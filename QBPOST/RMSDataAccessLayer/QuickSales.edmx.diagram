@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="6bc5f6e8ca5245f993169dc5ecb38d84" Name="Prescription" ZoomLevel="58" >
+        <EntityTypeShape EntityType="RMSEntities.Item" Width="1.5" PointX="13.875" PointY="3.75" />
+        <AssociationConnector Association="RMSEntities.TransactionTransactionEntry" />
+        <EntityTypeShape EntityType="RMSEntities.PrescriptionEntry" Width="2.5" PointX="13" PointY="0.5" />
+        <EntityTypeShape EntityType="RMSEntities.Prescription" Width="2.75" PointX="6.875" PointY="8.75" />
+        <InheritanceConnector EntityType="RMSEntities.Prescription" />
+        <InheritanceConnector EntityType="RMSEntities.PrescriptionEntry" />
+        <EntityTypeShape EntityType="RMSEntities.Medicine" Width="1.5" PointX="16.5" PointY="5.375" />
+        <InheritanceConnector EntityType="RMSEntities.Medicine" />
+        <EntityTypeShape EntityType="RMSEntities.Customer" Width="1.5" PointX="9.5" PointY="7.375" />
+        <EntityTypeShape EntityType="RMSEntities.Doctor" Width="1.5" PointX="7.25" PointY="6" />
+        <AssociationConnector Association="RMSEntities.DoctorPrescription" />
+        <AssociationConnector Association="RMSEntities.ItemTransactionEntry" />
+        <AssociationConnector Association="RMSEntities.CustomerPrescription" />
+        <EntityTypeShape EntityType="RMSEntities.QuickPrescription" Width="1.5" PointX="2.625" PointY="3.375" />
+        <InheritanceConnector EntityType="RMSEntities.QuickPrescription" />
+        <EntityTypeShape EntityType="RMSEntities.QBInventoryItem" Width="1.5" PointX="4.7236737928929147" PointY="12.234751036499977" />
+        <AssociationConnector Association="RMSEntities.FK_Item_QBInventoryItems" />
+        <EntityTypeShape EntityType="RMSEntities.Patient" Width="1.5" PointX="9.375" PointY="5.875" />
+        <AssociationConnector Association="RMSEntities.PatientPrescription" />
+        <EntityTypeShape EntityType="RMSEntities.TransactionBase" Width="1.5" PointX="5.375" PointY="0.875" />
+        <InheritanceConnector EntityType="RMSEntities.Prescription" />
+        <InheritanceConnector EntityType="RMSEntities.QuickPrescription" />
+        <EntityTypeShape EntityType="RMSEntities.TransactionEntryBase" Width="2.375" PointX="15.125" PointY="10.75" />
+        <InheritanceConnector EntityType="RMSEntities.PrescriptionEntry" />
+        <EntityTypeShape EntityType="RMSEntities.Person" Width="1.5" PointX="11.375" PointY="2.5" />
+        <InheritanceConnector EntityType="RMSEntities.Doctor" />
+        <InheritanceConnector EntityType="RMSEntities.Patient" />
+        <AssociationConnector Association="RMSEntities.CustomerTransaction" />
+        <EntityTypeShape EntityType="RMSEntities.TransactionEntryItem" Width="1.5" PointX="19.75" PointY="8.25" />
+        <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_Item" />
+        <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_TransactionEntryBase" />
+        <EntityTypeShape EntityType="RMSEntities.Company" Width="1.5" PointX="3.375" PointY="6.75" />
+        <EntityTypeShape EntityType="RMSEntities.Batch" Width="1.5" PointX="0.75" PointY="9.125" />
+        <AssociationConnector Association="RMSEntities.BatchTransactionBase" />
+        <AssociationConnector Association="RMSEntities.BatchTransactionBase1" />
+        <EntityTypeShape EntityType="RMSEntities.Store" Width="1.5" PointX="5.625" PointY="16.625" />
+        <AssociationConnector Association="RMSEntities.CompanyStore" />
+        <EntityTypeShape EntityType="RMSEntities.Station" Width="1.5" PointX="7.875" PointY="16.375" />
+        <AssociationConnector Association="RMSEntities.StoreStation" />
+        <AssociationConnector Association="RMSEntities.StationTransactionBase" />
+        <AssociationConnector Association="RMSEntities.StationBatch" />
+        <EntityTypeShape EntityType="RMSEntities.CashierLog" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RMSEntities.DoctorsView" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RMSEntities.PatientView" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RMSEntities.SearchView1" Width="1.5" PointX="7.75" PointY="11.75" />
+        <EntityTypeShape EntityType="RMSEntities.TransactionsView1" Width="1.5" PointX="9.75" PointY="12.75" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
