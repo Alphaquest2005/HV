@@ -117,6 +117,7 @@ namespace LeftRegion
                                                                 .Include("Prescription.TransactionEntries.TransactionEntryItem")
                                                                 .Include(x => x.Prescription.Patient)
                                                                 .Include(x => x.Prescription.Doctor)
+                                                                .OrderByDescending(x => x.Time)
                                                                 .Take(listCount).ToList());
                                                     }
                                                 }
@@ -141,6 +142,7 @@ namespace LeftRegion
                                                                 .Include("Prescription.TransactionEntries.TransactionEntryItem")
                                                                 .Include(x => x.Prescription.Patient)
                                                                 .Include(x => x.Prescription.Doctor)
+                                                                .OrderByDescending(x => x.Time)
                                                                 .Take(listCount).ToList());
                                                     }
                                                 }
@@ -164,6 +166,7 @@ namespace LeftRegion
                                                                 .Include("Prescription.TransactionEntries.TransactionEntryItem")
                                                                 .Include(x => x.Prescription.Patient)
                                                                 .Include(x => x.Prescription.Doctor)
+                                                                .OrderByDescending(x => x.Time)
                                                                 .Take(listCount).ToList());
                                                     }
                                                 }
@@ -188,6 +191,7 @@ namespace LeftRegion
                                        .Include("Prescription.TransactionEntries.TransactionEntryItem")
                                         .Include(x => x.Prescription.Patient)
                                         .Include(x => x.Prescription.Doctor)
+                                        .OrderByDescending(x => x.Time)
                                         .Take(listCount).ToList());
                             }
                         }
