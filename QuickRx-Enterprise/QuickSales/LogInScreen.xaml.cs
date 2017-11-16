@@ -261,7 +261,7 @@ public LogInScreen()
                     MessageBox.Show("Please Create Batch before continuing!");
                     return;
                 }
-                
+                SalesRegion.SalesVM.Instance.QBCompanyFile = Properties.Settings.Default.QBCompanyFile;
                 SalesRegion.SalesVM.Instance.Batch = batch;
                 //SalesRegion.SalesVM.Instance.CashierEx = cashier;
                 SalesRegion.SalesVM.Instance.Station = station;

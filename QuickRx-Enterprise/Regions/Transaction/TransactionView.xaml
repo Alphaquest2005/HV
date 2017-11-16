@@ -10,7 +10,7 @@
             <ColumnDefinition Width="175"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="DownloadQB" Content="Download &#xA; Inventory" Click="DownloadQB_OnClick" Grid.Column="1" Margin="0,2,493,10" HorizontalAlignment="Right" />
+        <Button x:Name="DownloadQB" Content="Download &#xA; Inventory" Click="DownloadQB_OnClick" Grid.Column="1" Margin="0,2,493,10" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <TextBlock Height="42" TextWrapping="Wrap" Text="Quick-Rx" VerticalAlignment="Top" FontSize="32" TextAlignment="Right" Margin="10,5,0,0" FontFamily="SketchFlow Print" HorizontalAlignment="Left" Width="145">
             <TextBlock.Effect>
                 <DropShadowEffect Color="#FFFFF9B3" Direction="70" ShadowDepth="0"/>
@@ -19,6 +19,7 @@
         <WrapPanel Margin="0,0,10.333,10" Grid.Column="1" HorizontalAlignment="Right" Width="Auto">
             <TextBlock HorizontalAlignment="Left" Height="42" TextWrapping="Wrap" Text="Status " VerticalAlignment="Top" Width="42" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="#FFF7FEBC" />
             <TextBlock Text="{Binding Path=TransactionData.Status, Mode=OneWay}" HorizontalAlignment="Left" Height="42"  VerticalAlignment="Top" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="White" FontSize="16" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,10,0" />
+            <TextBlock Text="{Binding Path=Status, Mode=OneWay}" HorizontalAlignment="Left" Height="42"  VerticalAlignment="Top" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="White" FontSize="16" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,10,0" />
             <TextBlock HorizontalAlignment="Left" Height="42" TextWrapping="Wrap" Text="Ref #" VerticalAlignment="Top" Width="42" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="#FFF7FEBC" />
             <TextBlock Text="{Binding Path=TransactionData.ReferenceNumber, Mode=OneWay}" HorizontalAlignment="Left" Height="42"  VerticalAlignment="Top" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="White" FontSize="16" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,10,0" />
             <TextBlock HorizontalAlignment="Left" Height="42" TextWrapping="Wrap" Text="Tran #" VerticalAlignment="Top" Width="42" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="#FFF7FEBC" />

@@ -28,5 +28,6 @@ namespace QuickBooks
         public string TaxCode { get; set; }
     
         public virtual SalesReceipt SalesReceipt { get; set; }
+        public string ItemNumber { get; set; }
     }
 }

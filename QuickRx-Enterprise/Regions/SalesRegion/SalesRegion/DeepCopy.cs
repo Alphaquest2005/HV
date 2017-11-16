@@ -32,7 +32,7 @@ namespace System
         public static bool IsPrimitive(this Type type)
         {
             if (type == typeof(String)) return true;
-            return (type.IsValueType & type.IsPrimitive);
+            return type != null && (type.IsValueType & type.IsPrimitive);
         }
 
         public static Object Copy(this Object originalObject)
@@ -44,12 +44,19 @@ namespace System
             if (originalObject == null) return null;
             var typeToReflect = originalObject.GetType();
             if (IsPrimitive(typeToReflect)) return originalObject;
-            if (visited.ContainsKey(originalObject)) return visited[originalObject];
-            var cloneObject = CloneMethod.Invoke(originalObject, null);
-            visited.Add(originalObject, cloneObject);
-            CopyFields(originalObject, visited, cloneObject, typeToReflect);
-            RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect);
-            return cloneObject;
+            if (visited != null && visited.ContainsKey(originalObject)) return visited[originalObject];
+            if (CloneMethod != null)
+            {
+                var cloneObject = CloneMethod.Invoke(originalObject, null);
+                if (visited != null)
+                {
+                    visited.Add(originalObject, cloneObject);
+                    CopyFields(originalObject, visited, cloneObject, typeToReflect);
+                    RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect);
+                }
+                return cloneObject;
+            }
+            return null;
         }
 
         private static void RecursiveCopyBaseTypePrivateFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect)

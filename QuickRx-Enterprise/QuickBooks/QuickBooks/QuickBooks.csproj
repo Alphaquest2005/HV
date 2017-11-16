@@ -66,22 +66,20 @@
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Expression.Interactions" />
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ReadOnlyCollectionsInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ReadOnlyCollectionInterfaces.1.0.0\lib\NET45\ReadOnlyCollectionsInterfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable.Net40, Version=1.0.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Collections.Immutable.Net40.1.0.30.17\lib\net40\System.Collections.Immutable.Net40.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
-    <Reference Include="System.Windows.Interactivity" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -89,6 +87,14 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TrackableEntities.Client, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TrackableEntities.Client.2.5.2\lib\net45\TrackableEntities.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TrackableEntities.Common, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TrackableEntities.Common.2.5.2.1\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -123,13 +129,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QBPos.edmx</DependentUpon>
     </Compile>
-    <Compile Include="QuickBooksPOSViewModel.cs" />
+    <Compile Include="QBResults.cs" />
     <Compile Include="QuickBooks\CustomerRet.cs" />
     <Compile Include="QuickBooks\InventoryAdjustmentRet.cs" />
     <Compile Include="QuickBooks\InventoryAdjustmentViewModel.cs" />
     <Compile Include="QuickBooks\ItemInventoryRet.cs" />
     <Compile Include="QuickBooks\ItemInventoryViewModel.cs" />
     <Compile Include="QuickBooks\QBPOS.cs" />
+    <Compile Include="QuickBooks\QBPosContext.cs" />
     <Compile Include="QuickBooks\SalesReceiptRet.cs" />
     <Compile Include="QuickBooks\SalesReceiptViewModel.cs" />
     <Compile Include="SalesReceipt.cs">
@@ -138,16 +145,8 @@
     <Compile Include="SalesReceiptDetail.cs">
       <DependentUpon>QBPos.tt</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -203,7 +202,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -213,15 +214,21 @@
     <Resource Include="QuickBooks\CustomerRet.xml" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="QBPOSFC3Lib">
-      <Guid>{47752563-4D1B-4CA7-9300-81012B363761}</Guid>
-      <VersionMajor>1</VersionMajor>
+    <COMReference Include="QBPOSXMLRPLib">
+      <Guid>{0D767FDB-2736-4429-A9D9-121A3FA5DBD9}</Guid>
+      <VersionMajor>3</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common.Core\Common.Core.csproj">
+      <Project>{459c400c-cc7c-4a97-9d0f-05a61eb4f7c8}</Project>
+      <Name>Common.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

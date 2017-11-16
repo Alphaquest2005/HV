@@ -875,12 +875,9 @@ namespace QuickBooks
             }
             set
             {
-                if (((this.priceLevelNumberField == null)
-                            || (priceLevelNumberField.Equals(value) != true)))
-                {
-                    this.priceLevelNumberField = value;
-                    this.OnPropertyChanged("PriceLevelNumber", value);
-                }
+                if (priceLevelNumberField.Equals(value) == true) return;
+                this.priceLevelNumberField = value;
+                this.OnPropertyChanged("PriceLevelNumber", value);
             }
         }
 

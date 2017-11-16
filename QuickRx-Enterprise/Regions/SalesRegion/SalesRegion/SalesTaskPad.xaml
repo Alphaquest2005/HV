@@ -16,8 +16,7 @@
 
     <UserControl.Resources>
 
-        <CollectionViewSource x:Key="QBItems"/>
-
+        <local:SalesVM  x:Key="SalesVMDataSource" />
         <barcode:BarCodeValueConverter x:Key="BarCodeConverter"/>
         <local:TimeSpanValueConverter x:Key="TimeC"/>
         <local:NotNullValueConverter x:Key="NotNullConverter"/>
@@ -41,16 +40,11 @@
             <Setter Property="Validation.ErrorTemplate">
                 <Setter.Value>
                     <ControlTemplate>
-                        <DockPanel LastChildFill="true">
-                            <Border Background="#FF560303" DockPanel.Dock="right" Margin="5,0,0,0" Width="20" Height="20" CornerRadius="10"
-									ToolTip="{Binding ElementName=customAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
-                                <TextBlock Text="!" VerticalAlignment="center" HorizontalAlignment="center" FontWeight="Bold" Foreground="white">
-                                </TextBlock>
-                            </Border>
-                            <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center" >
-                                <Border BorderBrush="#4CFF0000" BorderThickness="1" />
-                            </AdornedElementPlaceholder>
-                        </DockPanel>
+                        <StackPanel>
+                            <!-- Placeholder for the TextBox itself -->
+                            <AdornedElementPlaceholder x:Name="textBox"/>
+                            <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"/>
+                        </StackPanel>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -235,32 +229,35 @@
 
         <!--<wd:ListCollectionView x:Key="SearchLstView" Source="{StaticResource SearchLst}" />-->
 
-     
 
-       
+
+
 
         <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
             <Grid Background="#FF032039">
-                <TextBox Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Quantity,StringFormat=n0, Mode=OneWay}" GotKeyboardFocus="TextBox_GotKeyboardFocus_1" HorizontalAlignment="Left" Height="29" Margin="321,4,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="18.667" RenderTransformOrigin="0.488,0.466"/>
+                <TextBox Text="{Binding  Quantity,StringFormat=n0, UpdateSourceTrigger=PropertyChanged}" GotKeyboardFocus="TextBox_GotKeyboardFocus_1" HorizontalAlignment="Left" Height="29" Margin="321,4,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="18.667" RenderTransformOrigin="0.488,0.466"/>
                 <!--<DatePicker Text="{Binding ExpiryDate, Mode=OneWay}" x:Name="RepeatTxt"  HorizontalAlignment="Left" Height="23" Margin="240,119,0,0"  VerticalAlignment="Top" Width="132" Background="#FF1F1F1F" Foreground="#FF303030" RenderTransformOrigin="0.488,0.466"/>-->
 
 
-                <acbox:AutoCompleteTextBox   Text="{Binding Dosage, Mode=OneWay,ValidatesOnDataErrors=True, NotifyOnValidationError=true, UpdateSourceTrigger=PropertyChanged}"
-											 ItemsSource="{Binding DosageList}"
+                <acbox:AutoCompleteTextBox   Text="{Binding Dosage, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true, UpdateSourceTrigger=PropertyChanged}"
+											 ItemsSource="{Binding TransactionEntryItem.Item.DosageList}"
 											 Binding="{Binding}" 
 											 MaxCompletions="5"
-						  TextWrapping="Wrap"  Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="70" Margin="11,40,0,0"  VerticalAlignment="Top" Width="215" FontSize="13.333" />
-                <!--<TextBox   Text="{Binding Dosage,ValidatesOnDataErrors=True, NotifyOnValidationError=true, UpdateSourceTrigger=PropertyChanged}"
+                                             x:Name="AutoCompleteTextBox"
+						  TextWrapping="Wrap"  Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="79" Margin="11,40,0,0"  VerticalAlignment="Top" Width="215" FontSize="13.333" />
+                <!--<TextBox   Text="{Binding Dosage,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true, UpdateSourceTrigger=PropertyChanged}"
 											 
 						  TextWrapping="Wrap"  Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="70" Margin="11,40,0,0"  VerticalAlignment="Top" Width="215" FontSize="13.333" SpellCheck.IsEnabled="True" />-->
 
-                <TextBlock HorizontalAlignment="Left" Height="19" Margin="240,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="21" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White" Text="Exp"/>
-                <CheckBox IsChecked="{Binding Taxable, Mode=OneWay}" Content="VAT" Style="{StaticResource checkboxLeftSideText}" HorizontalAlignment="Left" Height="20" Margin="322,99,0,0" VerticalAlignment="Top" Width="49" Foreground="#FFEAEAEA" VerticalContentAlignment="Center" FlowDirection="LeftToRight" HorizontalContentAlignment="Right"/>
-                <TextBox Text="{Binding Price, Mode=OneWay, TargetNullValue={x:Static sys:String.Empty},StringFormat=c}" x:Name="PriceTxt" HorizontalAlignment="Left" Height="22" Margin="321,72,0,0" VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
+                <TextBlock Text="Set Dosage" MouseLeftButtonDown="SetDosage" HorizontalAlignment="Left" Height="19" Margin="240,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="#FF3AC72F" />
+                <CheckBox IsChecked="{Binding Taxable, Mode=TwoWay, ValidatesOnNotifyDataErrors=True}" Content="VAT" Style="{StaticResource checkboxLeftSideText}" HorizontalAlignment="Left" Height="20" Margin="322,127,0,0" VerticalAlignment="Top" Width="49" Foreground="#FFEAEAEA" VerticalContentAlignment="Center" FlowDirection="LeftToRight" HorizontalContentAlignment="Right"/>
+                <TextBox Text="{Binding Price, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, TargetNullValue={x:Static sys:String.Empty},StringFormat=c}" x:Name="PriceTxt" HorizontalAlignment="Left" Height="22" Margin="321,72,0,0" VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="282,77,0,0" TextWrapping="Wrap" Text="Price" VerticalAlignment="Top" Width="34" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
-                <TextBlock Text="{Binding Path=Item.ItemName, Mode=OneWay}" HorizontalAlignment="Left" Height="25" Margin="11,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="250" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
-                <TextBox Text="{Binding Repeat, Mode=OneWay, StringFormat=n0, TargetNullValue={x:Static sys:String.Empty}, UpdateSourceTrigger=PropertyChanged}" x:Name="PriceTxt_Copy" HorizontalAlignment="Left" Height="22" Margin="321,41,0,0"   VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
+                <TextBlock Text="{Binding Path=TransactionEntryItem.ItemName, Mode=OneWay}" HorizontalAlignment="Left" Height="25" Margin="11,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="250" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
+                <TextBox Text="{Binding Repeat, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, StringFormat=n0, TargetNullValue={x:Static sys:String.Empty}, UpdateSourceTrigger=PropertyChanged}" x:Name="PriceTxt_Copy" HorizontalAlignment="Left" Height="22" Margin="321,41,0,0"   VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="270,46,0,0" TextWrapping="Wrap" Text="Repeat" VerticalAlignment="Top" Width="46" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
+                <TextBlock Text="{Binding Amount, Mode=OneWay, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" x:Name="PriceTxt_Copy1" HorizontalAlignment="Left" Height="22" Margin="321,99,0,0" VerticalAlignment="Top" Width="52"  Foreground="#FFC7DA11" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
+                <TextBlock Text="Total" HorizontalAlignment="Left" Height="20" Margin="282,104,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="34" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
 
             </Grid>
         </DataTemplate>
@@ -297,24 +294,24 @@
                 </Grid.RowDefinitions>
                 <TextBlock HorizontalAlignment="Left" Height="25" Margin="10,0,0,0" TextWrapping="Wrap" Text="Add Patient" VerticalAlignment="Top" Width="135" FontSize="18" FontFamily="Segoe UI Light"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,6,0,0" Grid.Row="1" TextWrapping="Wrap" Text="First Name" VerticalAlignment="Top" Height="16" Width="65"/>
-                <TextBox Text="{Binding FirstName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
+                <TextBox Text="{Binding FirstName, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,2.412,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Address" VerticalAlignment="Top" Height="16" Width="65"/>
-                <TextBox Text="{Binding Address, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,34.706,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.RowSpan="2"/>
+                <TextBox Text="{Binding Address, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,34.706,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.RowSpan="2"/>
                 <TextBlock HorizontalAlignment="Left" Margin="5.41,6,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Last Name" VerticalAlignment="Top" Height="16" Width="65" Grid.Column="1"/>
-                <TextBox Text="{Binding LastName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70.41,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox Text="{Binding LastName, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70.41,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
                 <TextBlock HorizontalAlignment="Left" Margin="5.41,3.412,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Phone No." VerticalAlignment="Top" Height="16" Width="65" Grid.Column="1"/>
-                <TextBox Text="{Binding PhoneNumber, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70.41,0.412,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox Text="{Binding PhoneNumber, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70.41,0.412,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
                 <TextBlock HorizontalAlignment="Left" Margin="5,8,0,0" Grid.Row="3" TextWrapping="Wrap" Text="Date of Birth" VerticalAlignment="Top" Height="16" Width="70"/>
-                <DatePicker Text="{Binding DOB, Mode=OneWay, UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}" HorizontalAlignment="Left" Height="23" Margin="75,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
+                <DatePicker Text="{Binding DOB, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}" HorizontalAlignment="Left" Height="23" Margin="75,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
                 <Button x:Name="SavePatientBtn" Content="Save" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="130.41,12,0,0" Grid.Row="3" VerticalAlignment="Top" Width="62" Click="SavePatientBtn_Click"/>
-                <RadioButton GroupName="Sex"  IsChecked="{Binding Sex,Mode=OneWay,Converter={StaticResource EnumConverter},ConverterParameter=True, UpdateSourceTrigger=PropertyChanged}" Content="Female" Grid.Column="1" HorizontalAlignment="Left" Margin="10.41,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="25" Width="72"/>
-                <RadioButton GroupName="Sex" IsChecked="{Binding Sex, Mode=OneWay,Converter={StaticResource EnumConverter},ConverterParameter=False, UpdateSourceTrigger=PropertyChanged}" Content="Male" Grid.Column="1" HorizontalAlignment="Left" Margin="70.41,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="25" Width="55"/>
+                <RadioButton GroupName="Sex"  IsChecked="{Binding Sex,Mode=TwoWay, ValidatesOnNotifyDataErrors=True,Converter={StaticResource EnumConverter},ConverterParameter=True, UpdateSourceTrigger=PropertyChanged}" Content="Female" Grid.Column="1" HorizontalAlignment="Left" Margin="10.41,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="25" Width="72"/>
+                <RadioButton GroupName="Sex" IsChecked="{Binding Sex, Mode=TwoWay, ValidatesOnNotifyDataErrors=True,Converter={StaticResource EnumConverter},ConverterParameter=False, UpdateSourceTrigger=PropertyChanged}" Content="Male" Grid.Column="1" HorizontalAlignment="Left" Margin="70.41,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="25" Width="55"/>
                 <TextBlock HorizontalAlignment="Left" Margin="133,8,0,0" TextWrapping="Wrap" Text="Guardian" VerticalAlignment="Top" Height="16" Width="65" Grid.ColumnSpan="2"/>
-                <TextBox Text="{Binding Guardian, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="10.41,5,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="180" Grid.Column="1"/>
+                <TextBox Text="{Binding Guardian, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="10.41,5,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="180" Grid.Column="1"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,32.412,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Allergies" VerticalAlignment="Top" Height="16" Width="65"/>
-                <TextBox Text="{Binding Allergies, Mode=OneWay, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,28.6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="193" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                <TextBox Text="{Binding Allergies, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,28.6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="193" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
                 <TextBlock HorizontalAlignment="Left" Margin="98.4,28.6,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Disc. %" VerticalAlignment="Top" Height="16" Width="27" Grid.Column="1"/>
-                <TextBox Text="{Binding Discount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="130.4,28.6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="60" Grid.Column="1" Grid.RowSpan="2"/>
+                <TextBox Text="{Binding Discount, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="130.4,28.6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="60" Grid.Column="1" Grid.RowSpan="2"/>
 
             </Grid>
 
@@ -334,15 +331,15 @@
                 </Grid.RowDefinitions>
                 <TextBlock HorizontalAlignment="Left" Height="25" Margin="10,0,0,0" TextWrapping="Wrap" Text="Add Doctor" VerticalAlignment="Top" Width="135" FontSize="18" FontFamily="Segoe UI Light"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,6,0,0" Grid.Row="1" TextWrapping="Wrap" Text="First Name" VerticalAlignment="Top" Height="16" Width="65"/>
-                <TextBox Text="{Binding FirstName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
+                <TextBox Text="{Binding FirstName, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,9,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Address" VerticalAlignment="Top" Height="16" Width="65"/>
-                <TextBox Text="{Binding Address, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
+                <TextBox Text="{Binding Address, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
                 <TextBlock HorizontalAlignment="Left" Margin="5,6,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Last Name" VerticalAlignment="Top" Height="16" Width="65" Grid.Column="1"/>
-                <TextBox Text="{Binding LastName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox Text="{Binding LastName, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70,3,0,0" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
                 <TextBlock HorizontalAlignment="Left" Margin="5,9,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Phone No." VerticalAlignment="Top" Height="16" Width="65" Grid.Column="1"/>
-                <TextBox Text="{Binding PhoneNumber, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+                <TextBox Text="{Binding PhoneNumber, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="2" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Grid.Column="1"/>
                 <TextBlock HorizontalAlignment="Left" Margin="5,8,0,0" Grid.Row="3" TextWrapping="Wrap" Text="Code" VerticalAlignment="Top" Height="16" Width="70"/>
-                <TextBox Text="{Binding Code, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
+                <TextBox Text="{Binding Code, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="75,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
                 <Button x:Name="SavePatientBtn" Content="Save" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="110.41,4,0,0" Grid.Row="3" VerticalAlignment="Top" Width="80" Click="SavePatientBtn_Click"/>
 
 
@@ -353,33 +350,32 @@
         <DataTemplate DataType="{x:Type data:Medicine}">
 
             <Grid Background="#FF523A04">
-                <TextBox Text="{Binding Quantity, StringFormat=n0, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" GotKeyboardFocus="TextBox_GotKeyboardFocus_1" HorizontalAlignment="Left" Height="23" Margin="321,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="18.667" RenderTransformOrigin="0.488,0.466"/>
-                <!--<DatePicker Text="{Binding ExpiryDate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" x:Name="RepeatTxt"  HorizontalAlignment="Left" Height="23" Margin="240,85,0,0"  VerticalAlignment="Top" Width="132" Background="#FF1F1F1F" Foreground="#FF303030" RenderTransformOrigin="0.488,0.466"/>-->
-                <!--<ComboBox  DisplayMemberPath="{Binding Dosage,ValidatesOnDataErrors=True, NotifyOnValidationError=true}"
+                <TextBox Text="{Binding Quantity, StringFormat=n0, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" GotKeyboardFocus="TextBox_GotKeyboardFocus_1" HorizontalAlignment="Left" Height="23" Margin="321,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="18.667" RenderTransformOrigin="0.488,0.466"/>
+                <!--<DatePicker Text="{Binding ExpiryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="RepeatTxt"  HorizontalAlignment="Left" Height="23" Margin="240,85,0,0"  VerticalAlignment="Top" Width="132" Background="#FF1F1F1F" Foreground="#FF303030" RenderTransformOrigin="0.488,0.466"/>-->
+                <!--<ComboBox  DisplayMemberPath="{Binding Dosage,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true}"
 						   ItemsSource="{Binding Item,Converter={StaticResource DosageLstConverter}}"  Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="70" Margin="11,40,0,0"  VerticalAlignment="Top" Width="215" FontSize="13.333" />-->
-                <TextBox  Text="{Binding SuggestedDosage, Mode=OneWay,ValidatesOnDataErrors=True, NotifyOnValidationError=true, UpdateSourceTrigger=PropertyChanged}"
+                <TextBox  Text="{Binding SuggestedDosage,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true, UpdateSourceTrigger=PropertyChanged}"
 						   TextWrapping="Wrap" Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="41" Margin="65,40,0,0"  VerticalAlignment="Top" Width="161" FontSize="13.333" SpellCheck.IsEnabled="True" xml:lang="en-us" />
                 <TextBlock HorizontalAlignment="Left" Height="19" Margin="240,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="21" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White" Text="Exp"/>
                 <TextBox x:Name="PriceTxt" HorizontalAlignment="Left" Height="22" Margin="321,38,0,0"  
-                         Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, TargetNullValue={x:Static sys:String.Empty},StringFormat=c}" VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
+                         Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, TargetNullValue={x:Static sys:String.Empty},StringFormat=c}" VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="282,43,0,0" TextWrapping="Wrap" Text="Price" VerticalAlignment="Top" Width="34" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
-                <TextBox Text="{Binding ItemName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="25" Margin="11,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="184" FontSize="13.333" />
+                <TextBox Text="{Binding ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="25" Margin="11,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="184" FontSize="13.333" />
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="11,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="49" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"><Run Text="Dosage"/><LineBreak/><Run/></TextBlock>
                 <TextBox x:Name="PriceTxt_Copy" HorizontalAlignment="Left" Height="22" Margin="321,63,0,0"  
-                         Text="{Binding SalesTax, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, StringFormat=p, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
+                         Text="{Binding SalesTax, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, StringFormat=p, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="52" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="282,68,0,0" TextWrapping="Wrap" Text="VAT" VerticalAlignment="Top" Width="34" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
-                <Button x:Name="SaveMedicineBtn" Click="SavePatientBtn_Click" Content="Save" HorizontalAlignment="Left" Height="25" Margin="321,113,0,0" VerticalAlignment="Top" Width="51"/>
+                <Button x:Name="SaveMedicineBtn" Click="SaveMedicineBtn_Click" Content="Save" HorizontalAlignment="Left" Height="25" Margin="321,113,0,0" VerticalAlignment="Top" Width="51"/>
                 <TextBox x:Name="PriceTxt_Copy1" HorizontalAlignment="Left" Height="22" Margin="65,86,0,0"  
-                         Text="{Binding Department, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="161" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
+                         Text="{Binding Department, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="161" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="16" RenderTransformOrigin="0.488,0.466" FontFamily="DS-Digital" FontWeight="Bold" TextOptions.TextFormattingMode="Display"/>
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="10,89,0,0" TextWrapping="Wrap" Text="Dept" VerticalAlignment="Top" Width="34" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
                 <TextBlock HorizontalAlignment="Left" Height="20" Margin="282,13,0,0" TextWrapping="Wrap" Text="Qty" VerticalAlignment="Top" Width="34" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="13.333" Foreground="White"/>
                 <CheckBox Content="Inactive" 
-                          IsChecked="{Binding Inactive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="136,113,0,0" VerticalAlignment="Top" Width="90"/>
+                          IsChecked="{Binding Inactive, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="136,113,0,0" VerticalAlignment="Top" Width="90"/>
 
             </Grid>
 
         </DataTemplate>
-      
     </UserControl.Resources>
 
     <Border x:Name="SalesPad"  UIElement.PreviewKeyDown="SalesPad_PreviewKeyDown_1"  FocusManager.FocusedElement="{Binding ElementName=InputTxt}" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Left" Height="235" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Top" Width="610" Background="{DynamicResource HighlightGray}" BorderThickness="1" CornerRadius="3" BorderBrush="#FF505050" ClipToBounds="False" >
@@ -398,17 +394,17 @@
                     <ColumnDefinition x:Name="PrintCol" Width="200" />
                     <ColumnDefinition x:Name="ReceiptCol" Width="400" />
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TransStatusTxt" LostFocus="TransStatusTxt_LostFocus_1" Text="{Binding SalesVM.TransactionData.Status, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Height="23" VerticalAlignment="Top" FontSize="16" Foreground="#FFEF9D9D" HorizontalAlignment="Left" Width="286" Focusable="True" Grid.ColumnSpan="1" Margin="0,-16,0,0" />
+                <TextBlock x:Name="TransStatusTxt" LostFocus="TransStatusTxt_LostFocus_1" Text="{Binding Instance.TransactionData.Status, Mode=OneWay,Source={StaticResource SalesVMDataSource}}" Height="23" VerticalAlignment="Top" FontSize="16" Foreground="#FFEF9D9D" HorizontalAlignment="Left" Width="286" Focusable="True" Grid.ColumnSpan="1" Margin="0,-16,0,0" />
                 <Grid x:Name="TransactionGrd"  Background="#FF464646" Margin="12,49,6,-25" Width="382" Focusable="False">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="134*"/>
                         <ColumnDefinition Width="57*"/>
                     </Grid.ColumnDefinitions>
-                    <Button HorizontalAlignment="Left" Click="NewTransaction"  Height="35" Margin="77,-39,0,0" VerticalAlignment="Top" Width="37" Grid.Column="1">
+                    <Button HorizontalAlignment="Left" Click="NewTransaction"  Height="35" Margin="77,-39,0,0" VerticalAlignment="Top" Width="37" Grid.Column="1" Visibility="Collapsed">
                         <Button.Background>
                             <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
                         </Button.Background>
-                        <Image Source="{DynamicResource NewTicket}"/>
+                        <Image Source="{DynamicResource NewTicket}" Visibility="Collapsed"/>
 
                     </Button>
 
@@ -424,7 +420,7 @@
                         </Button.Background>
                         <TextBlock Text="Clear" Width="28" FontWeight="Bold" Foreground="#FF203A0F"/>
                     </Button>
-                    <local:FilterControl FilterTextBindingPath="SearchCriteria" FilterFiringInterval="1" TargetControl="{Binding ElementName=SearchListCtl}"  Filter="SearchBox_Filter_1" PreviewKeyDown="SearchBox_PreviewKeyDown_1" Direction="FilterControl_Direction_1" x:Name="SearchBox" HorizontalAlignment="Left" Height="35" Margin="10,-40,0,0" VerticalAlignment="Top" Width="231"/>
+                    <TextBox TextChanged="SearchBox_OnTextChanged" PreviewKeyDown="SearchBox_PreviewKeyDown_1" x:Name="SearchBox" HorizontalAlignment="Left" Height="35" FontSize="14" Margin="10,-40,0,0" VerticalAlignment="Top" Width="231" Style="{DynamicResource FilterTextBoxStyle}" />
                     <ContentControl x:Name="ItemEditor"  Background="#FF0B430A" Content="{Binding}" Margin="0,0,0,0" Grid.ColumnSpan="2"/>
                     
                     <Button x:Name="NextEntry"  HorizontalAlignment="Left" Height="40" Margin="135,93,-61,-12" VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE10B;" FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF65E468" Click="NextEntry_Click" Grid.Column="1"/>
@@ -448,19 +444,19 @@
                     </Grid.RenderTransform>
                     <TextBlock HorizontalAlignment="Left" Height="42" Margin="7,42,0,0" TextWrapping="Wrap" Text="Discount %" VerticalAlignment="Top" Width="74" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="White"/>
                     <TextBlock HorizontalAlignment="Left" Height="41.581" Margin="7.266,1,0,0" TextWrapping="Wrap" Text="Total" VerticalAlignment="Top" Width="49.9" FontSize="16" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="White"/>
-                    <TextBlock HorizontalAlignment="Left" Height="29" Margin="81,55,0,0" TextWrapping="Wrap" Text="{Binding SalesVM.TransactionData.TotalDiscount, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="72" FontSize="21.333" TextAlignment="Right" RenderTransformOrigin="-0.791,0.354" FontFamily="DS-Digital" Foreground="White"/>
-                    <TextBlock x:Name="TotalSalesTxt" HorizontalAlignment="Left" Height="41.581" TextWrapping="Wrap" Text="{Binding SalesVM.TransactionData.TotalSales, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="112.829" FontSize="29.333" TextAlignment="Right" Margin="40.171,8,0,0" FontFamily="DS-Digital" FontWeight="Bold" Foreground="White">
+                    <TextBlock HorizontalAlignment="Left" Height="29" Margin="81,55,0,0" TextWrapping="Wrap" Text="{Binding Instance.TransactionData.TotalDiscount, Source={StaticResource SalesVMDataSource}, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="72" FontSize="21.333" TextAlignment="Right" RenderTransformOrigin="-0.791,0.354" FontFamily="DS-Digital" Foreground="White"/>
+                    <TextBlock x:Name="TotalSalesTxt" HorizontalAlignment="Left" Height="41.581" TextWrapping="Wrap" Text="{Binding Instance.TransactionData.TotalSales, Mode=OneWay, Source={StaticResource SalesVMDataSource}, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="112.829" FontSize="29.333" TextAlignment="Right" Margin="40.171,8,0,0" FontFamily="DS-Digital" FontWeight="Bold" Foreground="White">
                         <TextBlock.Effect>
                             <DropShadowEffect Color="#FFFFF9B3" Direction="70" ShadowDepth="0" BlurRadius="3"/>
                         </TextBlock.Effect>
                     </TextBlock>
                     <TextBlock HorizontalAlignment="Left" Height="41.581" Margin="7.266,67.107,0,-1.411" TextWrapping="Wrap" Text="VAT" VerticalAlignment="Top" Width="49.9" FontSize="13.333" LineStackingStrategy="BlockLineHeight" LineHeight="37.333" Foreground="White"/>
-                    <TextBlock HorizontalAlignment="Left" Height="29.107" Margin="52.166,79.581,0,-1.411" TextWrapping="Wrap" Text="{Binding SalesVM.TransactionData.TotalTax, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="100.834" FontSize="21.333" TextAlignment="Right" RenderTransformOrigin="-0.791,0.354" FontFamily="DS-Digital" Foreground="White"/>
+                    <TextBlock HorizontalAlignment="Left" Height="29.107" Margin="52.166,79.581,0,-1.411" TextWrapping="Wrap" Text="{Binding Instance.TransactionData.TotalTax, Source={StaticResource SalesVMDataSource}, StringFormat=c, TargetNullValue={x:Static sys:String.Empty}}" VerticalAlignment="Top" Width="100.834" FontSize="21.333" TextAlignment="Right" RenderTransformOrigin="-0.791,0.354" FontFamily="DS-Digital" Foreground="White"/>
                 </Grid>
                
                 <!--ItemsSource="{Binding Source={StaticResource SearchLstView}}"-->
                 <Canvas x:Name="ReceiptCanvas" >
-                    <Grid x:Name="ReceiptGrd" Canvas.Left="175"   DataContext="{Binding SalesVM.TransactionData, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Grid.ColumnSpan="1" Grid.Column="5" MaxWidth="400"  Width="400" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Background="#19FFFFFF" ScrollViewer.CanContentScroll="False" VerticalAlignment="Top" Height="Auto" MaxHeight="400"  >
+                    <Grid x:Name="ReceiptGrd" Canvas.Left="175"   DataContext="{Binding Instance.TransactionData, Source={StaticResource SalesVMDataSource}}" Grid.ColumnSpan="1" Grid.Column="5" MaxWidth="400"  Width="400" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Background="#19FFFFFF" ScrollViewer.CanContentScroll="False" VerticalAlignment="Top" Height="Auto" MaxHeight="400"  >
                         <Grid.Resources>
                             <local:TransPreZeroConverter x:Key="TransPreZeroConverter"/>
 
@@ -469,7 +465,7 @@
                                     <ListView x:Name="PrescriptionEntriesRptLst"
 										ItemsSource="{Binding TransactionEntries}"
 										  
-										ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SourceUpdated="ListView_SourceUpdated_1" LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated" Width="288" HorizontalAlignment="Center" VerticalAlignment="Center" MaxHeight="400">
+										ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated" Width="288" HorizontalAlignment="Center" VerticalAlignment="Center" MaxHeight="400">
 
                                         <ListView.ItemTemplate>
                                             <DataTemplate >
@@ -483,26 +479,26 @@
                                                                 <RowDefinition Height="15*"/>
                                                             </Grid.RowDefinitions>
                                                             <Image HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="30" Margin="3,3,0,0" Stretch="UniformToFill" Source="{DynamicResource HVLogo}"/>
-                                                            <TextBlock Text="{Binding SalesVM.Store.Company.CompanyName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Margin="38,2,62,9.895" FontFamily="Candara" FontSize="16" Foreground="Black" TextWrapping="Wrap" FontWeight="Bold"/>
-                                                            <TextBlock Text="{Binding SalesVM.Store.Company.Motto, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" TextWrapping="Wrap" Margin="46,21,71,118.579" FontFamily="Century Gothic" Foreground="Black" FontWeight="Bold" Grid.RowSpan="2" FontSize="9" />
-                                                            <TextBlock Text="{Binding SalesVM.Store.Company.Address, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="11" Margin="208,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Text="{Binding Instance.Store.Company.CompanyName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" Margin="38,2,62,9.895" FontFamily="Candara" FontSize="16" Foreground="Black" TextWrapping="Wrap" FontWeight="Bold"/>
+                                                            <TextBlock Text="{Binding Instance.Store.Company.Motto, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" TextWrapping="Wrap" Margin="46,21,71,118.579" FontFamily="Century Gothic" Foreground="Black" FontWeight="Bold" Grid.RowSpan="2" FontSize="9" />
+                                                            <TextBlock Text="{Binding Instance.Store.Company.Address, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="11" Margin="208,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
                                                             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="1" Margin="0,136.067,0,0" Stroke="Black" VerticalAlignment="Top" Width="286" Grid.RowSpan="2" Grid.Row="1"/>
                                                             <TextBlock Text="KEEP OUT THE REACH OF CHILDREN" HorizontalAlignment="Left" Height="14" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="276" FontFamily="Arial" FontSize="8" FontWeight="Bold" Foreground="Black" Margin="3,125,0,0" Grid.RowSpan="2" />
                                                             <Grid Margin="3,29,5,30" Grid.Row="1">
 
                                                                 <TextBlock Text="{Binding Dosage, Mode=OneWay}" x:Name="DosageTxt" HorizontalAlignment="Left" Margin="0,22,-6,-15.316" TextWrapping="Wrap" Width="278" FontFamily="Calibri" FontSize="14" Foreground="Black" FontWeight="Bold"/>
-                                                                <TextBlock Text="{Binding Item.ItemName, Mode=OneWay}" HorizontalAlignment="Left" Height="17" Margin="36,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="236" FontFamily="Calibri" FontSize="14" Foreground="Black"/>
+                                                                <TextBlock Text="{Binding TransactionEntryItem.ItemName, Mode=OneWay}" HorizontalAlignment="Left" Height="17" Margin="36,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="236" FontFamily="Calibri" FontSize="14" Foreground="Black"/>
                                                                 <TextBlock Text="{Binding Quantity, Mode=OneWay, StringFormat=n0}" HorizontalAlignment="Left" Height="22" Margin="3,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="32" FontFamily="Calibri" RenderTransformOrigin="0.701,0.758" Foreground="Black" FontSize="16"/>
                                                                
                                                             </Grid>
 
                                                             <TextBlock Text="Walk in Customer" Margin="3,4.105,0,0" Foreground="Black" LineHeight="12" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="164" FontFamily="Segoe UI" RenderTransformOrigin="0.527,0.538" Grid.Row="1"/>
 
-                                                            <TextBlock Text="{Binding SalesVM.TransactionData.Time, Mode=OneWay,StringFormat=Date: \{0:MMM-dd-yyyy\}, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="18" Margin="200,4.105,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="100" FontFamily="Calibri" FontSize="10" Foreground="Black" FontWeight="Bold" Grid.Row="1"/>
+                                                            <TextBlock Text="{Binding Instance.TransactionData.Time, Mode=OneWay,StringFormat=Date: \{0:MMM-dd-yyyy\}, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="200,4.105,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="100" FontFamily="Calibri" FontSize="10" Foreground="Black" FontWeight="Bold" Grid.Row="1"/>
                                                             <TextBlock Text="{Binding TransactionEntryNumber, Mode=OneWay,StringFormat=Trans#:{0}}" HorizontalAlignment="Left" Height="18" Margin="180,16.105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80" FontFamily="Calibri" FontSize="10" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Right"/>
-                                                            <TextBlock Text="{Binding SalesVM.TransactionData.Pharmacist.Initials, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="18" Margin="260,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="Auto" FontFamily="Calibri" FontSize="12" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Right"/>
-                                                            <TextBlock Text="{Binding SalesVM.Store.Company.PhoneNumber, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="11" Margin="208,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="10" TextAlignment="Right" Foreground="Black" Grid.RowSpan="2"/>
-                                                            <TextBlock Text="{Binding SalesVM.Store.Company.Address1, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="11" Margin="195,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
+                                                            <TextBlock Text="{Binding Instance.TransactionPharmacist.Initials, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="260,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="Auto" FontFamily="Calibri" FontSize="12" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Instance.Store.Company.PhoneNumber, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="11" Margin="208,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="10" TextAlignment="Right" Foreground="Black" Grid.RowSpan="2"/>
+                                                            <TextBlock Text="{Binding Instance.Store.Company.Address1, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="11" Margin="195,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
 
 
                                                         </Grid>
@@ -536,29 +532,29 @@
                                                 <RowDefinition Height="136*"/>
                                                 <RowDefinition Height="15*"/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock Text="{Binding SalesVM.Store.Company.CompanyName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" Margin="38,2,62,9.895" FontFamily="Candara" FontSize="16" Foreground="Black" TextWrapping="Wrap" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding SalesVM.Store.Company.Motto, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" TextWrapping="Wrap" Margin="46,21,71,118.579" FontFamily="Century Gothic" Foreground="Black" FontWeight="Bold" Grid.RowSpan="2" FontSize="9" />
-                                            <TextBlock Text="{Binding SalesVM.Store.Company.Address, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="11" Margin="208,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Instance.Store.Company.CompanyName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" Margin="38,2,62,9.895" FontFamily="Candara" FontSize="16" Foreground="Black" TextWrapping="Wrap" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Instance.Store.Company.Motto, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" TextWrapping="Wrap" Margin="46,21,71,118.579" FontFamily="Century Gothic" Foreground="Black" FontWeight="Bold" Grid.RowSpan="2" FontSize="9" />
+                                            <TextBlock Text="{Binding Instance.Store.Company.Address, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="11" Margin="208,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
                                             
                                             <TextBlock Text="KEEP OUT THE REACH OF CHILDREN" HorizontalAlignment="Left" Height="13
                                                         " Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" FontFamily="Arial" FontSize="8" FontWeight="Bold" Foreground="Black" Margin="3,122.8,0,0" Grid.RowSpan="2" />
-                                            <TextBlock Text="{Binding SalesVM.TransactionData.Patient.AllergiesEx, Mode=OneWay,RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="17" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="126" FontFamily="Arial" FontSize="10" FontWeight="Bold" Foreground="Black" Margin="150,119.8,0,0" Grid.RowSpan="2" TextAlignment="Right" />
+                                            <TextBlock Text="{Binding Instance.TransactionData.Patient.AllergiesEx, Mode=OneWay,Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="17" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="126" FontFamily="Arial" FontSize="10" FontWeight="Bold" Foreground="Black" Margin="150,119.8,0,0" Grid.RowSpan="2" TextAlignment="Right" />
                                             <Grid Margin="3,29,5,30" Grid.Row="1">
 
                                                 <TextBlock Text="{Binding Dosage, Mode=OneWay}" x:Name="DosageTxt" HorizontalAlignment="Left" Margin="0,22,0,-14.8" TextWrapping="Wrap" Width="274" FontFamily="Calibri" FontSize="14" Foreground="Black" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding Item.ItemName, Mode=OneWay}" HorizontalAlignment="Left" Height="17" Margin="36,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" FontFamily="Calibri" FontSize="14" Foreground="Black"/>
-                                                <TextBlock Text="{Binding Quantity, Mode=OneWay, StringFormat=n0}" HorizontalAlignment="Left" Height="22" Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="32" FontFamily="Calibri" RenderTransformOrigin="0.701,0.758" Foreground="Black" FontSize="16"/>
+                                                <TextBlock Text="{Binding TransactionEntryItem.ItemName, Mode=OneWay}" HorizontalAlignment="Left" Height="17" Margin="36,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" FontFamily="Calibri" FontSize="14" Foreground="Black"/>
+                                                <TextBlock Text="{Binding Quantity, Mode=OneWay, StringFormat=n0 }" HorizontalAlignment="Left" Height="22" Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="32" FontFamily="Calibri" RenderTransformOrigin="0.701,0.758" Foreground="Black" FontSize="16"/>
                                                 <TextBlock Text="{Binding Repeat,StringFormat=Repeat {0} times}" HorizontalAlignment="Left" Height="16" Margin="180,76,-0.4,-27.8" TextWrapping="Wrap" VerticalAlignment="Top" Width="94" FontFamily="Calibri" FontSize="14" Background="{x:Null}" Foreground="Black"/>
                                             </Grid>
 
 
-                                            <TextBlock Text="{Binding SalesVM.TransactionData.Doctor.DisplayName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"  HorizontalAlignment="Left" Height="12" Margin="3,1.105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="139"  FontFamily="Calibri" FontSize="12" Foreground="Black" Grid.Row="1" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding SalesVM.TransactionData.Patient.ContactInfo, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="16" Margin="3,15.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="192" FontFamily="Calibri" FontSize="12" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding SalesVM.TransactionData.Time, Mode=OneWay,StringFormat=Date: \{0:MMM-dd-yyyy\}, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="18" Margin="180,4.105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" FontFamily="Calibri" FontSize="10" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Right" Background="{x:Null}"/>
+                                            <TextBlock Text="{Binding Instance.TransactionData.Doctor.DisplayName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"  HorizontalAlignment="Left" Height="12" Margin="3,1.105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="139"  FontFamily="Calibri" FontSize="12" Foreground="Black" Grid.Row="1" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Instance.TransactionData.Patient.ContactInfo, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="16" Margin="3,15.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="192" FontFamily="Calibri" FontSize="12" Grid.Row="1" Foreground="Black" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Instance.TransactionData.Time, Mode=OneWay,StringFormat=Date: \{0:MMM-dd-yyyy\}, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="180,4.105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" FontFamily="Calibri" FontSize="10" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Right" Background="{x:Null}"/>
                                             <TextBlock Text="{Binding TransactionEntryNumber, Mode=OneWay,StringFormat=RX#:{0}}" HorizontalAlignment="Left" Height="18" Margin="199,15.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60" FontFamily="Calibri" FontSize="10" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Right"/>
-                                            <TextBlock Text="{Binding SalesVM.TransactionData.Pharmacist.Initials, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="18" Margin="258,14.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="19" FontFamily="Calibri" FontSize="12" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Left" />
-                                            <TextBlock Text="{Binding SalesVM.Store.Company.PhoneNumber, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="11" Margin="208,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="10" TextAlignment="Right" Foreground="Black" Grid.RowSpan="2"/>
-                                            <TextBlock Text="{Binding SalesVM.Store.Company.Address1, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" HorizontalAlignment="Left" Height="11" Margin="195,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Instance.TransactionPharmacist.Initials, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="258,14.8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="19" FontFamily="Calibri" FontSize="12" Foreground="Black" FontWeight="Bold" Grid.Row="1" TextAlignment="Left" />
+                                            <TextBlock Text="{Binding Instance.Store.Company.PhoneNumber, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="11" Margin="208,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" FontFamily="Calibri" FontSize="10" TextAlignment="Right" Foreground="Black" Grid.RowSpan="2"/>
+                                            <TextBlock Text="{Binding Instance.Store.Company.Address1, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="11" Margin="195,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" FontFamily="Calibri" FontSize="7.5" TextAlignment="Right" Foreground="Black" FontWeight="Bold"/>
 
 
                                         </Grid>
@@ -572,7 +568,7 @@
                             
                             <DataTemplate DataType="{x:Type data:Prescription}">
                                 <Canvas>
-                                    <ListView x:Name="PrescriptionEntriesRptLst" ItemsSource="{Binding TransactionEntries}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SourceUpdated="ListView_SourceUpdated_1" LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated" MaxHeight="400" >
+                                    <ListView x:Name="PrescriptionEntriesRptLst" ItemsSource="{Binding TransactionEntries}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated" MaxHeight="400" >
                                      </ListView>
 
                                 </Canvas>
@@ -582,14 +578,14 @@
                         <ContentControl Content="{Binding}" Margin="50,0,50,0" Height="Auto" Background="#FFD0D0D0" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" />
                     </Grid>
                 </Canvas>
-                <Grid x:Name="PrintGrd" Grid.Column="4" HorizontalAlignment="Left" Height="136" Margin="0,0,0,0" VerticalAlignment="Top" Width="180">
+                <Grid x:Name="PrintGrd" Grid.Column="2" HorizontalAlignment="Left" Height="136" Margin="0,0,0,0" VerticalAlignment="Top" Width="180">
                     <Button x:Name="PrintBtn" 
                             
                             Content="Print" Click="PrintBtn_Click_1" HorizontalAlignment="Left" Height="25" Margin="37,53,0,0" VerticalAlignment="Top" Width="111" RenderTransformOrigin="0.47,0.671" MouseRightButtonDown="PrintBtn_RightClick">
                         <Button.Visibility>
                             <MultiBinding Converter = "{StaticResource IsPharmacistVisibleConverter}" >
-                                <Binding Path="SalesVM.TransactionData.Cashier" Mode="OneWay"  RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
-                                <Binding Path="SalesVM.TransactionData.Pharmacist" Mode="OneWay" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                <Binding Path="Instance.TransactionCashier" Mode="OneWay"  Source="{StaticResource SalesVMDataSource}" />
+                                <Binding Path="Instance.TransactionPharmacist" Mode="OneWay" Source="{StaticResource SalesVMDataSource}" />
                                 <MultiBinding.ConverterParameter >
                                     <sys:String>Button</sys:String>
                                 </MultiBinding.ConverterParameter>
@@ -600,23 +596,24 @@
                     <Button x:Name="QuickBooksBtn" Content="Post to QuickBooks" Click="PostToQB_Click" HorizontalAlignment="Left" Height="34" Margin="37,92,0,0" VerticalAlignment="Top" Width="111" RenderTransformOrigin="0.47,0.671">
                         <Button.Visibility>
                             <MultiBinding Converter = "{StaticResource IsPharmacistVisibleConverter}" >
-                                <Binding Path="SalesVM.TransactionData.Cashier" Mode="OneWay"  RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
-                                <Binding Path="SalesVM.TransactionData.Pharmacist" Mode="OneWay" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                <Binding Path="Instance.TransactionCashier" Mode="OneWay"  Source="{StaticResource SalesVMDataSource}" />
+                                <Binding Path="Instance.TransactionPharmacist" Mode="OneWay" Source="{StaticResource SalesVMDataSource}" />
                                 <MultiBinding.ConverterParameter >
                                     <sys:String>Button</sys:String>
                                 </MultiBinding.ConverterParameter>
                             </MultiBinding>
                         </Button.Visibility>
                     </Button>
-                    <ComboBox x:Name="PharmacistCbo" ItemsSource="{Binding SalesVM.Pharmacists, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                              SelectedItem="{Binding SalesVM.TransactionData.Pharmacist, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}"
+                    <ComboBox x:Name="PharmacistCbo" ItemsSource="{Binding Instance.Pharmacists, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+                              SelectedValue="{Binding Instance.TransactionData.PharmacistId, Mode=OneWayToSource, Source={StaticResource SalesVMDataSource}, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding Instance.TransactionPharmacist, Mode=OneWayToSource, Source={StaticResource SalesVMDataSource}}"
                               DisplayMemberPath="DisplayName"
                               SelectedValuePath="CashierId"
                                HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="160" SelectionChanged="PharmacistCbo_SelectionChanged">
                         <ComboBox.Visibility>
                             <MultiBinding Converter = "{StaticResource IsPharmacistVisibleConverter}" >
-                                <Binding Path="SalesVM.TransactionData.Cashier" Mode="OneWay" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
-                                <Binding Path="SalesVM.TransactionData.Pharmacist" Mode="OneWay" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                <Binding Path="Instance.TransactionCashier" Mode="OneWay" Source="{StaticResource SalesVMDataSource}"  />
+                                <Binding Path="Instance.TransactionPharmacist" Mode="OneWay" Source="{StaticResource SalesVMDataSource}" />
                                 <MultiBinding.ConverterParameter>
                                     <sys:String>Combo</sys:String>
                                 </MultiBinding.ConverterParameter>
@@ -654,7 +651,7 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <ListView x:Name="SearchListCtl"   Background="LightGray" ItemContainerStyle="{StaticResource myLBStyle}" Margin="10,47,0,-12" HorizontalAlignment="Left" Width="530" Visibility="Collapsed" Focusable="False" MouseLeftButtonUp="SearchListCtl_MouseLeftButtonUp_1" MouseDown="SearchListCtl_MouseDown" Grid.ColumnSpan="2">
+            <ListView x:Name="SearchListCtl" ItemsSource="{Binding Instance.SearchList, Source={StaticResource SalesVMDataSource}}"  Background="LightGray" ItemContainerStyle="{StaticResource myLBStyle}" Margin="10,47,0,-12" HorizontalAlignment="Left" Width="530" Visibility="Collapsed" Focusable="False" MouseLeftButtonUp="SearchListCtl_MouseLeftButtonUp_1"  Grid.ColumnSpan="2">
                 <ListView.Resources>
                     <DataTemplate DataType="{x:Type data:Doctor}">
                         <StackPanel Orientation="Horizontal">
@@ -681,7 +678,7 @@
                     
                     <DataTemplate DataType="{x:Type data:Medicine}">
                         <Grid Height="50" >
-                            <TextBlock Text="{Binding ItemName, Mode=OneWay}" Height="25" Foreground="#FF192560" FontSize="14" TextWrapping="Wrap"  FontWeight="Bold" Margin="45,0,185,25"/>
+                            <TextBlock Text="{Binding DisplayName, Mode=OneWay}" Height="25" Foreground="#FF192560" FontSize="14" TextWrapping="Wrap"  FontWeight="Bold" Margin="45,0,185,25"/>
                             <TextBlock x:Name="EditItemTB" Text="Edit..." Width="40" MouseLeftButtonDown="EditItemTB_MouseLeftButtonDown"  Foreground="#FF982102" Margin="460,5,0,25" FontWeight="Bold"/>
                             <TextBlock Text="{Binding ItemNumber, Mode=OneWay}"  Foreground="#FF192560" Margin="0,15,460,15" FontSize="12"/>
                             <TextBlock Text="{Binding VatPrice, Mode=OneWay, StringFormat=c}" Height="25" Foreground="#FF192560" TextAlignment="Center" Margin="320,0,135,25"/>
@@ -692,7 +689,7 @@
                         </Grid>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type data:Item}">
-                        <TextBlock Text="{Binding Path=ItemName, Mode=OneWay}"  Foreground="Black"/>
+                        <TextBlock Text="{Binding Path=DisplayName, Mode=OneWay}"  Foreground="Black"/>
                     </DataTemplate>
 
                 </ListView.Resources>

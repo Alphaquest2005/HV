@@ -1,14 +1,19 @@
 ﻿using RMSDataAccessLayer;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Transactions.Configuration;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-
+using System.Windows.Threading;
+using Common.Core.Logging;
+using log4netWrapper;
+using SimpleMvvmToolkit;
 
 
 namespace SalesRegion
@@ -20,33 +25,36 @@ namespace SalesRegion
     public partial class SalesTaskPad : UserControl
     {
         private static readonly SalesTaskPad _instance;
+
         static SalesTaskPad()
         {
             _instance = new SalesTaskPad();
+            
         }
 
         public static SalesTaskPad Instance
         {
             get { return _instance; }
         }
+
         public SalesTaskPad()
         {
             InitializeComponent();
             this.DataContextChanged += SalesTaskPad_DataContextChanged;
-           
 
+           
         }
 
-        void SalesLst_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SalesLst_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ReBindItemEditor();
 
         }
 
 
-        void SalesTaskPad_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void SalesTaskPad_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            SearchBox.Focus();
+            if (SearchBox != null) SearchBox.Focus();
             ReBindTranStatusTxt();
         }
 
@@ -54,19 +62,32 @@ namespace SalesRegion
         {
             Binding myBinding = new Binding("Status");
             myBinding.Source = SalesVM.Instance.TransactionData;
-            ((FrameworkElement)SalesPad.FindName("TransStatusTxt")).SetBinding(TextBlock.TextProperty, myBinding);
+            if (SalesPad != null)
+            {
+                var frameworkElement = (FrameworkElement) SalesPad.FindName("TransStatusTxt");
+                if (frameworkElement != null)
+                    if (TextBlock.TextProperty != null) frameworkElement.SetBinding(TextBlock.TextProperty, myBinding);
+            }
         }
 
 
         private void ReBindItemEditor()
         {
+            try
+            {
+                ReBindTranStatusTxt();
+                Binding myBinding = new Binding("SelectedItem");
+                myBinding.Source = SalesView.SalesLst;
+                myBinding.Mode = BindingMode.OneWay;
 
-            ReBindTranStatusTxt();
-            Binding myBinding = new Binding("SelectedItem");
-            myBinding.Source = SalesView.SalesLst;
-            myBinding.Mode = BindingMode.OneWay;
-
-            ((FrameworkElement)SalesPad.FindName("ItemEditor")).SetBinding(ContentControl.ContentProperty, myBinding);
+                if (ContentProperty != null)
+                    ((FrameworkElement) SalesPad.FindName("ItemEditor")).SetBinding(ContentProperty, myBinding);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
 
@@ -75,178 +96,232 @@ namespace SalesRegion
 
         public TransactionBase Transaction
         {
-            get {return SalesVM.Instance.TransactionData;}
+            get { return SalesVM.Instance.TransactionData; }
         }
 
 
         private void SalesPad_PreviewKeyDown_1(object sender, KeyEventArgs e)
         {
-
-            var uie = e.OriginalSource as Control;
-
-            if (uie == null) uie = SearchBox as Control;
-            if (uie.Name == "PART_FilterBox")
+            try
             {
-                if (e.Key == Key.Enter)//pkey == Key.Enter &&
+
+                if (e == null) return;
+                var uie = e.OriginalSource as Control;
+
+                if (uie == null) uie = SearchBox as Control;
+                if (uie.Name == "PART_FilterBox")
                 {
-                    SearchBox.RaiseFilterEvent();
-                    if (SearchListCtl.Items.Count == 1)
-                        SearchListCtl.SelectedIndex = 0;
-                    (uie as TextBox).Text = "";
-                    //e.Handled = true;
-                    MoveToNextControl(uie);
+                    if (e.Key == Key.Enter) //pkey == Key.Enter &&
+                    {
+                        // SearchBox.RaiseFilterEvent();
+                        if (SearchListCtl.Items.Count == 1)
+                            SearchListCtl.SelectedIndex = 0;
+                        var textBox = uie as TextBox;
+                        if (textBox != null) textBox.Text = "";
+                        //e.Handled = true;
+                        MoveToNextControl(uie);
+                    }
+
+                    return;
                 }
 
-                return;
+                if (e.Key == Key.Enter)
+                {
+                    // e.Handled = true;
+                    MoveToNextControl(uie);
+                }
+                pkey = e.Key;
             }
-
-            if (e.Key == Key.Enter)
+            catch (Exception ex)
             {
-                // e.Handled = true;
-                MoveToNextControl(uie);
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
-            pkey = e.Key;
         }
 
         public void MoveToNextControl(object sender)
         {
-            UIElement uie = sender as UIElement;
-            uie.MoveFocus(
-            new TraversalRequest(
-            FocusNavigationDirection.Next));
+            try
+            {
+                UIElement uie = sender as UIElement;
+                uie.MoveFocus(
+                    new TraversalRequest(
+                        FocusNavigationDirection.Next));
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
         private void FilterControl_Direction_1(object sender, DirectionEventArgs e)
         {
-            if (e.Direction == DirectionEnum.Down)
+            try
             {
-                SearchListCtl.SelectedIndex += 1;
-            }
-            if (e.Direction == DirectionEnum.Up && SearchListCtl.SelectedIndex > -1)
-            {
-                SearchListCtl.SelectedIndex -= 1;
-            }
-            if (e.Direction == DirectionEnum.Right)
-            {
+                if (e.Direction == DirectionEnum.Down)
+                {
+                    if (SearchListCtl != null) SearchListCtl.SelectedIndex += 1;
+                }
+                if (e.Direction == DirectionEnum.Up && SearchListCtl.SelectedIndex > -1)
+                {
+                    SearchListCtl.SelectedIndex -= 1;
+                }
+                if (e.Direction == DirectionEnum.Right)
+                {
 
-                MoveToNextControl(sender);
+                    MoveToNextControl(sender);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
-         Key pkey;
+
+        private Key pkey;
+
         private void SearchBox_PreviewKeyDown_1(object sender, KeyEventArgs e)
         {
-
-            if (e.Key == Key.Delete)
+            try
             {
-                DeleteTransactionEntry();
+                if (e.Key == Key.Delete)
+                {
+                    DeleteTransactionEntry();
+                }
+
+                if (SearchListCtl.Items.Count == 1)
+                    SearchListCtl.SelectedIndex = 0;
+
+                if (e.Key == Key.Enter)
+                {
+
+                    LocalProcesItem(SearchListCtl.SelectedItem);
+                    MoveToNextControl(sender);
+                }
+
+
+                pkey = e.Key;
             }
-
-            if (SearchListCtl.Items.Count == 1)
-                SearchListCtl.SelectedIndex = 0;
-
-            if (e.Key == Key.Enter)
+            catch (Exception ex)
             {
-                //if (SearchListCtl.SelectedItem == null)
-                //{
-                //    SalesVM.GetSearchResults(SearchBox.FilterText);
-                //    return;
-                //}
-                //else
-                //{
-                //select the item
-                LocalProcesItem(SearchListCtl.SelectedItem);
-                MoveToNextControl(sender);
-                //}
-
-
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
-           
-
-            pkey = e.Key;
-
         }
 
         private void DeleteTransactionEntry()
         {
-
-            if (SalesVM.Instance.TransactionData != null && SalesVM.Instance.CurrentTransactionEntry != null)
+            try
             {
-                SalesVM.Instance.DeleteTransactionEntry<TransactionEntryBase>(SalesVM.Instance.CurrentTransactionEntry);
+                if (SalesVM.Instance.TransactionData == null)
+                {
+                    MessageBox.Show("Current Transaction Line not selected!");
+                    return;
+                }
+                if (SalesVM.Instance.TransactionData.CurrentTransactionEntry == null)
+                {
+                    MessageBox.Show("Current Transaction Line not selected!");
+                    var t = SalesVM.Instance.TransactionData.TransactionEntries.FirstOrDefault() as PrescriptionEntry;
+                    if (t != null)
+                        SalesVM.Instance.TransactionData.CurrentTransactionEntry = t;
+                    return;
+                }
+                if (SalesVM.Instance.TransactionData != null &&
+                    SalesVM.Instance.TransactionData.CurrentTransactionEntry != null)
+                {
+                    SalesVM.Instance.DeleteTransactionEntry<TransactionEntryBase>(
+                        SalesVM.Instance.TransactionData.CurrentTransactionEntry);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
         private void LocalProcesItem(object itm)
         {
-
-            if (itm == null) return;
-
-            if (edititem == true)
+            try
             {
-                ItemEditor.Content = itm;
-                edititem = false;
-                return;
-            }
+                if (ItemEditor == null) return;
+                if (itm == null) return;
 
-
-            if (itm.GetType() == typeof (RMSDataAccessLayer.SearchItem))
-            {
-                switch (((ISearchItem) itm).DisplayName)
+                if (edititem == true)
                 {
-
-                    case "Add Patient":
-
-
-                        Patient p = SalesVM.Instance.CreateNewPatient();
-                        //   SalesVM.rms.Persons.AddObject(p);
-                        ItemEditor.Content = p;
-
-                        break;
-                    case "Add Doctor":
-                        Doctor d = SalesVM.Instance.CreateNewDoctor();
-                        //  SalesVM.rms.Persons.AddObject(d);
-                        ItemEditor.Content = d;
-                        break;
-                   
-                    default:
-                        ItemEditor.Content = ((RMSDataAccessLayer.SearchItem) itm).SearchObject;
-                        break;
+                    ItemEditor.Content = itm;
+                    edititem = false;
+                    return;
                 }
-            }
 
 
-
-            else
-            {
-                if (showPatientPrescriptions == true)
+                if (itm.GetType() == typeof (RMSDataAccessLayer.SearchItem))
                 {
-                    if (itm.GetType() == typeof (RMSDataAccessLayer.Patient))
+                    switch (((ISearchItem) itm).DisplayName)
                     {
-                        ItemEditor.Content = SalesVM.Instance.GetPatientTransactionList(itm as Patient);
-                        showPatientPrescriptions = false;
-                    }
 
-                    if (itm.GetType() == typeof (RMSDataAccessLayer.Doctor))
-                    {
-                        ItemEditor.Content = SalesVM.Instance.GetDoctorTransactionList(itm as Doctor);
-                        showPatientPrescriptions = false;
+                        case "Add Patient":
+
+
+                            Patient p = SalesVM.Instance.CreateNewPatient(SearchBox.Text);
+                            p.StartTracking();
+                            ItemEditor.Content = p;
+
+                            break;
+                        case "Add Doctor":
+                            Doctor d = SalesVM.Instance.CreateNewDoctor();
+                            d.StartTracking();
+                            ItemEditor.Content = d;
+                            break;
+
+                        default:
+                            ItemEditor.Content = ((RMSDataAccessLayer.SearchItem) itm).SearchObject;
+                            break;
                     }
                 }
+
+
+
                 else
                 {
-                    SalesVM.ProcessSearchListItem(itm);
-                    MoveToNextControl(ItemEditor);
+                    if (showPatientPrescriptions == true)
+                    {
+                        if (itm.GetType() == typeof (RMSDataAccessLayer.Patient))
+                        {
+                            var lst = SalesVM.Instance.GetPatientTransactionList(itm as Patient);
+                            ItemEditor.Content = lst;
+                            showPatientPrescriptions = false;
+                        }
+
+                        if (itm.GetType() == typeof (RMSDataAccessLayer.Doctor))
+                        {
+                            var lst = SalesVM.Instance.GetDoctorTransactionList(itm as Doctor);
+                            ItemEditor.Content = lst;
+                            showPatientPrescriptions = false;
+                        }
+                    }
+                    else
+                    {
+                        if (SalesVM.Instance != null) SalesVM.Instance.ProcessSearchListItem(itm);
+                        MoveToNextControl(ItemEditor);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
 
-        SalesView _SalesView;
+        private SalesView _SalesView;
+
         public SalesView SalesView
         {
-            get
-            {
-                return _SalesView;
-            }
+            get { return _SalesView; }
             set
             {
                 _SalesView = value;
@@ -254,132 +329,208 @@ namespace SalesRegion
             }
         }
 
-        SalesVM _SalesVM;
-        public SalesVM SalesVM
+
+
+        private Timer queryTimer;
+
+        private void RevokeQueryTimer()
         {
-            get
+            if (queryTimer != null)
             {
-                return _SalesVM;
-            }
-            set
-            {
-                _SalesVM = value;
-                SearchListCtl.ItemsSource = SalesVM.SearchList;
-                // SalesVM.TransactionData.PropertyChanged += TransactionData_PropertyChanged;
-
-
+                queryTimer.Stop();
+                queryTimer.Elapsed -= queryTimer_Tick;
+                queryTimer = null;
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(HideSearchList));
             }
         }
 
-
-
-
-
-
-        private void SearchBox_Filter_1(object sender, FilterEventArgs e)
+        private void RestartQueryTimer()
         {
-            if (e.FilterText != "" && e.IsFilterApplied == false)
+            // Start or reset a pending query
+            if (queryTimer == null)
             {
-                this.SalesVM.GetSearchResults(SearchBox.FilterText);
+                queryTimer = new Timer {Enabled = true, Interval = 300};
+                queryTimer.Elapsed += queryTimer_Tick;
+            }
+            else
+            {
+                queryTimer.Stop();
+                queryTimer.Start();
+            }
+        }
+
+        private void queryTimer_Tick(object sender, EventArgs e)
+        {
+            // Stop the timer so it doesn't fire again unless rescheduled
+            RevokeQueryTimer();
+
+            // Perform the query
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
                 ShowSearchList();
-
-            }
-            if (e.FilterText == "")
-            {
-                HideSearchList();
-
-
-            }
-
+            }));
         }
+
+        private void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (e != null && e.Changes != null)
+                {
+                    //if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
+
+                    //ShowSearchList();
+                    RestartQueryTimer();
+
+                }
+                else
+                {
+                    HideSearchList();
+                    RevokeQueryTimer();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
+        }
+
 
         private void HideSearchList()
         {
-            SearchListCtl.Visibility = System.Windows.Visibility.Collapsed;
-            SearchListCtl.Focusable = false;
-            SearchListCtl.SelectedIndex = -1;
+            if (SearchListCtl != null)
+            {
+                SearchListCtl.Visibility = System.Windows.Visibility.Collapsed;
+                SearchListCtl.Focusable = false;
+                SearchListCtl.SelectedIndex = -1;
+            }
         }
 
         private void ShowSearchList()
         {
-            SearchListCtl.Visibility = System.Windows.Visibility.Visible;
-            SearchListCtl.Focusable = true;
-            if (SearchListCtl.Items.Count == 1)
-                SearchListCtl.SelectedIndex = 0;
+            if (SearchListCtl != null && !string.IsNullOrEmpty(SearchBox.Text))
+            {
+                SearchListCtl.Visibility = System.Windows.Visibility.Visible;
+                SearchListCtl.Focusable = true;
+                if (SearchListCtl.Items.Count == 1)
+                    SearchListCtl.SelectedIndex = 0;
+            }
         }
 
 
 
         private void TextBox_GotKeyboardFocus_1(object sender, KeyboardFocusChangedEventArgs e)
         {
-            (sender as TextBox).SelectAll();
+            var textBox = sender as TextBox;
+            if (textBox != null) textBox.SelectAll();
         }
 
-        public void PrintBtn_Click_1(object sender, RoutedEventArgs e)
+        public async void PrintBtn_Click_1(object sender, RoutedEventArgs e)
         {
 
 
-            if (ReceiptCol.Width == new GridLength(0))
+            if (ReceiptCol != null && ReceiptCol.Width == new GridLength(0))
             {
                 // unhide the colums to print
                 ReceiptCol.Width = new GridLength(400);
                 ReceiptGrd.UpdateLayout();
-                Print();
+
+                await Print().ConfigureAwait(false);
+
                 ReceiptCol.Width = new GridLength(0);
                 //hide it back
             }
             else
             {
-                Print();
+
+                await Print().ConfigureAwait(false);
+
             }
 
         }
 
 
-        private void Print()
+        private async Task Print()
         {
-            if (typeof(QuickPrescription).IsInstanceOfType(SalesVM.TransactionData) || typeof(Prescription).IsInstanceOfType(SalesVM.TransactionData))
+            try
             {
+                if (SalesVM.Instance != null &&
+                    (SalesVM.Instance.TransactionData is QuickPrescription ||
+                     SalesVM.Instance.TransactionData is Prescription))
+                {
+                    
+                    ListView plist = Common.FindChild<ListView>(ReceiptGrd, "PrescriptionEntriesRptLst");
+                    // (ListView)this.FindName("PrescriptionEntriesRptLst");
+                    if (plist != null)
+                        PrintListItems(plist);
+                }
 
-                ListView plist = Common.FindChild<ListView>(ReceiptGrd, "PrescriptionEntriesRptLst");// (ListView)this.FindName("PrescriptionEntriesRptLst");
-                if (plist != null)
-                    PrintListItems(plist);
+                //else
+                //{
+                //    if (SalesVM.Instance != null) SalesVM.Instance.Print(ref ReceiptGrd);
+                //}
             }
-
-            else
+            catch (Exception ex)
             {
-                SalesVM.Print(ref ReceiptGrd);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
         private void PrintListItems(ListView plist)
         {
-            dynamic lst;
-            if (plist.SelectedItems.Count == 0)
+            try
             {
-                lst = plist.Items;
-            }
-            else
-            {
-                lst = plist.SelectedItems;
-            }
+                if (plist == null) return;
+                dynamic lst;
+                if (plist.SelectedItems.Count == 0)
+                {
+                    lst = plist.Items;
+                }
+                else
+                {
+                    lst = plist.SelectedItems;
+                }
 
-            foreach (var item in lst)
-            {
-                FrameworkElement fi = (FrameworkElement)plist.ItemContainerGenerator.ContainerFromItem(item);
+                foreach (var itm in lst)
+                {
 
-                SalesVM.Print(ref fi);
+                    if (plist.ItemContainerGenerator != null)
+                    {
+                        var fi =
+                            (FrameworkElement) plist.ItemContainerGenerator.ContainerFromItem(itm);
+                        if (fi != null) PrintEntry(fi, itm);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
+        private void PrintEntry(FrameworkElement fi, PrescriptionEntry item)
+        {
+            Task.Run(() =>
+            {
+
+                Dispatcher.Invoke(DispatcherPriority.Send, new Action(() => { SalesVM.Instance.Print(ref fi, item); }));
+            }).ConfigureAwait(false);
+        }
 
 
         private void NewTransaction(object sender, RoutedEventArgs e)
         {
-           // SalesVM.NewTransaction();
-            
+            if (SalesVM.Instance != null) SalesVM.Instance.TransactionData = SalesVM.Instance.NewPrescription();
         }
-         bool focusswitch;
+
+        private bool focusswitch;
+
         private void TransStatusTxt_LostFocus_1(object sender, RoutedEventArgs e)
         {
             if (focusswitch == true)
@@ -391,45 +542,35 @@ namespace SalesRegion
 
         }
 
-        private void ListView_SourceUpdated_1(object sender, DataTransferEventArgs e)
-        {
 
-        }
-        int TemplateHeight = 192;
+        private int TemplateHeight = 192;
+
         private void PrescriptionEntriesRptLst_LayoutUpdated(object sender, EventArgs e)
         {
-            if (SalesVM.TransactionData != null && SalesView.SalesPadState == SalesPadTransState.Receipt)
-                ((FrameworkElement)this.FindName("ReceiptGrd")).Height = TemplateHeight * SalesVM.TransactionData.TransactionEntries.Count;
+            if (SalesView != null &&
+                (SalesVM.Instance != null &&
+                 (SalesVM.Instance.TransactionData != null && SalesView.SalesPadState == SalesPadTransState.Receipt)))
+                if (SalesVM.Instance.TransactionData.TransactionEntries != null)
+                {
+                    var frameworkElement = (FrameworkElement) this.FindName("ReceiptGrd");
+                    if (frameworkElement != null)
+                        frameworkElement.Height = TemplateHeight*
+                                                  SalesVM.Instance.TransactionData.TransactionEntries.Count;
+                }
         }
 
-        private void SearchListCtl_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void Grid_MouseDown_1(object sender, MouseButtonEventArgs e)
-        {
-            LocalProcesItem(SearchListCtl.SelectedItem);
-            MoveToNextControl(sender);
-        }
 
         private void SearchListCtl_MouseLeftButtonUp_1(object sender, MouseButtonEventArgs e)
         {
-
-            LocalProcesItem(SearchListCtl.SelectedItem);
+            if (SearchListCtl != null) LocalProcesItem(SearchListCtl.SelectedItem);
             MoveToNextControl(sender);
-            SearchBox.FilterText = "";
+            if (SearchBox != null) SearchBox.Text = "";
             HideSearchList();
-        }
-
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-
         }
 
         private void SearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (SearchListCtl.Visibility == System.Windows.Visibility.Visible)
+            if (SearchListCtl != null && SearchListCtl.Visibility == System.Windows.Visibility.Visible)
             {
                 HideSearchList();
             }
@@ -441,10 +582,12 @@ namespace SalesRegion
 
         private void NextEntry_Click(object sender, RoutedEventArgs e)
         {
-            SalesView.pkey = Key.Down;
-            SalesView.padPos = SalesRegion.SalesView.PadPosition.Middle;
-            SalesView.GoToNextTransactionEntry();
-
+            if (SalesView != null)
+            {
+                SalesView.pkey = Key.Down;
+                SalesView.padPos = SalesRegion.SalesView.PadPosition.Middle;
+                SalesView.GoToNextTransactionEntry();
+            }
         }
 
         private void DeleteTranBtn_Click(object sender, RoutedEventArgs e)
@@ -454,47 +597,59 @@ namespace SalesRegion
 
         private void BackBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SalesView.GotoPreviousSalesStep();
+            if (SalesView != null) SalesView.GotoPreviousSalesStep();
         }
 
         private void NextBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SalesView.GotoNextSalesStep(Key.Right);
+            if (SalesView != null) SalesView.GotoNextSalesStep(Key.Right);
         }
 
         private void DataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
-                SalesVM.GoToTransaction((e.AddedItems[0] as TransactionBase).TransactionId);
+                if (SalesVM.Instance != null)
+                {
+                    var transactionBase = e.AddedItems[0] as TransactionBase;
+                    if (transactionBase != null)
+                        SalesVM.Instance.GoToTransaction(transactionBase.TransactionId);
+
+                }
                 ReBindItemEditor();
             }
         }
 
         private void SavePatientBtn_Click(object sender, RoutedEventArgs e)
         {
-            
-            if (ItemEditor.Content is Patient)
-            {
 
-                SalesVM.Instance.SavePatient( (Patient) ItemEditor.Content);
+            if (ItemEditor.Content is Person)
+            {
+               if(!SalesVM.Instance.SavePerson((Person) ItemEditor.Content)) return;
             }
-            SalesVM.Instance.SaveTransaction();
-            //if (SalesVM.Instance.SaveTransaction() == false)
-            //{
-            //    ReBindItemEditor();
-            //    return;
-            //}
+            
             LocalProcesItem(ItemEditor.Content);
             ReBindItemEditor();
         }
-        bool edititem = false;
+
+        private void SaveMedicineBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SalesVM.Instance.SaveMedicine((Medicine) ItemEditor.Content);
+            ReBindItemEditor();
+        }
+
+        
+
+
+        private bool edititem = false;
+
         private void EditItemTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             edititem = true;
         }
 
-        bool showPatientPrescriptions = false;
+        private bool showPatientPrescriptions = false;
+
         private void PatientPrescriptionBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             showPatientPrescriptions = true;
@@ -504,30 +659,44 @@ namespace SalesRegion
         {
             ItemEditor.Content = null;
             ReBindItemEditor();
-            // SalesVM.DiscardChanges();
+            // SalesVM.Instance.DiscardChanges();
         }
 
-        private void PostToQB_Click(object sender, RoutedEventArgs e)
+        private async void PostToQB_Click(object sender, RoutedEventArgs e)
         {
-            SalesVM.PostQBSale();
-            NextBtn_MouseLeftButtonDown(sender, null);
-        }
-
-
-
-        private void PrintBtn_RightClick(object sender, MouseButtonEventArgs e)
-        {
-            ListView plist = Common.FindChild<ListView>(ReceiptGrd, "PrescriptionEntriesRptLst");// (ListView)this.FindName("PrescriptionEntriesRptLst");
-            if (plist != null)
+           await Task.Run(() => SalesVM.Instance.PostQBSale()).ConfigureAwait(false);
+            UIDispatcher.Current.BeginInvoke(() =>
             {
-                plist.SelectAll();
-                PrintBtn_Click_1(sender, e);
+                NextBtn_MouseLeftButtonDown(sender, null);
+            });
+            
+        }
+
+
+
+        private async void PrintBtn_RightClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                ListView plist = Common.FindChild<ListView>(ReceiptGrd, "PrescriptionEntriesRptLst");
+                // (ListView)this.FindName("PrescriptionEntriesRptLst");
+                if (plist != null)
+                {
+                    plist.SelectAll();
+                    PrintBtn_Click_1(sender, e);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ListView plist = Common.FindChild<ListView>(ReceiptGrd, "PrescriptionEntriesRptLst");// (ListView)this.FindName("PrescriptionEntriesRptLst");
+            ListView plist = Common.FindChild<ListView>(ReceiptGrd, "PrescriptionEntriesRptLst");
+            // (ListView)this.FindName("PrescriptionEntriesRptLst");
             if (plist != null)
             {
                 plist.SelectedItems.Clear();
@@ -536,30 +705,41 @@ namespace SalesRegion
 
         private void PharmacistCbo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //if (e.AddedItems.Count > 0)
-            //{
-            //    Cashier c = (e.AddedItems[0] as Cashier);
-            //    if (c != null && SalesVM.TransactionData != null)
-            //        SalesVM.TransactionData.PharmacistId = c.Id;
-            //}
-            // SalesVM.OnStaticPropertyChanged("PharmacistId");
+            try
+            {
+                if (e != null && e.AddedItems.Count > 0)
+                {
+                    Cashier c = (e.AddedItems[0] as Cashier);
+                    if (c != null && SalesVM.Instance.TransactionData != null)
+                        SalesVM.Instance.TransactionData.PharmacistId = c.Id;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private void SetDosage(object sender, MouseButtonEventArgs e)
+        {
+           
+            if (SalesVM.Instance.TransactionData.CurrentTransactionEntry.TransactionEntryItem != null)
+            {
+                using (var ctx = new RMSModel())
+                {
+                    var m =
+                        ctx.Item.OfType<Medicine>().FirstOrDefault(
+                            x =>
+                                x.ItemId ==
+                                SalesVM.Instance.TransactionData.CurrentTransactionEntry.TransactionEntryItem.ItemId);
+                    m.SuggestedDosage = SalesVM.Instance.TransactionData.CurrentTransactionEntry.Dosage;
+                    ctx.Item.AddOrUpdate(m);
+                    ctx.SaveChanges();
+                    MessageBox.Show("Suggested Dosage Saved");
+                }
+            }
+        }
     }
 
 

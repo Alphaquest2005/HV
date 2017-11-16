@@ -7,18 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using BarCodes;
-using Microsoft.Practices.Prism;
-using Microsoft.Practices.Prism.Regions;
-using NSubstitute;
-using SalesRegion.Messages;
+using Common.Core.Logging;
+using log4netWrapper;
 using SimpleMvvmToolkit;
 
 namespace SalesRegion
@@ -28,105 +20,86 @@ namespace SalesRegion
     /// </summary>
     public partial class SalesView : UserControl
     {
-        public SalesView(SalesVM salesVM)
+        public SalesView()
         {
             InitializeComponent();
-            DataContext = salesVM;
-            salesvm = salesVM;
-            SalesPad.SalesVM = salesVM;
-            SalesPad.SalesView = this;
-            
-            
-           
-         
-            ((INotifyCollectionChanged)SalesLst.Items).CollectionChanged += SalesView_CollectionChanged;
+            //DataContext = SalesVM.Instance;
+           // SalesVM = SalesVM.Instance;
+           // SalesPad.SalesVM = SalesVM.Instance;
+            if (SalesPad != null) SalesPad.SalesView = this;
 
-                      
-            SalesLst.SelectionChanged += SalesLst_SelectionChanged;
-            SalesLst.LayoutUpdated += SalesLst_LayoutUpdated;
-                       
+
+            if (SalesLst != null)
+            {
+                var notifyCollectionChanged = (INotifyCollectionChanged)SalesLst.Items;
+                if (notifyCollectionChanged != null)
+                    notifyCollectionChanged.CollectionChanged += SalesView_CollectionChanged;
+
+
+                SalesLst.SelectionChanged += SalesLst_SelectionChanged;
+                //  SalesPad.LayoutUpdated += SalesPad_LayoutUpdated;
+                //SalesLst.SizeChanged += SalesLst_SizeChanged;
+            
+                SalesLst.LayoutUpdated += SalesLst_LayoutUpdated;
+            }
+            // salesVM.ParentCanvas = ppcan;
+           
+            
             HideReceipt();
             ShowTransaction();
 
             SetUpSalesPad();
-            ObservableObject<object> viewRegionContext =
-               RegionContext.GetObservableContext(this);
-            viewRegionContext.PropertyChanged += this.ViewRegionContext_OnPropertyChangedEvent;
+           
 
         }
 
-        private void ViewRegionContext_OnPropertyChangedEvent(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Value")
-            {
-                var context = (ObservableObject<object>)sender;
-                salesvm.TransactionData = (RMSDataAccessLayer.TransactionBase)context.Value;
-            }
-        }
 
         private void SetUpSalesPad()
         {
-            Canvas.SetTop(SalesLst, 0);
-            SalesPad.Margin = SalesPadMargin;
-            Canvas.SetTop(SalesPad, 0);
-            this.SalesLst.SelectedIndex = 0;
+            if (SalesLst != null)
+            {
+                Canvas.SetTop(SalesLst, 0);
+                if (SalesPad != null)
+                {
+                    SalesPad.Margin = SalesPadMargin;
+                    Canvas.SetTop(SalesPad, 0);
+                }
+                this.SalesLst.SelectedIndex = 0;
+            }
             SetSalesPadtoSelectedItem();
         }
 
-        void salesVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SearchList")
-            {
-                SalesPad.SearchListCtl.ItemsSource = salesvm.SearchList;
-            }
-            if (e.PropertyName == "TransactionData")
-            {
-                SalesLst.SelectedIndex = 0;
-                pkey = Key.Up;
-            }
-           
-        }
+       
 
 
-
-        //void salesVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        //{
-        //    if (e.PropertyName == "TransactionData")
-        //    {
-        //        SalesPad.Transaction = salesvm.TransactionData;
-        //    }
-        //}
-
-        //void SalesPad_TransactionChanged(object sender, EventArgs e)
-        //{
-        //    if (salesvm.TransactionData != SalesPad.Transaction)
-        //    {
-        //        salesvm.TransactionData = SalesPad.Transaction;
-        //        SalesLst.SelectedIndex = 0;
-        //    }
-        //}
-
-
-        void SalesLst_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Canvas.SetTop(SalesPad, SalesLst.ActualHeight + 8);
-        }
-
-     
-        
 
         void SalesView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            try
             {
-                SalesLst.ScrollIntoView(e.NewItems[0]);
-                SalesLst.SelectedItem = e.NewItems[0];
-                salesvm.CurrentTransactionEntry =(RMSDataAccessLayer.TransactionEntryBase) SalesLst.SelectedItem;
+
+            if (e != null && e.Action == NotifyCollectionChangedAction.Add)
+            {
+                if (e.NewItems != null && e.NewItems.Count > 0)
+                {
+                    if (SalesLst != null)
+                    {
+                        SalesLst.ScrollIntoView(e.NewItems[0]);
+                        SalesLst.SelectedItem = e.NewItems[0];
+                    }
+                }
+                SalesVM.Instance.TransactionData.CurrentTransactionEntry = (PrescriptionEntry)SalesLst.SelectedItem;
             }
             else if(e.Action == NotifyCollectionChangedAction.Reset)
             {
                 SetUpSalesPad();
                // SalesLst_SelectionChanged(null, null);
+            }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
@@ -144,8 +117,7 @@ namespace SalesRegion
         Thickness SalesPadMargin = new Thickness(0, 0, 0, 0);
         void SalesPad_LayoutUpdated(object sender, EventArgs e)
         {
-            //if (pkey != Key.Down && pkey != Key.Up && pkey != Key.None)
-            //{
+           
                 if ( SalesLst.SelectedIndex != -1)
                 {
                     Canvas.SetTop(SalesLst, 0);
@@ -154,69 +126,12 @@ namespace SalesRegion
                     pkey = Key.None;
                     return;
                 }
-            //}
-            //if (pkey == Key.Up)
-            //{
-            //    SalesPad.Margin = SalesPadMargin;
-            //    SalesLst.UpdateLayout();
-
-            //    if (padPos == PadPosition.Middle && SalesLst.SelectedIndex == -1)
-            //    {
-
-            //        Canvas.SetTop(SalesPad, 0);
-            //        Canvas.SetTop(SalesLst, SalesPad.ActualHeight + 8);
-            //        //SetSalesPadtoSelectedItem();
-            //        if(SalesLst.SelectedIndex == -1) padPos = PadPosition.Above;
-            //        //return;
-            //    }
-            //    if (padPos == PadPosition.Middle && SalesLst.SelectedIndex != -1)
-            //    {
-            //        Canvas.SetTop(SalesLst, 0);
-            //        Canvas.SetTop(SalesPad, 0);
-            //        SetSalesPadtoSelectedItem();
-                    
-            //    }
-
-            //    if (SalesLst.SelectedIndex != -1 && padPos == PadPosition.Above)
-            //    {
-            //        // set the index to the last one and goto that one
-            //        Canvas.SetTop(SalesLst, 0);
-            //        //SalesLst.SelectedIndex = SalesLst.Items.Count - 1;
-            //        SetSalesPadtoSelectedItem();
-            //        padPos = PadPosition.Middle;
-            //    }
-
-            //    if (padPos == PadPosition.Below)
-            //    {
-            //        // set the index to the last one and goto that one
-
-            //        Canvas.SetTop(SalesLst, 0);
-            //        Canvas.SetTop(SalesPad, 0);
-            //        SetSalesPadtoSelectedItem();
-            //        padPos = PadPosition.Middle;
-            //        SalesLst.SelectedIndex = SalesLst.Items.Count - 1;
-                    
-                    
-                   
-            //    }
-            //    pkey = Key.None;
-            //}
-            //if (pkey == Key.Down)
-            //{
-            //    MoveSalesPadDown();
-            //    pkey = Key.None;
-            //}
-            
-
-           // pkey = Key.None;
-            //}
-
-
         }
 
         public void MoveSalesPadDown()
         {
-            
+            try
+            {
             SalesLst.UpdateLayout();
             SalesPad.Margin = SalesPadMargin;
 
@@ -255,59 +170,67 @@ namespace SalesRegion
                 if (SalesLst.SelectedIndex == 0) padPos = PadPosition.Middle;
                // padPos = PadPosition.Below;
             }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
-   
-       public SalesVM salesvm;
+
+        
         FrameworkElement f;
         void SalesLst_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Rect r = ((FrameworkElement)SalesLst.ItemContainerGenerator.ContainerFromItem(SalesLst.SelectedItem)).TransformToAncestor(ppcan).TransformBounds(new Rect(0,0,0,0));
-            //SalesPad.Margin = new Thickness(r.Left, r.Top, r.Right, r.Bottom);
+            try
+            {
             
-            if (salesvm.TransactionData == null) return;
+            if (SalesVM.Instance.TransactionData == null) return;
             if (SalesLst.SelectedItem == null) return;
 
-            salesvm.CurrentTransactionEntry = (RMSDataAccessLayer.TransactionEntryBase)SalesLst.SelectedItem;
+            SalesVM.Instance.TransactionData.CurrentTransactionEntry = (PrescriptionEntry)SalesLst.SelectedItem;
             if (padPos != PadPosition.Middle) return;
+            SalesPad_LayoutUpdated(null, null);
             
-            
-           // f = (FrameworkElement)SalesLst.ItemContainerGenerator.ContainerFromItem(SalesLst.SelectedItem);
-           
-                SalesPad_LayoutUpdated(null, null);
-              //  SetSalesPadtoSelectedItem();
-                //if (f != null)
-                //{
-                //    f.LayoutUpdated += f_LayoutUpdated;
-                //}
-            
-        }
-
-        void f_LayoutUpdated(object sender, EventArgs e)
-        {
-           
-                SetSalesPadtoSelectedItem();
-          
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
         private void SetSalesPadtoSelectedItem()
         {
+            try
+            {
 
             SalesLst.UpdateLayout();
             f = (FrameworkElement)SalesLst.ItemContainerGenerator.ContainerFromItem(SalesLst.SelectedItem);
             if (f != null )//&& f.Parent != null
             {
-                Rect r = ((FrameworkElement)f).TransformToAncestor(ppcan).TransformBounds(new Rect(0, 0, 0, 0));
-                SalesPad.Margin = new Thickness(r.Left, r.Top, r.Right, r.Bottom);
+                var transformToAncestor = ((FrameworkElement)f).TransformToAncestor(ppcan);
+                if (transformToAncestor != null)
+                {
+                    Rect r = transformToAncestor.TransformBounds(new Rect(0, 0, 0, 0));
+                    SalesPad.Margin = new Thickness(r.Left, r.Top, r.Right, r.Bottom);
+                }
             }
-            
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
-       public SalesRegion.SalesPadTransState SalesPadState = SalesPadTransState.Transaction;
+       public SalesPadTransState SalesPadState = SalesPadTransState.Transaction;
        public Key pkey;
         public void ppcan_PreviewKeyDown_1(object sender, KeyEventArgs e)
         {
-            
+            try
+            {
             var uie = e.OriginalSource as Control;
 
             if (uie == null) uie = SalesPad.SearchBox as Control;
@@ -327,26 +250,32 @@ namespace SalesRegion
             }
 
            
-            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.P)
-            {
-                if (SalesPadState != SalesPadTransState.Receipt)
-                {
-                    HideCurrentSalesPadState();
-                    // unhide the colums to print
-                    ShowReceipt();
-                    salesvm.Print(ref SalesPad.ReceiptGrd);
-                    e.Handled = true;
-                    //hide it back
-                }
-                else
-                {
-                    salesvm.Print(ref SalesPad.ReceiptGrd);
-                    e.Handled = true;
-                }
+            //if (e.KeyboardDevice != null && (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.P))
+            //{
+            //    if (SalesPadState != SalesPadTransState.Receipt)
+            //    {
+            //        HideCurrentSalesPadState();
+            //        // unhide the colums to print
+            //        ShowReceipt();
+            //        SalesVM.Instance.Print(ref SalesPad.ReceiptGrd);
+            //        e.Handled = true;
+            //        //hide it back
+            //    }
+            //    else
+            //    {
+            //        SalesVM.Instance.Print(ref SalesPad.ReceiptGrd);
+            //        e.Handled = true;
+            //    }
                
-            }
+            //}
 
             pkey = e.Key;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
         private void HideCurrentSalesPadState()
@@ -364,6 +293,8 @@ namespace SalesRegion
 
         private void PreviousPharmacySaleSteps()
         {
+            try
+            {
             SalesLst.SelectedIndex = 0;
             if (SalesPadState == SalesPadTransState.Receipt)//SalesPad.TotalsCol.Width == new GridLength(0) && SalesPad.PaymentCol.Width == new GridLength(0)
             {
@@ -373,24 +304,37 @@ namespace SalesRegion
             }
             if (SalesPadState == SalesPadTransState.Transaction)
             {
-                salesvm.GoToPreviousTransaction();
+                SalesVM.Instance.GoToPreviousTransaction();
+                
+            }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
             }
         }
 
         public void HideReceipt()
         {
-            SalesPad.ReceiptCol.Width = new GridLength(0);
-            SalesPad.ReceiptGrd.Visibility = System.Windows.Visibility.Hidden;
-            SalesPad.PrintCol.Width = new GridLength(0);
-            SalesPad.PrintGrd.Visibility = System.Windows.Visibility.Hidden;
+            if (SalesPad != null)
+            {
+                SalesPad.ReceiptCol.Width = new GridLength(0);
+                SalesPad.ReceiptGrd.Visibility = System.Windows.Visibility.Hidden;
+                SalesPad.PrintCol.Width = new GridLength(0);
+                SalesPad.PrintGrd.Visibility = System.Windows.Visibility.Hidden;
+            }
         }
         public void ShowReceipt()
         {
-            SalesPad.ReceiptCol.Width = new GridLength(400);
-            SalesPad.ReceiptGrd.Visibility = System.Windows.Visibility.Visible;
-            SalesPad.PrintCol.Width = new GridLength(200);
-            SalesPad.PrintGrd.Visibility = System.Windows.Visibility.Visible;
-            SalesTaskPad.Instance.MoveToNextControl(SalesPad.PrintGrd);
+            if (SalesPad != null)
+            {
+                SalesPad.ReceiptCol.Width = new GridLength(400);
+                SalesPad.ReceiptGrd.Visibility = System.Windows.Visibility.Visible;
+                SalesPad.PrintCol.Width = new GridLength(200);
+                SalesPad.PrintGrd.Visibility = System.Windows.Visibility.Visible;
+                SalesTaskPad.Instance.MoveToNextControl(SalesPad.PrintGrd);
+            }
             SalesPadState = SalesPadTransState.Receipt;
             
             
@@ -398,11 +342,14 @@ namespace SalesRegion
 
         public void ShowTransaction()
         {
-            SalesPad.EntryCol.Width = new GridLength(408);
-            SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Visible;
-            SalesPad.TotalsCol.Width = new GridLength(200);
-            SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Visible;
-            SalesTaskPad.Instance.MoveToNextControl(SalesPad.TransactionGrd);
+            if (SalesPad != null)
+            {
+                SalesPad.EntryCol.Width = new GridLength(408);
+                SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Visible;
+                SalesPad.TotalsCol.Width = new GridLength(200);
+                SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Visible;
+                SalesTaskPad.Instance.MoveToNextControl(SalesPad.TransactionGrd);
+            }
             SalesPadState = SalesPadTransState.Transaction;
 
         }
@@ -415,10 +362,12 @@ namespace SalesRegion
 
         private void NextPhamacySalesSteps(Key e)
         {
+            try
+            {
             if (SalesPadState == SalesPadTransState.Receipt && (e == Key.Right || e == Key.Enter))
             {
                 HideReceipt();
-                salesvm.CloseTransaction();
+                SalesVM.Instance.CloseTransaction();
                 ShowTransaction();
                 return;
             }
@@ -426,48 +375,68 @@ namespace SalesRegion
 
             if (SalesPadState == SalesPadTransState.Transaction)
             {
-                //if (salesvm.TransactionData != null && salesvm.TransactionData.GetType() == typeof(Prescription))
-                //{
-                //    var p = salesvm.TransactionData as Prescription;
-                //    if (p.Doctor == null)
-                //    {
-                //        MessageBox.Show("Please Select a doctor");
-                //        return;
-                //    }
-                //    if (p.Patient == null)
-                //    {
-                //        MessageBox.Show("Please Select a Patient");
-                //        return;
-                //    }
-                //}
-                
-                    HideTransaction();
-                   
-                    ShowReceipt();
-               }
+                if (SalesVM.Instance.TransactionData != null && SalesVM.Instance.TransactionData.GetType() == typeof(Prescription))
+                {
+                    var p = SalesVM.Instance.TransactionData as Prescription;
+                    if (p.Doctor == null)
+                    {
+                        MessageBox.Show("Please Select a doctor");
+                        return;
+                    }
+                    if (p.Patient == null)
+                    {
+                        MessageBox.Show("Please Select a Patient");
+                        return;
+                    }
+                }
 
+                HideTransaction();
+                if (SalesVM.Instance.TransactionData != null && SalesVM.Instance.TransactionData.Status == null)
+                {
+                    if (!SalesVM.Instance.SaveTransaction())
+                    {
+                         MessageBox.Show("Saving Transaction Failed Try again!");
+                        //return;
+                    };
+                        //ShowReceipt();
+                    }
+                ShowReceipt();
+               }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
         public void HideTransaction()
         {
-            SalesPad.EntryCol.Width = new GridLength(0);
-            SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Hidden;
-            SalesPad.TotalsCol.Width = new GridLength(0);
-            SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Hidden;
-            SalesTaskPad.Instance.MoveToNextControl(SalesPad.ReceiptGrd);
+            if (SalesPad != null)
+            {
+                SalesPad.EntryCol.Width = new GridLength(0);
+                SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Hidden;
+                SalesPad.TotalsCol.Width = new GridLength(0);
+                SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Hidden;
+                SalesTaskPad.Instance.MoveToNextControl(SalesPad.ReceiptGrd);
+            }
         }
 
 
         public void GoToNextTransactionEntry()
         {
-           
+            try
+            {
+            if (SalesVM.Instance.TransactionData == null) return;
+            
+            if(!SalesVM.Instance.SaveTransaction()) return;
 
-            if (SalesLst.SelectedIndex == SalesLst.Items.Count - 1)
+                if (SalesLst.SelectedIndex == SalesLst.Items.Count - 1)
             {
                 
 
                padPos = PadPosition.Below;
-               salesvm.CurrentTransactionEntry = null;
+               SalesVM.Instance.TransactionData.CurrentTransactionEntry = null;
                SalesLst.SelectedItem = null;
                Canvas.SetTop(SalesLst, 0);
                SalesLst.UpdateLayout();
@@ -481,7 +450,12 @@ namespace SalesRegion
                 SalesLst.SelectedIndex += 1; // selected index don't change when more than list
 
             }
-           
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
         private void GoToPreviousTransactionEntry(KeyEventArgs e)
@@ -497,31 +471,27 @@ namespace SalesRegion
             }
         }
 
-        private void UserControl_Unloaded_1(object sender, RoutedEventArgs e)
-        {
-            salesvm.CreateNewPrescription();
-        }
 
         private void EditDoctorTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(salesvm.Doctor != null)
-            SalesPad.ItemEditor.Content = salesvm.Doctor;
+            if ((SalesVM.Instance.TransactionData as Prescription).Doctor != null)
+                SalesPad.ItemEditor.Content = (SalesVM.Instance.TransactionData as Prescription).Doctor;
         }
 
         private void EditPatientTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (salesvm.Patient != null)
-                SalesPad.ItemEditor.Content = salesvm.Patient;
+            if ((SalesVM.Instance.TransactionData as Prescription).Patient != null)
+                SalesPad.ItemEditor.Content = (SalesVM.Instance.TransactionData as Prescription).Patient;
         }
 
         private void DeleteTranBtn_Click(object sender, RoutedEventArgs e)
         {
-            salesvm.DeleteCurrentTransaction();
+            SalesVM.Instance.DeleteCurrentTransaction();
         }
 
         private void AutoRepeatBtn_Click(object sender, RoutedEventArgs e)
         {
-            salesvm.AutoRepeat();
+            SalesVM.Instance.AutoRepeat();
             SetUpSalesPad();
         }
 

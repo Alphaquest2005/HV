@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects.DataClasses;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +11,9 @@ using System.Windows.Media;
 using RMSDataAccessLayer;
 
 using System.Globalization;
+using System.Reflection;
+using Common.Core.Logging;
+using log4netWrapper;
 
 namespace SalesRegion
 {
@@ -30,38 +34,42 @@ namespace SalesRegion
 
                 if (param.Length > 0)
                 {
-                    Match match = arithmeticRegex.Match(param);
-                    if (match != null && match.Groups.Count == 3)
+                    if (arithmeticRegex != null)
                     {
-                        string operation = match.Groups[1].Value.Trim();
-                        string numericValue = match.Groups[2].Value;
+                        Match match = arithmeticRegex.Match(param);
 
-                        double number = 0;
-                        if (double.TryParse(numericValue, out number)) // this should always succeed or our regex is broken
+                        if (match.Groups.Count == 3)
                         {
-                            double valueAsDouble = (double)value;
-                            double returnValue = 0;
+                            string operation = match.Groups[1].Value.Trim();
+                            string numericValue = match.Groups[2].Value;
 
-                            switch (operation)
+                            double number = 0;
+                            if (double.TryParse(numericValue, out number)) // this should always succeed or our regex is broken
                             {
-                                case "+":
-                                    returnValue = valueAsDouble + number;
-                                    break;
+                                double valueAsDouble = (double)value;
+                                double returnValue = 0;
 
-                                case "-":
-                                    returnValue = valueAsDouble - number;
-                                    break;
+                                switch (operation)
+                                {
+                                    case "+":
+                                        returnValue = valueAsDouble + number;
+                                        break;
 
-                                case "*":
-                                    returnValue = valueAsDouble * number;
-                                    break;
+                                    case "-":
+                                        returnValue = valueAsDouble - number;
+                                        break;
 
-                                case "/":
-                                    returnValue = valueAsDouble / number;
-                                    break;
+                                    case "*":
+                                        returnValue = valueAsDouble * number;
+                                        break;
+
+                                    case "/":
+                                        returnValue = valueAsDouble / number;
+                                        break;
+                                }
+
+                                return returnValue;
                             }
-
-                            return returnValue;
                         }
                     }
                 }
@@ -83,7 +91,7 @@ namespace SalesRegion
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value.GetType() == typeof(TimeSpan))
+            if (value is TimeSpan)
             {
                 TimeSpan t = (TimeSpan)value;
                 return String.Format("{0} Hours:{1} Min:{2} Sec", t.Hours * -1, t.Minutes * -1, t.Seconds * -1);
@@ -122,10 +130,16 @@ namespace SalesRegion
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            try
+            {
+                return Visibility.Visible;
+          
             Cashier c = SalesVM.Instance.CashierEx; 
             Cashier tc = (values[0] as Cashier);
             Cashier p = (values[1] as Cashier);
             //if (c == null || c.Role == "Pharmacist")
+            
+
             if (parameter.ToString() == "Button")
             {
                 if (c != null)
@@ -152,7 +166,7 @@ namespace SalesRegion
                 }
 
 
-                if (tc != null && c.Id == tc.Id && p != null && p.Role == "Pharmacist")
+                if (c != null && (tc != null && c.Id == tc.Id && p != null && p.Role == "Pharmacist"))
                 {
                     return Visibility.Visible;
                 }
@@ -160,7 +174,7 @@ namespace SalesRegion
             }
             else
             {
-                if (c != null && c.Role == "Pharmacist" || tc != null && c.Id != tc.Id )
+                if (c != null && (c != null && c.Role == "Pharmacist" || tc != null && c.Id != tc.Id) )
                 {
                    // if(p != null && p.Id == c.Id)
                     return Visibility.Hidden;
@@ -173,7 +187,12 @@ namespace SalesRegion
                     return Visibility.Visible;
                 
             }
-            
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -205,16 +224,19 @@ namespace SalesRegion
 
     public class DosageSourceConverter : IValueConverter
     {
-        RMSDataAccessLayer.RMSModel db = new RMSDataAccessLayer.RMSModel();
+        
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value != null)
             {
-                var dosagelst = (from pe in db.TransactionEntryBase.OfType<PrescriptionEntry>()
-                                where pe.Item == value
-                                select pe.Dosage);
-                return dosagelst;
+                using (var ctx = new RMSModel())
+                {
+                    var dosagelst = (from pe in ctx.TransactionEntryBase.OfType<PrescriptionEntry>()
+                        where pe.TransactionEntryItem.ItemId == ((Item)value).ItemId
+                        select pe.Dosage);
+                    return dosagelst;
+                }
             }
             else
             {
@@ -394,26 +416,31 @@ namespace SalesRegion
             return foundChild;
         }
 
-        //public static T CopyEntity<T>(RMSModel ctx, T entity, bool copyKeys = false) where T : class
-        //{
-        //    T clone = ctx.CreateObject<T>();
-        //    PropertyInfo[] pis = entity.GetType().GetProperties();
+        public static T CopyEntity<T>(T entity, bool copyKeys = false) where T : class
+        {
+            using (var ctx = new RMSModel())
+            {
+                T clone = ctx.Set<T>().Create();
+                PropertyInfo[] pis = entity.GetType().GetProperties();
 
-        //    foreach (PropertyInfo pi in pis)
-        //    {
-        //        EdmScalarPropertyAttribute[] attrs = (EdmScalarPropertyAttribute[])pi.GetCustomAttributes(typeof(EdmScalarPropertyAttribute), false);
+                foreach (PropertyInfo pi in pis)
+                {
+                    EdmScalarPropertyAttribute[] attrs =
+                        (EdmScalarPropertyAttribute[])
+                            pi.GetCustomAttributes(typeof (EdmScalarPropertyAttribute), false);
 
-        //        foreach (EdmScalarPropertyAttribute attr in attrs)
-        //        {
-        //            if (!copyKeys && attr.EntityKeyProperty)
-        //                continue;
+                    foreach (EdmScalarPropertyAttribute attr in attrs)
+                    {
+                        if (!copyKeys && attr.EntityKeyProperty)
+                            continue;
 
-        //            pi.SetValue(clone, pi.GetValue(entity, null), null);
-        //        }
-        //    }
+                        pi.SetValue(clone, pi.GetValue(entity, null), null);
+                    }
+                }
 
-        //    return clone;
-        //}
+                return clone;
+            }
+        }
 
     }
 }

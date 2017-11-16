@@ -76,7 +76,7 @@ namespace SalesRegion
                                 // so we'll use UIElement.Focus() which will do exactly that.
                                 if (targetProperty == FocusManager.FocusedElementProperty)
                                 {
-                                    ie.Focus();
+                                    if (ie != null) ie.Focus();
                                 }
                                 // Being assigned to some other property - just assign it.
                                 else
@@ -137,8 +137,9 @@ namespace SalesRegion
             var dpo = fe as DependencyObject;
             return dpo == null ? null : (from vc in EnumerateVisualTree(dpo, c => !FocusManager.GetIsFocusScope(c))
                                          let iic = vc as IInputElement
-                                         where iic != null && iic.Focusable && iic.IsEnabled &&
-                                         (!(iic is FrameworkElement) || (((FrameworkElement)iic).IsVisible))
+                let frameworkElement = (FrameworkElement)iic
+                where frameworkElement != null && (iic != null && iic.Focusable && iic.IsEnabled &&
+                                                                                 (!(iic is FrameworkElement) || (frameworkElement.IsVisible)))
                                          select iic).FirstOrDefault();
         }
 
@@ -156,8 +157,10 @@ namespace SalesRegion
                 if (child != null && (eval != null && eval(child)))
                 {
                     yield return child;
-                    foreach (var childOfChild in EnumerateVisualTree(child, eval))
-                        yield return childOfChild;
+                    var enumerateVisualTree = EnumerateVisualTree(child, eval);
+                    if (enumerateVisualTree != null)
+                        foreach (var childOfChild in enumerateVisualTree)
+                            yield return childOfChild;
                 }
             }
         }

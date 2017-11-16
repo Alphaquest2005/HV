@@ -59,8 +59,9 @@ namespace SalesRegion
         {
             //This OverrideMetadata call tells the system that this element wants to provide a style that is different than its base class.
             //This style is defined in themes\generic.xaml
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(FilterControl),
-                                                     new FrameworkPropertyMetadata(typeof(FilterControl)));
+            if (DefaultStyleKeyProperty != null)
+                DefaultStyleKeyProperty.OverrideMetadata(typeof(FilterControl),
+                    new FrameworkPropertyMetadata(typeof(FilterControl)));
 
             FilterEvent = EventManager.RegisterRoutedEvent("Filter", RoutingStrategy.Bubble, typeof(FilterRoutedEventHandler), typeof(FilterControl));
 
@@ -149,8 +150,12 @@ namespace SalesRegion
 
         public bool FilterOnEnter
         {
-            get { return (bool)GetValue(FilterOnEnterProperty); }
-            set { SetValue(FilterOnEnterProperty, value); }
+            get
+            {
+                var value = GetValue(FilterOnEnterProperty);
+                return value != null && (bool)value;
+            }
+            set { if (FilterOnEnterProperty != null) SetValue(FilterOnEnterProperty, value); }
         }
 
         public static readonly DependencyProperty FilterOnEnterProperty =
@@ -172,6 +177,7 @@ namespace SalesRegion
         private static void OnFilterFiringIntervalChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             FilterControl filterBox = d as FilterControl;
+            if (filterBox != null && filterBox.timer != null)
             filterBox.timer.Interval = new TimeSpan(0, 0, 0, 0, filterBox.FilterFiringInterval);
         }
 
@@ -257,9 +263,17 @@ namespace SalesRegion
                 throw new InvalidOperationException("FilterTextBindingPath is not set.");
             }
 
-            if (this.FilterText.StartsWith(":"))
+            var filterText = this.FilterText;
+            if (filterText != null && filterText.StartsWith(":"))
             {
-                collectionView.Filter = (m => (GetDataValue<string>(m, this.FilterTextBindingPath).IndexOf(string.Format("m{0}",this.FilterText), StringComparison.InvariantCultureIgnoreCase) > -1));
+                collectionView.Filter = (m =>
+                {
+                    var dataValue = GetDataValue<string>(m, this.FilterTextBindingPath);
+                    return
+                        dataValue != null && (dataValue
+                            .IndexOf(string.Format("m{0}", this.FilterText), StringComparison.InvariantCultureIgnoreCase) >
+                                                                                        -1);
+                });
             }
             else
             {

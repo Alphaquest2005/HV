@@ -129,11 +129,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Client, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <HintPath>..\packages\TrackableEntities.Client.2.5.5\lib\net45\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Client.2.5.2\lib\net45\TrackableEntities.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Common, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <HintPath>..\packages\TrackableEntities.Common.2.5.2.1\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Common.2.5.2\lib\portable-net40+sl50+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\TrackableEntities.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TrackableEntities.EF.6, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <HintPath>..\packages\TrackableEntities.EF.6.2.5.2\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TrackableEntities.Patterns, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <HintPath>..\packages\TrackableEntities.Patterns.2.5.2\lib\net45\TrackableEntities.Patterns.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase">
@@ -249,7 +257,7 @@
       <Name>LeftRegion</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
-    <ProjectReference Include="..\Regions\SalesRegion\backup\SalesRegion\SalesRegion.csproj">
+    <ProjectReference Include="..\Regions\SalesRegion\SalesRegion\SalesRegion.csproj">
       <Project>{9b2403fe-7ece-495d-97d9-20560121a2ee}</Project>
       <Name>SalesRegion</Name>
     </ProjectReference>

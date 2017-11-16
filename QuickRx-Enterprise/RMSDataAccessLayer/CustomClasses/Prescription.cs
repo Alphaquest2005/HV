@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace RMSDataAccessLayer
@@ -8,10 +10,11 @@ namespace RMSDataAccessLayer
     public partial class Prescription: ISearchItem
 
     {
-       
-        
 
-       public new string SearchCriteria
+
+        [NotMapped]
+        [IgnoreDataMember]
+        public new string SearchCriteria
        {
            get
            {

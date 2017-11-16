@@ -1468,7 +1468,7 @@ namespace QuickBooks
         {
             get
             {
-                return this.price1Field;
+                return  this.price1Field;
             }
             set
             {
@@ -2219,7 +2219,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRet Deserialize(string xml)
+        public static ItemInventoryRet Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -2330,7 +2330,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRet LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRet LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -2564,7 +2564,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetAvailableQty Deserialize(string xml)
+        public static ItemInventoryRetAvailableQty Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -2675,7 +2675,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetAvailableQty LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetAvailableQty LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -3032,7 +3032,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetUnitOfMeasure1 Deserialize(string xml)
+        public static ItemInventoryRetUnitOfMeasure1 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -3143,7 +3143,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetUnitOfMeasure1 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetUnitOfMeasure1 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -3500,7 +3500,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetUnitOfMeasure2 Deserialize(string xml)
+        public static ItemInventoryRetUnitOfMeasure2 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -3611,7 +3611,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetUnitOfMeasure2 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetUnitOfMeasure2 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -3968,7 +3968,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetUnitOfMeasure3 Deserialize(string xml)
+        public static ItemInventoryRetUnitOfMeasure3 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -4079,7 +4079,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetUnitOfMeasure3 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetUnitOfMeasure3 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -4321,7 +4321,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo2 Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo2 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -4432,7 +4432,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo2 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo2 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -4628,7 +4628,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo2VendorListID Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo2VendorListID Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -4739,7 +4739,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo2VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo2VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -4981,7 +4981,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo3 Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo3 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -5092,7 +5092,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo3 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo3 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -5288,7 +5288,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo3VendorListID Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo3VendorListID Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -5399,7 +5399,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo3VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo3VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -5641,7 +5641,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo4 Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo4 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -5752,7 +5752,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo4 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo4 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -5948,7 +5948,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo4VendorListID Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo4VendorListID Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -6059,7 +6059,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo4VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo4VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -6301,7 +6301,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo5 Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo5 Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -6412,7 +6412,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo5 LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo5 LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -6608,7 +6608,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetVendorInfo5VendorListID Deserialize(string xml)
+        public static ItemInventoryRetVendorInfo5VendorListID Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -6719,7 +6719,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetVendorInfo5VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetVendorInfo5VendorListID LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;
@@ -6957,7 +6957,7 @@ namespace QuickBooks
             return Deserialize(xml, out obj, out exception);
         }
 
-        public new static ItemInventoryRetDataExtRet Deserialize(string xml)
+        public static ItemInventoryRetDataExtRet Deserialize(string xml)
         {
             System.IO.StringReader stringReader = null;
             try
@@ -7068,7 +7068,7 @@ namespace QuickBooks
             return LoadFromFile(fileName, Encoding.UTF8);
         }
 
-        public new static ItemInventoryRetDataExtRet LoadFromFile(string fileName, System.Text.Encoding encoding)
+        public static ItemInventoryRetDataExtRet LoadFromFile(string fileName, System.Text.Encoding encoding)
         {
             System.IO.FileStream file = null;
             System.IO.StreamReader sr = null;

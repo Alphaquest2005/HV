@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace RMSDataAccessLayer
 {
@@ -43,7 +45,9 @@ namespace RMSDataAccessLayer
                 
             }
         }
-       public string TransactionNumber
+        [NotMapped]
+        [IgnoreDataMember]
+        public string TransactionNumber
         {
             get
             {
@@ -56,7 +60,9 @@ namespace RMSDataAccessLayer
             set { NotifyPropertyChanged();}
         }
 
-       public double TotalSales
+        [NotMapped]
+        [IgnoreDataMember]
+        public double TotalSales
        {
            get
            {
@@ -65,7 +71,9 @@ namespace RMSDataAccessLayer
                return 0;
            }
        }
-       public double TotalTax
+        [NotMapped]
+        [IgnoreDataMember]
+        public double TotalTax
        {
            get
            {
@@ -76,7 +84,11 @@ namespace RMSDataAccessLayer
 
        }
 
-       public Decimal TotalDiscount
+
+        [NotMapped]
+        [IgnoreDataMember]
+
+        public Decimal TotalDiscount
        {
            get
            {
@@ -88,18 +100,21 @@ namespace RMSDataAccessLayer
 
 
 
-     
+        [NotMapped]
+        [IgnoreDataMember]
         public string SearchCriteria
         {
             get { return TransactionNumber + "|" + Time.ToShortDateString() + "|" + Time.ToShortTimeString() + "|" + Time.ToString("MMM"); }
            
         }
-
+        [NotMapped]
+        [IgnoreDataMember]
         public string DisplayName
         {
             get { return "TransactionList"; }
         }
-
+        [NotMapped]
+        [IgnoreDataMember]
         public string Key
         {
             get { return "TransactionList"; }

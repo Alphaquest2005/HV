@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="QBCompanyFile" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Computer Name=alphaques;Company Data=c;Version=hills and valleys - 8</Value>
+      <Value Profile="(Default)">Computer Name=server;Company Data=hills and valley gd;Version=11</Value>
     </Setting>
   </Settings>
 </SettingsFile>

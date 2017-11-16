@@ -1,262 +1,243 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-//using System.Data.Entity.Validation;
 using System.Linq;
 using System.Data;
-using System.IO;
-using QBPOSFC3Lib;
-using System.Windows;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Xml;
+using log4netWrapper;
 
 namespace QuickBooks
 {
-    public class QBPOS: IDisposable
+    public class QBPOS //: IDisposable
     {
-        static QBPOSSessionManager sessionManager = null;
-        bool sessionBegun = false;
-        bool connectionOpen = false;
-        string qbposfile = Properties.Settings.Default.QBCompanyFile  ;
+
 
         private static object syncRoot = new Object();
-        private static volatile QBPOS instance;
-        public static QBPOS Instance
+       // private static volatile QBPOS instance;
+
+        public static List<ItemInventoryRet> GetInventoryItemQuery(string QBCompanyFile, int days = 1)
         {
-            get
+            var modxml = ItemInventoryViewModel.BuildModifiedItemInventoryQuery(days);
+            var createdxml = ItemInventoryViewModel.BuildCreatedItemInventoryQuery(days);
+
+            var modres = QBPosContext.ProcessXML(modxml.OuterXml, QBCompanyFile);
+            var createdres = QBPosContext.ProcessXML(createdxml.OuterXml, QBCompanyFile);
+            //if(sessionBegun == true)
+
+            var lst = new List<ItemInventoryRet>();
+            lst.AddRange(GetQBInventoryItems(modres));
+
+            lst.AddRange(GetQBInventoryItems(createdres));
+
+            return lst.GroupBy(x => x.ListID).Select(grp => grp.First()).ToList();
+        }
+
+   public static List<ItemInventoryRet> ValidateInventoryItemQuery(string listId, string QBCompanyFile)
+        {
+            var modxml = ItemInventoryViewModel.BuildItemInventoryQueryRq(listId);
+          
+
+            var modres = QBPosContext.ProcessXML(modxml.OuterXml, QBCompanyFile);
+          
+            //if(sessionBegun == true)
+
+            var lst = new List<ItemInventoryRet>();
+            lst.AddRange(GetQBInventoryItems(modres));
+
+           
+
+            return lst.GroupBy(x => x.ListID).Select(grp => grp.First()).ToList();
+        }
+        public static QBResult AddSalesReceipt(SalesReceipt salesreceipt, string QBCompanyFile)
+        {
+            var saleXml = SalesReceiptViewModel.BuildSalesReceiptAddRq(salesreceipt);
+            if (saleXml != null)
             {
-                if (instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (instance == null)
-                            instance = new QBPOS();
-                    }
-                }
+                var responseXml = QBPosContext.ProcessXML(saleXml.OuterXml, QBCompanyFile);
 
-                return instance;
+                return GetQBResult(responseXml);
             }
+            return null;
         }
 
-        private QBPOS()
+        private static QBResult GetQBResult(string response)
         {
-            ///////////////////////// Do not attempt per instance manager cuz of constant dialog box
-            sessionManager = new QBPOSSessionManager();
-            BeginSession();
-        }
-
-        private void CloseSession()
-        {
-            if (sessionManager != null)
-            {
-                sessionManager.EndSession();
-                sessionBegun = false;
-                sessionManager.CloseConnection();
-            }
-            connectionOpen = false;
-        }
-
-        private void BeginSession()
-        {
-            //sessionManager.OpenConnection("1", "Insight QBBulk");
-            //short majorVersion;
-            //short minorVersion;
-            //ENReleaseLevel releaseLevel;
-            //short releaseNumber;
-            //sessionManager.GetVersion(out majorVersion, out minorVersion, out releaseLevel, out releaseNumber);
             try
             {
-                
-                sessionManager.OpenConnection("1", "QS2QBPost");
-                connectionOpen = true;
-                sessionManager.BeginSession("Computer Name=server;Company Data=hills and valley gd;Version=11");//
-                //sessionManager.BeginSession("");
-                
-                sessionBegun = true;
-             
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message, "Error");
-              
-                if (sessionBegun)
-                {
-                    sessionManager.EndSession();
-                }
-                if (connectionOpen)
-                {
-                    sessionManager.CloseConnection();
-                }
-            }
-        }
 
-        public List<ItemInventoryRet> GetInventoryItemQuery(int days = 1)
-        {
             
-           
+            if(string.IsNullOrEmpty(response)) return null;
 
-            if (sessionManager != null)
+            XmlDocument outputXMLDoc = new XmlDocument();
+            outputXMLDoc.LoadXml(response);
+            XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("SalesReceiptAddRs");
+            XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
+            GetXmlErrors(rsAttributes);
+
+                XmlNodeList vendAddRsNodeList = qbXMLMsgsRsNodeList.Item(0).ChildNodes;
+                XmlNodeList vendRetNodeList = vendAddRsNodeList.Item(0).ChildNodes;
+                var res = new QBResult();
+            foreach (XmlNode itm in vendRetNodeList)
             {
-                IMsgSetRequest ItemModifiedInventoryRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
-                IMsgSetRequest ItemCreatedInventoryRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
-                ItemModifiedInventoryRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-                ItemCreatedInventoryRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-                ItemInventoryViewModel inventoryVM = new ItemInventoryViewModel();
-                inventoryVM.BuildModifiedItemInventoryQuery(ItemModifiedInventoryRequestMsgSet, days);
-                inventoryVM.BuildCreatedItemInventoryQuery(ItemCreatedInventoryRequestMsgSet, days);
-                //if(sessionBegun == false)
-                //    BeginSession();
-                ////Send the request and get the response from QuickBooks
-                IMsgSetResponse ModifiedItemsLst = sessionManager.DoRequests(ItemModifiedInventoryRequestMsgSet);
-                IMsgSetResponse CreatedItemsLst = sessionManager.DoRequests(ItemCreatedInventoryRequestMsgSet);
-                //if(sessionBegun == true)
-                
-                var lst = new List<ItemInventoryRet>();
-                var tlst = new TrackableCollection<ItemInventoryRet>(null);
-
-                if (ModifiedItemsLst != null)
-                    tlst = inventoryVM.WalkItemInventoryQueryRs(ModifiedItemsLst);
-
-                if(tlst != null) 
-                    lst.AddRange(tlst.ToList());
-
-                if (CreatedItemsLst != null)
-                    tlst = inventoryVM.WalkItemInventoryQueryRs(CreatedItemsLst);
-
-                if (tlst != null) 
-                    lst.AddRange(tlst.ToList());
-
-                return lst.GroupBy(x => x.ListID).Select(grp => grp.First()).ToList();
-            }
-            return new List<ItemInventoryRet>();
-        }
-
-        public void DoSalesReceipt()
-        {
-            //Create the message set request object to hold our request
-            
-            if (sessionManager != null)
-            {
-                IMsgSetRequest SalesReceiptRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
-                SalesReceiptRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-                SalesReceiptViewModel SalesReceiptVM = new SalesReceiptViewModel();
-                SalesReceiptVM.BuildSalesReceiptQueryRq(SalesReceiptRequestMsgSet);
-
-                // BeginSession();
-
-                IMsgSetResponse SalesReceiptResponseMsgSet = sessionManager.DoRequests(SalesReceiptRequestMsgSet);
-
-          
-
-                SalesReceiptVM.WalkSalesReceiptQueryRs(SalesReceiptResponseMsgSet);
-            }
-        }
-
-        public SalesReceiptRet AddSalesReceipt(SalesReceipt salesreceipt)
-        {
-            //Create the message set request object to hold our request
-           
-            if (sessionManager != null)
-            {
-                IMsgSetRequest SalesReceiptRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
-                SalesReceiptRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-                SalesReceiptViewModel SalesReceiptVM = new SalesReceiptViewModel();
-                SalesReceiptVM.BuildSalesReceiptAddRq(SalesReceiptRequestMsgSet,
-                    SalesReceiptVM.BuildSalesReceipt(salesreceipt));
-
-                try
+                if (itm.Name.Equals("SalesReceiptNumber"))
                 {
-                    return GetQBSalesReceipt(salesreceipt, SalesReceiptRequestMsgSet, SalesReceiptVM);
+                    res.SalesReceiptNumber = itm.InnerText;
+                    continue;
                 }
-                catch (COMException ce)
+                if (itm.Name.Equals("SalesReceiptNumber"))
                 {
-                    // MessageBox.Show("QuickBooks Problem: " + ce.Message);
-                    return new SalesReceiptRet() {Comments = "QuickBooks Problem: " + ce.Message };
+                    res.SalesReceiptNumber = itm.InnerText;
+                    continue;
                 }
+                if (res.SalesReceiptNumber != null && res.Comments != null) break;
             }
-            return new SalesReceiptRet();
+            return res;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, ex.Message + ":---:" + response);
+                throw new Exception(ex.Message );
+            }
         }
-
-        private SalesReceiptRet GetQBSalesReceipt(SalesReceipt salesreceipt, IMsgSetRequest SalesReceiptRequestMsgSet, SalesReceiptViewModel SalesReceiptVM)
-        {
-            //if(sessionBegun == false)
-            //BeginSession();
-
-            IMsgSetResponse SalesReceiptResponseMsgSet = sessionManager.DoRequests(SalesReceiptRequestMsgSet);
-
-            //if(sessionBegun == true)
-          
-
-            return SalesReceiptVM.WalkSalesReceiptAddRs(SalesReceiptResponseMsgSet, salesreceipt);
-        }
-  
+        
        
 
-        public void DoInventoryAdjustment()
-        {
-            //IMsgSetRequest InventoryAdjustmentRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
-            //InventoryAdjustmentRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-            //InventoryAdjustmentViewModel AdjVM = new InventoryAdjustmentViewModel();
-            //AdjVM.BuildInventoryAdjustmentQueryRq(InventoryAdjustmentRequestMsgSet);
+        
 
-            //BeginSession();
-
-            //IMsgSetResponse InventoryAdjustmentResponseMsgSet = sessionManager.DoRequests(InventoryAdjustmentRequestMsgSet);
-
-            //CloseSession();
-
-            //AdjVM.WalkInventoryAdjustmentQueryRs(InventoryAdjustmentResponseMsgSet);
-
-        }
-
-
-        public void Dispose()
-        {
-           CloseSession();
-        }
-
-        public async Task<List<ItemInventoryRet>> GetAllInventoryQuery()
+        public static async Task<List<ItemInventoryRet>> GetAllInventoryQuery(string QBCompanyFile)
         {
             
-            if (sessionManager != null)
+
+            int increment = 1000;
+            int toItemNumber = 0;
+            int fromItemNumber = 0;
+            string errstring = null;
+
+
+            var lst = new List<ItemInventoryRet>();
+
+            while (errstring == null)
             {
-                var ItemInventoryRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
-                ItemInventoryRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
-                var inventoryVM = new ItemInventoryViewModel();
-                int increment = 1000;
-                int toItemNumber = 0;
-                int fromItemNumber = 0;
-                string errstring = null;
 
-         
-                var lst = new List<ItemInventoryRet>();
+                toItemNumber += increment;
 
-                while (errstring == null)
+                var requestXml = ItemInventoryViewModel.BuildItemInventoryQueryRq(fromItemNumber, toItemNumber);
+                fromItemNumber = toItemNumber;
+                var res = QBPosContext.ProcessXML(requestXml.OuterXml, QBCompanyFile);
+                var itms = GetQBInventoryItems(res);
+                if (!itms.Any() ) break;
+                lst.AddRange(itms);
+            }
+
+            return lst;
+        }
+
+        private static List<ItemInventoryRet> GetQBInventoryItems(string response)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(response)) return new List<ItemInventoryRet>();
+                XmlDocument outputXMLDoc = new XmlDocument();
+                outputXMLDoc.LoadXml(response);
+                XmlNodeList qbXMLMsgsRsNodeList = outputXMLDoc.GetElementsByTagName("ItemInventoryQueryRs");
+                XmlAttributeCollection rsAttributes = qbXMLMsgsRsNodeList.Item(0).Attributes;
+                GetXmlErrors(rsAttributes);
+
+
+
+                XmlNodeList inventoryItemRsNodeList = qbXMLMsgsRsNodeList.Item(0).ChildNodes;
+                if (inventoryItemRsNodeList.Count == 0) return new List<ItemInventoryRet>();
+                 var res = new List<ItemInventoryRet>();
+                foreach (XmlElement itm in inventoryItemRsNodeList)
                 {
 
-                    toItemNumber += increment;
-                    ItemInventoryRequestMsgSet.ClearRequests();
-                    inventoryVM.BuildItemInventoryQueryRq(ItemInventoryRequestMsgSet, fromItemNumber, toItemNumber);
-                    fromItemNumber = toItemNumber;
-                    ItemInventoryRequestMsgSet.Verify(out errstring);
-
-                    IMsgSetResponse ItemInventoryResponseMsgSet = null;
-                    ItemInventoryResponseMsgSet = sessionManager.DoRequests(ItemInventoryRequestMsgSet);
-                    var responseStatus = new Tuple<string, TrackableCollection<ItemInventoryRet>>("",null);
-                    if (ItemInventoryResponseMsgSet != null)
-                        responseStatus = await inventoryVM.WalkItemInventoryQueryRsAsync(ItemInventoryResponseMsgSet).ConfigureAwait(false);
-
-                
-                    if (errstring != null || responseStatus.Item1 == "0") break;
-                    lst.AddRange(responseStatus.Item2);
+                   XmlNodeList qbitms = itm.ChildNodes;
+                    var i = new ItemInventoryRet();
+                    foreach (XmlNode xi in qbitms)
+                    {
+                        if (xi.Name.Equals("ListID"))
+                        {
+                            i.ListID = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("ALU"))
+                        {
+                            i.ALU = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("Attribute"))
+                        {
+                            i.Attribute = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("Desc1"))
+                        {
+                            i.Desc1 = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("Desc2"))
+                        {
+                            i.Desc2 = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("ItemNumber"))
+                        {
+                            i.ItemNumber = Convert.ToInt32(xi.InnerText);
+                            continue;
+                        }
+                        if (xi.Name.Equals("Price1"))
+                        {
+                            i.Price1 = Convert.ToDecimal(xi.InnerText);
+                            continue;
+                        }
+                        if (xi.Name.Equals("QuantityOnHand"))
+                        {
+                            i.QuantityOnHand = Convert.ToDecimal(xi.InnerText);
+                            continue;
+                        }
+                        if (xi.Name.Equals("Size"))
+                        {
+                            i.Size = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("TaxCode"))
+                        {
+                            i.TaxCode = xi.InnerText;
+                            continue;
+                        }
+                        if (xi.Name.Equals("UnitOfMeasure"))
+                        {
+                            i.UnitOfMeasure = xi.InnerText;
+                            continue;
+                        }
+                        
+                    }
+                    res.Add(i);
                 }
-             
-                return lst;
+                return res;
             }
-            return new List<ItemInventoryRet>();
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, ex.Message);
+                throw ex;
+            }
+        }
+
+        private static void GetXmlErrors(XmlAttributeCollection rsAttributes)
+        {
+//get the status Code, info and Severity
+
+            if ( !"0,1".Contains(rsAttributes.GetNamedItem("statusCode").Value))
+            {
+                string retStatusCode = rsAttributes.GetNamedItem("statusCode").Value;
+                string retStatusSeverity = rsAttributes.GetNamedItem("statusSeverity").Value;
+                string retStatusMessage = rsAttributes.GetNamedItem("statusMessage").Value;
+                throw new ApplicationException(string.Format("statusCode = {0}, statusSeverity = {1}, statusMessage = {2}",
+                    retStatusCode, retStatusSeverity, retStatusMessage));
+            }
         }
     }
 }
+
+
