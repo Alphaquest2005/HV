@@ -9,8 +9,9 @@
              xmlns:local="clr-namespace:SalesRegion"
              xmlns:data="clr-namespace:RMSDataAccessLayer;assembly=RMSDataAccessLayer"
              xmlns:controls="clr-namespace:Aviad.WPF.Controls;assembly=Aviad.WPF.Controls"
-             mc:Ignorable="d" Width="500" Height="150" Background="#FF565656" Foreground="#FF926D6D">
+             mc:Ignorable="d" Width="Auto" Height="Auto" Background="#FF565656" Foreground="#FF926D6D">
 
     
+
 
 </UserControl>

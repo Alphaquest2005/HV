@@ -144,6 +144,7 @@
     <Compile Include="FilterControl\FilterControl.cs" />
     <Compile Include="FirstFocusedElementExtension.cs" />
     <Compile Include="Messages\MessageToken.cs" />
+    <Compile Include="ParentPrescriptionVisbilityConverter.cs" />
     <Compile Include="SalesTaskPad.xaml.cs">
       <DependentUpon>SalesTaskPad.xaml</DependentUpon>
     </Compile>

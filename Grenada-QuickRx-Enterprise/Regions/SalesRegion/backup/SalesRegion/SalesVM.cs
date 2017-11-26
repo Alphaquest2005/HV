@@ -448,7 +448,7 @@ namespace SalesRegion
         }
 
 
-
+        
 
 
         private void AddTransaction(CompositeCollection cc, string filterText)
@@ -776,17 +776,15 @@ namespace SalesRegion
                     ntrn = (from t in ctx.TransactionBase
                         .Include(x => x.TransactionEntries)
                         .Include(x => x.Cashier)
-                       //.Include(x => x.OldPrescription)
-                       // .Include("OldPrescription.TransactionEntries")
-                       // .Include(x => x.Repeats)
-                       // .Include("Repeats.TransactionEntries")
                         .Include("TransactionEntries.TransactionEntryItem")
                         .Include("TransactionEntries.TransactionEntryItem.Item")
-
+                        
                                 //.Include("TransactionEntries.Item.ItemDosages")
                             where t.TransactionId == TransactionId
                             orderby t.Time descending
                             select t).FirstOrDefault();
+                    ntrn.StartTracking();
+
                     if (ntrn != null)
                     {
                         IncludePrecriptionProperties(ctx, ntrn);
@@ -794,6 +792,8 @@ namespace SalesRegion
                         NotifyPropertyChanged(x => x.Item.DosageList);
                         TransactionData = ntrn;
                     }
+
+                    
 
                 }
             }
@@ -821,7 +821,7 @@ namespace SalesRegion
                     {
                         ptrn = GetDBTransaction(ctx).FirstOrDefault(t => t.TransactionId < TransactionData.TransactionId);
                     }
-                   
+                   ptrn.StartTracking();
                     if (ptrn != null)
                     {
                         IncludePrecriptionProperties(ctx, ptrn);
@@ -900,7 +900,16 @@ namespace SalesRegion
                     pc.Doctor.StartTracking();
                     pc.Patient = ctx.Persons.OfType<Patient>().FirstOrDefault(x => x.Id == pc.PatientId);
                     pc.Patient.StartTracking();
-                 
+                    pc.Prescriptions = ctx.TransactionBase.OfType<Prescription>().Include(x => x.Prescriptions)
+                        .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
+                        .Include(x => x.TransactionEntries)
+                        .FirstOrDefault(x => x.TransactionId == pc.TransactionId).Prescriptions;
+                    pc.ParentPrescription = ctx.TransactionBase.OfType<Prescription>()
+                        .Include(x => x.Prescriptions)
+                        .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
+                        .Include(x => x.TransactionEntries)
+                        .FirstOrDefault(x => x.TransactionId == pc.ParentPrescriptionId);
+
                 }
                 this.TransactionCashier = ctx.Persons.OfType<Cashier>().FirstOrDefault(x => x.Id == ptrn.CashierId);
                
@@ -1194,6 +1203,7 @@ namespace SalesRegion
                     {
                         var p = NewPrescription();
                         p.StartTracking();
+
                         var doc = ((Prescription) TransactionData).Doctor;
                         if (doc != null)
                         {
@@ -1246,11 +1256,13 @@ namespace SalesRegion
                     Dosage = itm.Dosage,
                     TransactionEntryItem = ti,
                     Repeat = itm.Repeat,
+                    RepeatQuantity = itm.RepeatQuantity,
                     Quantity = itm.Quantity,
                     SalesTaxPercent = itm.SalesTaxPercent,
                     Price = itm.Price,
                     ExpiryDate = itm.ExpiryDate,
                     Comment = itm.Comment,
+                    
                     TrackingState = TrackingState.Added
                 };
                
@@ -1280,20 +1292,29 @@ namespace SalesRegion
         {
             try
             {
-                
-                TransactionBase newt = CopyCurrentTransaction();
+                if (!(TransactionData is Prescription))
+                {
+                    MessageBox.Show("Only Prescriptions can be repeated.");
+                    return;
+                }
+                if (((Prescription) TransactionData).ParentPrescriptionId != null)
+                {
+                    GoToTransaction(((Prescription)TransactionData).ParentPrescriptionId.GetValueOrDefault());
+                }
+                var newt =(Prescription) CopyCurrentTransaction();
+
+                newt.ParentPrescriptionId = TransactionData.TransactionId;
                 foreach (PrescriptionEntry item in newt.TransactionEntries.ToList())
                 {
-                    if (item.Repeat == 0)
-                    {
-                        //newt.TransactionEntries.Remove(item);
-                        // rms.Detach(item);
-                    }
-                    else
-                    {
-                        item.Repeat -= 1;
-                    }
+                    item.Transaction = newt;
 
+                    item.Quantity = item.Remainder > 0 ? item.Remainder : item.RepeatQuantity.GetValueOrDefault();
+                    if (item.Remaining == 0)
+                            {
+                                newt.TransactionEntries.Remove(item);
+                                continue;
+                            }
+                        
                 }
 
                 var oldTrans = TransactionData;
@@ -1780,10 +1801,17 @@ namespace SalesRegion
             try
             {
                 if (trans == null || trans.TransactionEntries == null) return false;
-
+                if (trans.ChangeTracker == null || trans.ChangeTracker[0].ModifiedProperties.All(x => x == "CurrentTransactionEntry")) return true;
                 if (trans != null && trans.GetType() == typeof(Prescription))
                 {
-                    var p = trans as Prescription;
+                   var p = trans as Prescription;
+
+                    if (p.Prescriptions.Count > 0)
+                    {
+                        MessageBox.Show("Cannot change Master Prescription with existing Sub-Prescriptions");
+                       GoToTransaction(p.TransactionId);
+                    }
+
                     if (p.Doctor == null)
                     {
                         MessageBox.Show("Please Select a doctor");
@@ -1802,7 +1830,7 @@ namespace SalesRegion
                         p.Patient.TrackingState = TrackingState.Unchanged;
                     }
                 }
-                if (trans.ChangeTracker == null) return true;
+                
               using (var ctx = new RMSModel())
               {
                  
@@ -1968,7 +1996,7 @@ namespace SalesRegion
                     TrackingState = TrackingState.Added
                 };
                 trn.StartTracking();
-
+                
                 return trn;
             }
             catch (Exception ex)

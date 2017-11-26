@@ -369,9 +369,9 @@
                                           Mode=OneWay}"
                            TextWrapping="Wrap" />
                 <TextBox x:Name="PriceTxt_Copy"
-                         Width="52"
+                         Width="20"
                          Height="22"
-                         Margin="321,41,0,0"
+                         Margin="287,42,0,0"
                          HorizontalAlignment="Left"
                          VerticalAlignment="Top"
                          Background="#FF1F1F1F"
@@ -388,8 +388,8 @@
                                         UpdateSourceTrigger=PropertyChanged}"
                          TextOptions.TextFormattingMode="Display" />
                 <TextBlock Width="46"
-                           Height="20"
-                           Margin="270,46,0,0"
+                           Height="25"
+                           Margin="236,42,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            FontSize="13.333"
@@ -425,6 +425,31 @@
                            LineStackingStrategy="BlockLineHeight"
                            Text="Total"
                            TextWrapping="Wrap" />
+                <TextBlock Width="7"
+            Height="20"
+            Margin="310,42,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="13.333"
+            Foreground="White"
+            LineHeight="13.333"
+            LineStackingStrategy="BlockLineHeight"
+            Text="x"
+            TextWrapping="Wrap" />
+                <TextBox x:Name="PriceTxt_Copy2"
+            Width="51"
+            Height="22"
+            Margin="322,42,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="#FF1F1F1F"
+            FontFamily="DS-Digital"
+            FontSize="16"
+            FontWeight="Bold"
+            Foreground="#FFD7D7D7"
+            RenderTransformOrigin="0.488,0.466"
+            Text="{Binding RepeatQuantity, Mode=TwoWay, StringFormat=n0, TargetNullValue={x:Static sys:String.Empty}, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+            TextOptions.TextFormattingMode="Display" />
 
             </Grid>
         </DataTemplate>
@@ -1612,18 +1637,17 @@
                                                                           Mode=OneWay,
                                                                           StringFormat=n0}"
                                                            TextWrapping="Wrap" />
-                                                <TextBlock Width="94"
+                                                <TextBlock Width="197"
                                                            Height="16"
-                                                           Margin="180,76,-0.4,-27.8"
+                                                           Margin="77,76,-3,-29"
                                                            HorizontalAlignment="Left"
                                                            VerticalAlignment="Top"
                                                            Background="{x:Null}"
                                                            FontFamily="Calibri"
                                                            FontSize="14"
                                                            Foreground="Black"
-                                                           Text="{Binding Repeat,
-                                                                          StringFormat=Repeat {0} times}"
-                                                           TextWrapping="Wrap" />
+                                                           Text="{Binding RepeatInfo}"
+                                                           TextWrapping="Wrap" TextAlignment="Right" />
                                             </Grid>
 
 

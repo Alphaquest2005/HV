@@ -500,5 +500,11 @@ namespace SalesRegion
         {
             MessageBus.Default.Notify(token, sender, e);
         }
+
+        private void GoToMaster(object sender, RoutedEventArgs e)
+        {
+           var trans = SalesVM.Instance.TransactionData as Prescription;
+           if(trans.ParentPrescriptionId.GetValueOrDefault() > 0) SalesVM.Instance.GoToTransaction(trans.ParentPrescriptionId.GetValueOrDefault());
+        }
     }
 }

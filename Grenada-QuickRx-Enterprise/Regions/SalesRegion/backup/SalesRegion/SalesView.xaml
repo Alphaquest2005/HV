@@ -182,25 +182,28 @@
 
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type data:Prescription}">
+                    <DataTemplate.Resources>
+                        <local:ParentPrescriptionVisbilityConverter x:Key="ParentPrescriptionVisbilityConverter"/>
+                    </DataTemplate.Resources>
                     <Grid>
                         <TextBlock Text="Prescription" Margin="152,42,0,0" Foreground="#FF144000" LineHeight="12"
                                    Height="39" VerticalAlignment="Top" HorizontalAlignment="Left" Width="103"
                                    FontFamily="Pristina" FontSize="24" />
                         <TextBlock
                             Text="{Binding Doctor.DisplayName, Mode=OneWay, StringFormat=Doctor: 0, FallbackValue='Please Enter Doctor',ValidatesOnNotifyDataErrors=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                            Margin="50,75,105,0" Height="24" VerticalAlignment="Top" FontSize="14" FontFamily="Calibri" />
+                            Margin="50,75,137,0" Height="24" VerticalAlignment="Top" FontSize="14" FontFamily="Calibri" />
                         <TextBlock
                             Text="{Binding Patient.DisplayName, Mode=OneWay, StringFormat=Patient: 0, ValidatesOnDataErrors=True}"
-                            Margin="50,99,105,0" Height="27" VerticalAlignment="Top" />
+                            Margin="50,99,137,0" Height="27" VerticalAlignment="Top" />
                         <!--<TextBox Text="{Binding Repeat}" Margin="343,99,0,0" Background="Black" Foreground="#FFF4F4F4" HorizontalAlignment="Left" Width="63" Height="32" VerticalAlignment="Top" />-->
                         <!--<TextBlock Text="Rep." Margin="310,105,0,0" Foreground="#FF202020" LineHeight="12" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="28"/>-->
-                        <Button x:Name="AutoRepeatBtn" HorizontalAlignment="Left" Height="40" Margin="310,75,0,0"
-                                VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE0F2;"
-                                FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF65E468" ToolTip="Repeat"
+                        <Button x:Name="AutoRepeatBtn" HorizontalAlignment="Left" Height="24" Margin="348,75,0,0"
+                                VerticalAlignment="Top" Width="24" Background="#00000000" Content="&#xE0F2;"
+                                FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF65E468" ToolTip="Repeat"
                                 RenderTransformOrigin="0.5,0.45" Click="AutoRepeatBtn_Click" />
-                        <Button x:Name="DeleteTranBtn" HorizontalAlignment="Left" Height="40" Margin="360,75,0,0"
-                                VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE106;"
-                                FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF980909"
+                        <Button x:Name="DeleteTranBtn" HorizontalAlignment="Left" Height="24" Margin="377,75,0,0"
+                                VerticalAlignment="Top" Width="24" Background="#00000000" Content="&#xE106;"
+                                FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF980909"
                                 RenderTransformOrigin="0.5,0.45" Click="DeleteTranBtn_Click" />
 
                         <TextBlock
@@ -219,6 +222,10 @@
                         <TextBlock x:Name="EditPatientTB" HorizontalAlignment="Left" Height="18" Margin="10,103,0,0"
                                    TextWrapping="Wrap" Text="Edit..." VerticalAlignment="Top" Width="31"
                                    MouseLeftButtonDown="EditPatientTB_MouseLeftButtonDown" />
+                        <Button x:Name="AutoRepeatBtn_Copy" HorizontalAlignment="Left" Height="24" Margin="319,76,0,0"
+            VerticalAlignment="Top" Width="24" Background="#00000000" Content="M" Visibility="{Binding ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
+            FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FFE49F65" ToolTip="Repeat"
+            RenderTransformOrigin="0.5,0.45" Click="GoToMaster" FontWeight="Bold" />
                     </Grid>
 
                 </DataTemplate>
