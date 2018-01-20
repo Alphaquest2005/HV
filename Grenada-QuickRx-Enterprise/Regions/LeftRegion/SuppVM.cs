@@ -34,8 +34,8 @@ namespace LeftRegion
                 {
                     if (p.ParentPrescriptionId > 0 )
                     {
-                        if(Instance.SearchResults.All(x => x.TransactionId != p.ParentPrescriptionId)) SuppVM.Instance.SearchResults = new ObservableCollection<Prescription>(){p.ParentPrescription};
-                        if(SuppVM.Instance.TransactionData.TransactionId != p?.ParentPrescription.TransactionId) SuppVM.Instance.TransactionData = p.ParentPrescription;
+                        //if(Instance.SearchResults.All(x => x.TransactionId != p.ParentPrescriptionId)) SuppVM.Instance.SearchResults = new ObservableCollection<Prescription>(){p.ParentPrescription};
+                        //if(SuppVM.Instance?.TransactionData?.TransactionId != p?.ParentPrescription?.TransactionId) SuppVM.Instance.TransactionData = p.ParentPrescription;
                     }
                 }
             }
@@ -298,7 +298,8 @@ namespace LeftRegion
                         {
                             if (SalesVM.Instance.TransactionData is Prescription trans)
                             {
-                                if (trans.TransactionId != transactionData.TransactionId && trans.Prescriptions.All(x => x.TransactionId != transactionData.TransactionId))SalesVM.Instance.GoToTransaction(transactionData.TransactionId);
+                                //if (trans.TransactionId != transactionData.TransactionId && trans.Prescriptions.All(x => x.TransactionId != transactionData.TransactionId))
+                                    SalesVM.Instance.GoToTransaction(transactionData.TransactionId);
                             }
                             else
                             {

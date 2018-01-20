@@ -139,6 +139,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachedBehavior.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DeepCopy.cs" />
     <Compile Include="FilterControl\FilterControl.cs" />

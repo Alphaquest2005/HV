@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(RMSDataAccessLayer.RMSModel),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets1788231c37aadfee0670e75a3c749d5487d2512e09bf93e28b786c369645aac1))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets8fb1d9670f87e61cb2e0c0c95eb6ab8a8400010252c7f54d9e435d02482f0145))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework 6 Power Tools", "0.9.2.0")]
-    internal sealed class ViewsForBaseEntitySets1788231c37aadfee0670e75a3c749d5487d2512e09bf93e28b786c369645aac1 : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySets8fb1d9670f87e61cb2e0c0c95eb6ab8a8400010252c7f54d9e435d02482f0145 : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "1788231c37aadfee0670e75a3c749d5487d2512e09bf93e28b786c369645aac1"; }
+            get { return "8fb1d9670f87e61cb2e0c0c95eb6ab8a8400010252c7f54d9e435d02482f0145"; }
         }
 
         /// <summary>
@@ -504,11 +504,12 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Persons_Doctor
-        [RMSEntities.Store.Persons_Doctor](T1.[Persons_Doctor.Code], T1.[Persons_Doctor.Id])
+        [RMSEntities.Store.Persons_Doctor](T1.[Persons_Doctor.Code], T1.[Persons_Doctor.Id], T1.[Persons_Doctor.Discount])
     FROM (
         SELECT 
             TREAT(T AS [RMSEntities.Doctor]).Code AS [Persons_Doctor.Code], 
             T.Id AS [Persons_Doctor.Id], 
+            TREAT(T AS [RMSEntities.Doctor]).Discount AS [Persons_Doctor.Discount], 
             True AS _from0
         FROM RMSModel.Persons AS T
         WHERE T IS OF (ONLY [RMSEntities.Doctor])
@@ -842,11 +843,11 @@ namespace Edm_EntityMappingGeneratedViews
         CASE
             WHEN (NOT(T5._from1) AND NOT(T5._from2) AND NOT(T5._from3)) THEN [RMSEntities.Person](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp)
             WHEN T5._from1 THEN [RMSEntities.Cashier](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Cashier_SPassword, T5.Cashier_LoginName, T5.Cashier_Role, T5.Cashier_Initials)
-            WHEN T5._from3 THEN [RMSEntities.Doctor](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Doctor_Code)
+            WHEN T5._from3 THEN [RMSEntities.Doctor](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Doctor_Code, T5.Doctor_Discount)
             ELSE [RMSEntities.Patient](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Patient_Allergies, T5.Patient_Guardian, T5.Patient_Discount)
         END
     FROM (
-        SELECT T1.Person_Id, T1.Person_FirstName, T1.Person_LastName, T1.Person_CompanyName, T1.Person_Salutation, T1.Person_Address, T1.Person_PhoneNumber, T1.Person_InActive, T1.Person_Sex, T1.Person_DOB, T1.Person_EntryTimeStamp, T2.Cashier_SPassword, T2.Cashier_LoginName, T2.Cashier_Role, T2.Cashier_Initials, T3.Doctor_Code, T4.Patient_Allergies, T4.Patient_Guardian, T4.Patient_Discount, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1, (T4._from2 AND T4._from2 IS NOT NULL) AS _from2, (T3._from3 AND T3._from3 IS NOT NULL) AS _from3
+        SELECT T1.Person_Id, T1.Person_FirstName, T1.Person_LastName, T1.Person_CompanyName, T1.Person_Salutation, T1.Person_Address, T1.Person_PhoneNumber, T1.Person_InActive, T1.Person_Sex, T1.Person_DOB, T1.Person_EntryTimeStamp, T2.Cashier_SPassword, T2.Cashier_LoginName, T2.Cashier_Role, T2.Cashier_Initials, T3.Doctor_Code, T3.Doctor_Discount, T4.Patient_Allergies, T4.Patient_Guardian, T4.Patient_Discount, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1, (T4._from2 AND T4._from2 IS NOT NULL) AS _from2, (T3._from3 AND T3._from3 IS NOT NULL) AS _from3
         FROM  (
             SELECT 
                 T.Id AS Person_Id, 
@@ -876,6 +877,7 @@ namespace Edm_EntityMappingGeneratedViews
             SELECT 
                 T.Id AS Person_Id, 
                 T.Code AS Doctor_Code, 
+                T.Discount AS Doctor_Discount, 
                 True AS _from3
             FROM RMSEntitiesStoreContainer.Persons_Doctor AS T) AS T3
             ON T1.Person_Id = T3.Person_Id

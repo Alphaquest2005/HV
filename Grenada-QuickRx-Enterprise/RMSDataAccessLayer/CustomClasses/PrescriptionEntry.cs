@@ -13,6 +13,7 @@ namespace RMSDataAccessLayer
         partial void CustomStartup2()
         {
             PropertyChanged += PrescriptionEntry_PropertyChanged;
+            
         }
 
         private void PrescriptionEntry_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -22,25 +23,43 @@ namespace RMSDataAccessLayer
             if (e.PropertyName == nameof(RepeatQuantity)) NotifyPropertyChanged(nameof(RepeatInfo));
         }
 
-        public int Total => Convert.ToInt32(Repeat * RepeatQuantity);
+        public int Total => Convert.ToInt32((Repeat+1) * (RepeatQuantity??Convert.ToInt32(Quantity)));
 
         public int TotalTaken
         {
             get
             {
                 var pres = ((Prescription) this.Transaction);
-
+                if (pres == null) return 0;
                 var lst = new List<PrescriptionEntry>();
                 if (pres.ParentPrescription != null)
                 {
-                    lst.AddRange(pres.ParentPrescription.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>()
+                    if (TransactionId == 0)
+                    {
+                        lst.AddRange(pres.ParentPrescription.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>());
+                        lst.AddRange(pres.ParentPrescription.TransactionEntries.OfType<PrescriptionEntry>());
+                        lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>());
+                    }
+                    else
+                    {
+                         lst.AddRange(pres.ParentPrescription.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>()
                         .Where(x => x.TransactionEntryId < TransactionEntryId));
-                    lst.AddRange(pres.ParentPrescription.TransactionEntries.OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
+                        lst.AddRange(pres.ParentPrescription.TransactionEntries.OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
+                        lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
+                    }
+                    
                 }
-                    
 
-                lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
-                    
+                if (TransactionId == 0)
+                {
+                    lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>());
+                }
+                else
+                {
+                    lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
+                }
+
+
                 return lst.Sum(x => Convert.ToInt32(x.Quantity));
             }
         }
@@ -51,15 +70,18 @@ namespace RMSDataAccessLayer
         {
             get
             {
-                if (RepeatQuantity == null) return "";
+                
                 var r = 0;
-                var repeat = Math.DivRem(Remaining - Convert.ToInt32(Quantity), RepeatQuantity?? 1, out r);
+                if (Quantity == 0) return "";
+                var repeatQuantity = RepeatQuantity.HasValue == false ? Convert.ToInt32(Quantity) : RepeatQuantity.Value;
+                if (repeatQuantity == 0) return "";
+                var repeat = Math.DivRem(Remaining - Convert.ToInt32(Quantity), repeatQuantity, out r);
 
                 var rstr = "";
                 if (r > 0) rstr = $"Bal:{r} |";
 
                 var repeatstr = "";
-                if (repeat > 0) repeatstr = $"Repeat: {repeat} of {RepeatQuantity}  ";
+                if (repeat > 0) repeatstr = $"Repeat: {repeat} of {RepeatQuantity ?? Convert.ToInt32(Quantity)}  ";
 
                 var totalstr = (rstr + repeatstr);
 
@@ -67,7 +89,7 @@ namespace RMSDataAccessLayer
             }
         }
 
-        public int Remainder => Convert.ToInt32(RepeatQuantity) - Convert.ToInt32(Quantity);
+        public int Remainder => Convert.ToInt32(RepeatQuantity ?? Convert.ToInt32(Quantity)) - Convert.ToInt32(Quantity);
 
         #region ISearchItem Members
         [NotMapped]

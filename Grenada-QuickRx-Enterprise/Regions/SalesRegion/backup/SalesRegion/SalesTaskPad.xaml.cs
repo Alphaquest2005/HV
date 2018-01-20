@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -190,14 +191,19 @@ namespace SalesRegion
                     DeleteTransactionEntry();
                 }
 
-                if (SearchListCtl.Items.Count == 1)
-                    SearchListCtl.SelectedIndex = 0;
+
 
                 if (e.Key == Key.Enter)
                 {
+                    if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
+                    if (SearchListCtl.Items.Count == 3)
+                    {
+                        SearchListCtl.SelectedIndex = 2;
+                        LocalProcesItem(SearchListCtl.SelectedItem);
+                        MoveToNextControl(sender);
+                        HideSearchList();
+                    }
 
-                    LocalProcesItem(SearchListCtl.SelectedItem);
-                    MoveToNextControl(sender);
                 }
 
 
@@ -348,7 +354,7 @@ namespace SalesRegion
             // Start or reset a pending query
             if (queryTimer == null)
             {
-                queryTimer = new Timer {Enabled = true, Interval = 300};
+                queryTimer = new Timer {Enabled = true, Interval = 1000};
                 queryTimer.Elapsed += queryTimer_Tick;
             }
             else
@@ -366,6 +372,7 @@ namespace SalesRegion
             // Perform the query
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
             {
+                
                 if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
                 ShowSearchList();
             }));
@@ -377,16 +384,17 @@ namespace SalesRegion
             {
                 if (e != null && e.Changes != null)
                 {
+                    
                     //if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
 
                     //ShowSearchList();
-                    RestartQueryTimer();
-
+                   // RestartQueryTimer();
+                   ShowSearchList();
                 }
                 else
                 {
                     HideSearchList();
-                    RevokeQueryTimer();
+                 //   RevokeQueryTimer();
                 }
 
             }

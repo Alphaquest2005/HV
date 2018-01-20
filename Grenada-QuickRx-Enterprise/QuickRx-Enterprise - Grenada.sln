@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Regions", "Regions", "{CB88BA7B-E955-4369-BECA-98579E3AEF4E}"
 EndProject
@@ -49,6 +49,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Core", "Common.Core\Common.Core.csproj", "{459C400C-CC7C-4A97-9D0F-05A61EB4F7C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesRegion", "Regions\SalesRegion\backup\SalesRegion\SalesRegion.csproj", "{9B2403FE-7ECE-495D-97D9-20560121A2EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickSalesTests", "QuickSalesTests\QuickSalesTests.csproj", "{212A3F17-70AE-4E46-992B-204B94D27445}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -170,6 +172,18 @@ Global
 		{9B2403FE-7ECE-495D-97D9-20560121A2EE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9B2403FE-7ECE-495D-97D9-20560121A2EE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9B2403FE-7ECE-495D-97D9-20560121A2EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Debug|x86.Build.0 = Debug|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Release|Any CPU.Build.0 = Release|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Release|x86.ActiveCfg = Release|Any CPU
+		{212A3F17-70AE-4E46-992B-204B94D27445}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -190,7 +204,7 @@ Global
 		{9B2403FE-7ECE-495D-97D9-20560121A2EE} = {9BEF54D4-9E56-4B84-9F2F-3E275F641C1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35
 		SolutionGuid = {C5E2CD27-B835-4A54-A4E2-27DBF5ECFC9A}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35
 	EndGlobalSection
 EndGlobal

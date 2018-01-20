@@ -58,6 +58,19 @@ namespace RMSDataAccessLayer
     	}
     	private string _Code;
         [DataMember]
+        	public Nullable<double> Discount
+    	{ 
+    		get { return _Discount; }
+    		set
+    		{
+    			if (Equals(value, _Discount)) return;
+    			_Discount = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<double> _Discount;
+        [DataMember]
     	public ObservableCollection<Prescription> Prescription
     	{
     		get { return _Prescription; }

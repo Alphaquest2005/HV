@@ -37,8 +37,7 @@ namespace RMSDataAccessLayer
     	}
     	private int _ItemId;
         [DataMember]
-                    [Required(ErrorMessage="Dosage is required")]
-    	public string Dosage
+        	public string Dosage
     	{ 
     		get { return _Dosage; }
     		set

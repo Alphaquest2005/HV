@@ -121,6 +121,7 @@
           </Key>
           <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Discount" Type="float" />
         </EntityType>
         <EntityType Name="Persons_Patient">
           <Key>
@@ -243,7 +244,7 @@
           <Property Name="ItemId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6013: The table/view 'QuickSales-Enterprise.dbo.ItemDosage' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.-->
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.ItemDosage' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ItemDosage">
           <Key>
             <PropertyRef Name="ItemId" />
@@ -634,13 +635,11 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <EntitySet Name="TransactionEntryBase_PrescriptionEntry" EntityType="Self.TransactionEntryBase_PrescriptionEntry" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionEntryItem" EntityType="Self.TransactionEntryItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ItemDosage" EntityType="Self.ItemDosage" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>
-              SELECT
-              [ItemDosage].[ItemId] AS [ItemId],
-              [ItemDosage].[Dosage] AS [Dosage],
-              [ItemDosage].[Count] AS [Count]
-              FROM [dbo].[ItemDosage] AS [ItemDosage]
-            </DefiningQuery>
+            <DefiningQuery>SELECT 
+[ItemDosage].[ItemId] AS [ItemId], 
+[ItemDosage].[Dosage] AS [Dosage], 
+[ItemDosage].[Count] AS [Count]
+FROM [dbo].[ItemDosage] AS [ItemDosage]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="SearchView" EntityType="Self.SearchView" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -859,11 +858,11 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="TransactionEntryBase" EntitySet="TransactionEntryBase" />
             <End Role="TransactionEntryItem" EntitySet="TransactionEntryItems" />
           </AssociationSet>
-          <EntitySet Name="ItemDosages" EntityType="RMSEntities.ItemDosage" />
           <AssociationSet Name="FK_TransactionBase_Prescription_TransactionBase_Prescription" Association="RMSEntities.FK_TransactionBase_Prescription_TransactionBase_Prescription">
             <End Role="Prescription" EntitySet="TransactionBase" />
             <End Role="Prescription1" EntitySet="TransactionBase" />
           </AssociationSet>
+          <EntitySet Name="ItemDosages" EntityType="RMSEntities.ItemDosage" />
           </EntityContainer>
         <EntityType Name="Item" Abstract="false">
           <Key>
@@ -1130,6 +1129,7 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
         <EntityType Name="Doctor" BaseType="RMSEntities.Person">
           <Property Type="String" Name="Code" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Prescription" Relationship="RMSEntities.DoctorPrescription" FromRole="Doctor" ToRole="Prescription" />
+          <Property Name="Discount" Type="Double" />
         </EntityType>
         <EntityType Name="Patient" BaseType="RMSEntities.Person">
           <NavigationProperty Name="Prescription" Relationship="RMSEntities.PatientPrescription" FromRole="Patient" ToRole="Prescription" />
@@ -1366,14 +1366,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ItemDosage">
-          <Key>
-            <PropertyRef Name="ItemId" />
-          </Key>
-          <Property Name="ItemId" Type="Int32" Nullable="false" />
-          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Count" Type="Int32" />
-        </EntityType>
         <Association Name="FK_TransactionBase_Prescription_TransactionBase_Prescription">
           <End Type="RMSEntities.Prescription" Role="Prescription" Multiplicity="0..1" />
           <End Type="RMSEntities.Prescription" Role="Prescription1" Multiplicity="*" />
@@ -1386,6 +1378,14 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ItemDosage">
+          <Key>
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Count" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1531,7 +1531,8 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Doctor)">
         <MappingFragment StoreEntitySet="Persons_Doctor">
-          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Code" ColumnName="Code" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -1659,7 +1660,7 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ItemDosages">
-            <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.ItemDosage)">
+            <EntityTypeMapping TypeName="RMSEntities.ItemDosage">
               <MappingFragment StoreEntitySet="ItemDosage">
                 <ScalarProperty Name="Count" ColumnName="Count" />
                 <ScalarProperty Name="Dosage" ColumnName="Dosage" />

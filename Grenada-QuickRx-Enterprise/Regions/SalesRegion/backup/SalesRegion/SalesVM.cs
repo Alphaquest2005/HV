@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
@@ -81,14 +82,15 @@ namespace SalesRegion
                     MessageBox.Show("Batch is null");
                     return;
                 }
-                if (TransactionData != null)
+                if (TransactionData != null && TransactionData.OpenClose == true)
                 {
                     TransactionData.CloseBatchId = Batch.BatchId;
                     TransactionData.OpenClose = false;
 
                     SaveTransaction();
-                    TransactionData = null;
+                   
                 }
+                TransactionData = null;
             }
             catch (Exception ex)
             {
@@ -348,11 +350,11 @@ namespace SalesRegion
             {
                 Logger.Log(LoggingLevel.Info,
                     string.Format("Update SearchList -filter Text [{0}] - StartTime:{1}", filterText, DateTime.Now));
-                CompositeCollection cc = CreateSearchList(filterText);
+                var lst = CreateSearchList(filterText);
 
 
                 _csv = new ObservableCollection<Object>();
-                foreach (var item in cc)
+                foreach (var item in lst)
                 {
                     _csv.Add(item);
                 }
@@ -374,37 +376,74 @@ namespace SalesRegion
 
 
 
-        private CompositeCollection CreateSearchList(string filterText)
+        private List<dynamic> CreateSearchList(string filterText)
         {
             try
             {
                 //todo: make parallel
                 Logger.Log(LoggingLevel.Info,
                     string.Format("Start Create SearchList -filter Text [{0}] - StartTime:{1}", filterText, DateTime.Now));
-                CompositeCollection cc = new CompositeCollection();
-
-
-                foreach (var itm in AddSearchItems())
+               
+                var bag = new ConcurrentBag<dynamic>();
+                var taskLst = new List<Task>();
+               taskLst.Add(Task.Run(() =>
                 {
-                    cc.Add(itm);
-                }
+                    foreach (var itm in AddSearchItems())
+                    {
+                        bag.Add(itm);
+                    }
+                }));
 
+                taskLst.Add(Task.Run(() =>
+                {
+                    foreach (var itm in GetPatients(filterText))
+                    {
+                        bag.Add(itm);
+                    }
+                }));
 
-                GetPatients(cc, filterText);
-                GetDoctors(cc, filterText);
-
-                AddInventory(cc, filterText);
+                taskLst.Add(Task.Run(() =>
+                {
+                    foreach (var itm in GetDoctors(filterText))
+                    {
+                        bag.Add(itm);
+                    }
+                }));
+                taskLst.Add(Task.Run(() =>
+                {
+                    foreach (var itm in AddInventory(filterText))
+                    {
+                        bag.Add(itm);
+                    }
+                }));
+                
 
                 double t = 0;
                 if (double.TryParse(filterText, out t))
                 {
-                    AddTransaction(cc, filterText);
+                    taskLst.Add(Task.Run(() =>
+                    {
+                        foreach (var itm in AddPrescriptions(filterText))
+                        {
+                            bag.Add(itm);
+                        }
+                    }));
+
+                    taskLst.Add(Task.Run(() =>
+                    {
+                        foreach (var itm in AddQuickPrescriptions(filterText))
+                        {
+                            bag.Add(itm);
+                        }
+                    }));
+
                 }
+                Task.WaitAll(taskLst.ToArray());
 
                 Logger.Log(LoggingLevel.Info,
                     string.Format("Finish Create SearchList -filter Text [{0}] - StartTime:{1}", filterText,
                         DateTime.Now));
-                return cc;
+                return bag.ToList();
             }
             catch (Exception ex)
             {
@@ -414,16 +453,11 @@ namespace SalesRegion
         }
 
 
-        private CompositeCollection AddSearchItems()
+        private List<dynamic> AddSearchItems()
         {
             try
             {
-                CompositeCollection cc = new CompositeCollection();
-                //SearchItem b = new SearchItem();
-                //b.SearchObject = new RMSDataAccessLayer.Transactionlist();
-                //b.SearchCriteria = "Transaction History";
-                //b.DisplayName = "Transaction History";
-                //cc.Add(b);
+                var cc = new List<dynamic>();
 
                 SearchItem p = new SearchItem();
                 p.SearchObject = null;
@@ -448,38 +482,42 @@ namespace SalesRegion
         }
 
 
-        
-
-
-        private void AddTransaction(CompositeCollection cc, string filterText)
+        private List<Prescription> AddPrescriptions(string filterText)
         {
-            if (cc == null) return;
+
+            try
+            {
+                using (var ctx = new RMSModel())
+                {
+                    return 
+                        ctx.TransactionBase.OfType<Prescription>()
+                            .Where(x => x.TransactionId.ToString().StartsWith(filterText))
+                            .OrderBy(t => t.Time)
+                            .Take(listCount).ToList() ;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
+        }
+
+        private List<QuickPrescription> AddQuickPrescriptions(string filterText)
+        {
+            
             try
             {
                 using (var ctx = new RMSModel())
                 {
                     // right now any prescriptions
-                    foreach (
-                        var trns in
-                            ctx.TransactionBase.OfType<Prescription>()
-                                .Where(x => x.TransactionId.ToString().Contains(filterText))
-                                .OrderBy(t => t.Time)
-                                .Take(100))
-                    {
-                        cc.Add(trns);
-                    }
-                }
-                using (var ctx = new RMSModel())
-                {
-                    foreach (
-                        var trns in
-                            ctx.TransactionBase.OfType<QuickPrescription>()
-                                .Where(x => x.TransactionId.ToString().Contains(filterText))
-                                .OrderBy(t => t.Time)
-                                .Take(100))
-                    {
-                        cc.Add(trns);
-                    }
+                    return
+                        ctx.TransactionBase.OfType<QuickPrescription>()
+                            .Where(x => x.TransactionId.ToString().StartsWith(filterText))
+                            .OrderBy(t => t.Time)
+                            .Take(listCount).ToList();
                 }
             }
             catch (Exception ex)
@@ -494,24 +532,21 @@ namespace SalesRegion
 
 
 
-        private void GetDoctors(CompositeCollection cc, string filterText)
+        private List<Doctor> GetDoctors(string filterText)
         {
             try
             {
                 using (var ctx = new RMSModel())
                 {
-                    foreach (
-                        var cus in
-                            ctx.Persons.OfType<Doctor>()
-                                .Where(
-                                    x =>
-                                        ("Dr. " + " " + x.FirstName.Trim().Replace(".", "").Replace(" ", "").Replace("Dr", "Dr. ") + " " +
-                                         x.LastName.Trim() +
-                                         " " + x.Code).Contains(filterText))
-                                .Take(listCount))
-                    {
-                        cc.Add(cus);
-                    }
+                    return ctx.Persons.OfType<Doctor>()
+                        .Where(
+                            x =>
+                                ("Dr. " + " " +
+                                 x.FirstName.Trim().Replace(".", "").Replace(" ", "").Replace("Dr", "Dr. ") + " " +
+                                 x.LastName.Trim() +
+                                 " " + x.Code).StartsWith(filterText))
+                        .Take(listCount).ToList();
+                   
                 }
             }
             catch (Exception ex)
@@ -521,20 +556,16 @@ namespace SalesRegion
             }
         }
 
-        private void GetPatients(CompositeCollection cc, string filterText)
+        private List<Patient> GetPatients(string filterText)
         {
             try
             {
                 using (var ctx = new RMSModel())
                 {
-                    foreach (
-                        var cus in
-                            ctx.Persons.OfType<Patient>()
-                                .Where(x => (x.FirstName.Trim() + " " + x.LastName.Trim()).Contains(filterText))
-                                .Take(listCount)) //
-                    {
-                        cc.Add(cus);
-                    }
+                    return ctx.Persons.OfType<Patient>()
+                                .Where(x => (x.FirstName.Trim() + " " + x.LastName.Trim()).StartsWith(filterText))
+                                .Take(listCount).ToList();
+
                 }
             }
             catch (Exception ex)
@@ -559,10 +590,10 @@ namespace SalesRegion
             }
 
         }
-        private int listCount = 25;
+        private int listCount = 5;
 
 
-        private void AddInventory(CompositeCollection cc, string filterText)
+        private List<Medicine> AddInventory(string filterText)
         {
             try
             {
@@ -570,34 +601,19 @@ namespace SalesRegion
                 using (var ctx = new RMSModel())
                 {
 
-                    var itms = ctx.Item.OfType<Medicine>().Where(x => ((x.ItemName ?? x.Description).Contains(filterText) || (x.ItemNumber.ToString().Contains(filterText)))
+                    return ctx.Item.OfType<Medicine>().Where(x => ((x.ItemName ?? x.Description).StartsWith(filterText) || (x.ItemNumber.ToString().StartsWith(filterText)))
                                                                        && x.QBItemListID != null
                         // && x.Quantity > 0                           && 
                                                                        && x.QBActive == true
                                                                        && (x.Inactive == null ||
                                                                           (x.Inactive != null && x.Inactive == _showInactiveItems)))
-                                                                         
-                         .Take(listCount)
-                         .AsEnumerable()
-                         .OrderBy(x => x.DisplayName).ToList();
+                        .OrderBy(x => x.ItemName) 
+                        .Take(listCount).ToList();
 
-                    foreach (var itm in itms)
-                    {
-                        cc.Add(itm);
-                    }
+                    
                 }
 
-                using (var ctx = new RMSModel())
-                {
-                    foreach (
-                        var itm in
-                            ctx.Item.OfType<StockItem>()
-                                .Where(x => (x.ItemName ?? x.Description).Contains(filterText))
-                                .Take(listCount))
-                    {
-                        cc.Add(itm);
-                    }
-                }
+               
             }
             catch (Exception ex)
             {
@@ -1220,9 +1236,9 @@ namespace SalesRegion
                         }
                         newt = p;
                     }
-                    if (TransactionData is QuickPrescription)
-                        newt = CreateNewQuickPrescription();
-                        newt.StartTracking();
+                    if (TransactionData is QuickPrescription) newt = CreateNewQuickPrescription();
+
+                    newt.StartTracking();
 
                     if (copydetails)
                     {
@@ -1256,7 +1272,7 @@ namespace SalesRegion
                     Dosage = itm.Dosage,
                     TransactionEntryItem = ti,
                     Repeat = itm.Repeat,
-                    RepeatQuantity = itm.RepeatQuantity,
+                    RepeatQuantity = itm.RepeatQuantity?? Convert.ToInt32(itm.Quantity),
                     Quantity = itm.Quantity,
                     SalesTaxPercent = itm.SalesTaxPercent,
                     Price = itm.Price,
@@ -1301,35 +1317,36 @@ namespace SalesRegion
                 {
                     GoToTransaction(((Prescription)TransactionData).ParentPrescriptionId.GetValueOrDefault());
                 }
+                
+
                 var newt =(Prescription) CopyCurrentTransaction();
 
                 newt.ParentPrescriptionId = TransactionData.TransactionId;
+                newt.ParentPrescription = TransactionData as Prescription;
                 foreach (PrescriptionEntry item in newt.TransactionEntries.ToList())
                 {
                     item.Transaction = newt;
-
-                    item.Quantity = item.Remainder > 0 ? item.Remainder : item.RepeatQuantity.GetValueOrDefault();
                     if (item.Remaining == 0)
-                            {
-                                newt.TransactionEntries.Remove(item);
-                                continue;
-                            }
-                        
+                    {
+                        newt.TransactionEntries.Remove(item);
+                        continue;
+                    }
+                    item.Quantity = item.Remainder > 0 ? item.Remainder : item.RepeatQuantity.GetValueOrDefault();
+
+
                 }
+                if (newt.TransactionEntries.Any())
+                {
+                    TransactionData = newt;
 
-                var oldTrans = TransactionData;
-                // rms.TransactionBase.AddObject(newt);
-                TransactionData = newt;
-               // SaveTransaction();
-
-                //if (oldTrans is Prescription)
-                //{
-                    
-                //    ((Prescription)TransactionData).OldPrescription.Add(oldTrans as Prescription);
-                   
-                //}
-                if(!SaveTransaction()) return;
-                SalesVM.Instance.GoToTransaction(newt.TransactionId);
+                    if (!SaveTransaction()) return;
+                    SalesVM.Instance.GoToTransaction(newt.TransactionId);
+                }
+                else
+                {
+                    MessageBox.Show("Prescription is completely filled.");
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -1480,6 +1497,7 @@ namespace SalesRegion
                     if (p.Doctor != null)
                     {
                         doctor = p.Doctor.DisplayName;
+                        s.Discount = p.Doctor.Discount == null ? "" : p.Doctor.Discount.ToString();
                     }
                     if (p.Patient != null)
                     {
@@ -1801,15 +1819,21 @@ namespace SalesRegion
             try
             {
                 if (trans == null || trans.TransactionEntries == null) return false;
-                if (trans.ChangeTracker == null || trans.ChangeTracker[0].ModifiedProperties.All(x => x == "CurrentTransactionEntry")) return true;
+                if (trans.ModifiedProperties != null && trans.ModifiedProperties.Contains(nameof(trans.Pharmacist)))
+                    trans.ModifiedProperties.Remove(nameof(trans.Pharmacist));
+
+                if (trans.ModifiedProperties != null && trans.ModifiedProperties.Contains(nameof(trans.CurrentTransactionEntry)))
+                    trans.ModifiedProperties.Remove(nameof(trans.CurrentTransactionEntry));
+                
                 if (trans != null && trans.GetType() == typeof(Prescription))
                 {
                    var p = trans as Prescription;
 
-                    if (p.Prescriptions.Count > 0)
+                    if (p.Prescriptions.Count > 0 && (p.ModifiedProperties != null && p.ModifiedProperties.Any()))
                     {
                         MessageBox.Show("Cannot change Master Prescription with existing Sub-Prescriptions");
-                       GoToTransaction(p.TransactionId);
+                        return false;
+                        //GoToTransaction(p.TransactionId);
                     }
 
                     if (p.Doctor == null)
@@ -1829,6 +1853,8 @@ namespace SalesRegion
                     {
                         p.Patient.TrackingState = TrackingState.Unchanged;
                     }
+
+                   
                 }
                 
               using (var ctx = new RMSModel())
