@@ -544,7 +544,7 @@ namespace SalesRegion
                                 ("Dr. " + " " +
                                  x.FirstName.Trim().Replace(".", "").Replace(" ", "").Replace("Dr", "Dr. ") + " " +
                                  x.LastName.Trim() +
-                                 " " + x.Code).StartsWith(filterText))
+                                 " " + x.Code).Contains(filterText))
                         .Take(listCount).ToList();
                    
                 }
@@ -563,7 +563,7 @@ namespace SalesRegion
                 using (var ctx = new RMSModel())
                 {
                     return ctx.Persons.OfType<Patient>()
-                                .Where(x => (x.FirstName.Trim() + " " + x.LastName.Trim()).StartsWith(filterText))
+                                .Where(x => (x.FirstName.Trim() + " " + x.LastName.Trim()).Contains(filterText))
                                 .Take(listCount).ToList();
 
                 }
@@ -590,7 +590,7 @@ namespace SalesRegion
             }
 
         }
-        private int listCount = 5;
+        private int listCount = 10;
 
 
         private List<Medicine> AddInventory(string filterText)
@@ -786,6 +786,7 @@ namespace SalesRegion
         {
             try
             {
+                if (TransactionId == 0) return;
                 using (var ctx = new RMSModel())
                 {
                     TransactionBase ntrn;
@@ -1818,99 +1819,56 @@ namespace SalesRegion
         {
             try
             {
-                if (trans == null || trans.TransactionEntries == null) return false;
-                if (trans.ModifiedProperties != null && trans.ModifiedProperties.Contains(nameof(trans.Pharmacist)))
-                    trans.ModifiedProperties.Remove(nameof(trans.Pharmacist));
 
-                if (trans.ModifiedProperties != null && trans.ModifiedProperties.Contains(nameof(trans.CurrentTransactionEntry)))
-                    trans.ModifiedProperties.Remove(nameof(trans.CurrentTransactionEntry));
-                
                 if (trans != null && trans.GetType() == typeof(Prescription))
                 {
-                   var p = trans as Prescription;
-
-                    if (p.Prescriptions.Count > 0 && (p.ModifiedProperties != null && p.ModifiedProperties.Any()))
-                    {
-                        MessageBox.Show("Cannot change Master Prescription with existing Sub-Prescriptions");
-                        return false;
-                        //GoToTransaction(p.TransactionId);
-                    }
-
+                    var p = trans as Prescription;
                     if (p.Doctor == null)
                     {
                         MessageBox.Show("Please Select a doctor");
                         return false;
                     }
-                    else
-                    {
-                        p.Doctor.TrackingState = TrackingState.Unchanged;
-                    }
+
                     if (p.Patient == null)
                     {
                         MessageBox.Show("Please Select a Patient");
                         return false;
                     }
+                    if (p.ParentPrescription != null)
                     {
-                        p.Patient.TrackingState = TrackingState.Unchanged;
-                    }
-
-                   
-                }
-                
-              using (var ctx = new RMSModel())
-              {
-                 
-                    try
-                    {
-                        var t = trans;//trans.ChangeTracker.GetChanges();
-                        t.TransactionEntries.ToList().ForEach(x => x.TransactionEntryItem.Item = null);
-                        
-                        ctx.ApplyChanges(t);
-                        ctx.SaveChanges();
-                       // trans.ChangeTracker.MergeChanges(ref trans,t);
-                        trans.AcceptChanges();
-                        //.TransactionNumber = trans.TransactionNumber;
-                        ForceTransactionEntryNumberUpdate(TransactionData);
-                        return true;
-                    }
-                    catch (DbEntityValidationException vex)
-                    {
-                        var str = vex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Aggregate("", (current, er) => current + (er.PropertyName + ","));
-                        MessageBox.Show("Please Check the following fields before saving! - " + str);
-                        return false;
-                    }
-                    catch (DbUpdateConcurrencyException dce)
-                    {
-                        // Get failed entry
-                        foreach (var itm in dce.Entries)
+                        var res = new Prescription()
                         {
-                            if (itm.State != EntityState.Added)
-                            {
-                                var dv = itm.GetDatabaseValues();
-                                if (dv != null) itm.OriginalValues.SetValues(dv);
-                            }
-                        }
-                        return false;
-                    }
-                    catch (Exception ex1)
-                    {
-                        if (!ex1.Message.Contains("Object reference not set to an instance of an object")) throw; 
-                    }
+                            ParentPrescriptionId = p.ParentPrescriptionId,
+                            TransactionId = p.TransactionId,
+                            CashierId = p.CashierId,
+                            BatchId = p.BatchId,
+                            CloseBatchId = p.CloseBatchId,
+                            Comment = p.Comment,
+                            DoctorId = p.DoctorId,
+                            PatientId = p.PatientId,
+                            PharmacistId = p.PharmacistId,
+                            StationId = p.StationId,
+                            Time = p.Time,
+                            CustomerId = p.CustomerId,
+                            StoreCode = p.StoreCode,
+                            OpenClose = p.OpenClose,
+                            Status = p.Status,
+                            TransactionEntries = p.TransactionEntries,
+                            TrackingState = p.TrackingState
+                        };
 
-                   // trans.TransactionId = trans.TransactionId;
-                       
-                    if (trans != null)
-                    {
-                        var dbEntry = ctx.Entry(trans);
-
-                        if (dbEntry != null && dbEntry.State != EntityState.Deleted)
+                        res.TransactionEntries.ToList().ForEach(x =>
                         {
-                            if (trans.TransactionEntries != null)
-                               ForceTransactionEntryNumberUpdate(trans);
-                        }
+                           // if (x.Transaction.TransactionId == p.TransactionId) return;
+                            x.Transaction = null;
+                            x.ModifiedProperties?.Remove("Transaction");
+                            if (x.ModifiedProperties != null && !x.ModifiedProperties.Any()) x.AcceptChanges();
+                        });
+                        return SaveTransactionToDB(res);
                     }
-                    return false;
                 }
+
+                return SaveTransactionToDB(trans);
                 
             }
            
@@ -1918,6 +1876,74 @@ namespace SalesRegion
             {
                 Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw;
+            }
+        }
+
+        private bool SaveTransactionToDB(TransactionBase trans)
+        {
+            using (var ctx = new RMSModel())
+            {
+                try
+                {
+                    var t = trans; //trans.ChangeTracker.GetChanges();
+                    t.TransactionEntries.ToList().ForEach(x =>
+                    {
+                        x.TransactionEntryItem.Item = null;
+                    });
+
+                    ctx.ApplyChanges(t);
+                    ctx.SaveChanges();
+                    // trans.ChangeTracker.MergeChanges(ref trans,t);
+                    trans.AcceptChanges();
+                    //.TransactionNumber = trans.TransactionNumber;
+                    if (TransactionData.TransactionId == 0)
+                    {
+                        TransactionData.TransactionId = t.TransactionId;
+                        
+                    }
+
+                    ForceTransactionEntryNumberUpdate(TransactionData);
+                    TransactionData.AcceptChanges();
+                    return true;
+                }
+                catch (DbEntityValidationException vex)
+                {
+                    var str = vex.EntityValidationErrors.SelectMany(x => x.ValidationErrors)
+                        .Aggregate("", (current, er) => current + (er.PropertyName + ","));
+                    MessageBox.Show("Please Check the following fields before saving! - " + str);
+                    return false;
+                }
+                catch (DbUpdateConcurrencyException dce)
+                {
+                    // Get failed entry
+                    foreach (var itm in dce.Entries)
+                    {
+                        if (itm.State != EntityState.Added)
+                        {
+                            var dv = itm.GetDatabaseValues();
+                            if (dv != null) itm.OriginalValues.SetValues(dv);
+                        }
+                    }
+                    return false;
+                }
+                catch (Exception ex1)
+                {
+                    if (!ex1.Message.Contains("Object reference not set to an instance of an object")) throw;
+                }
+
+                // trans.TransactionId = trans.TransactionId;
+
+                if (trans != null)
+                {
+                    var dbEntry = ctx.Entry(trans);
+
+                    if (dbEntry != null && dbEntry.State != EntityState.Deleted)
+                    {
+                        if (trans.TransactionEntries != null)
+                            ForceTransactionEntryNumberUpdate(trans);
+                    }
+                }
+                return false;
             }
         }
 

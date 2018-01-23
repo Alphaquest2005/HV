@@ -20,8 +20,6 @@
         <AssociationConnector Association="RMSEntities.CustomerPrescription" />
         <EntityTypeShape EntityType="RMSEntities.QuickPrescription" Width="1.5" PointX="2.625" PointY="3.375" />
         <InheritanceConnector EntityType="RMSEntities.QuickPrescription" />
-        <EntityTypeShape EntityType="RMSEntities.QBInventoryItem" Width="1.5" PointX="4.7236737928929147" PointY="12.234751036499977" />
-        <AssociationConnector Association="RMSEntities.FK_Item_QBInventoryItems" />
         <EntityTypeShape EntityType="RMSEntities.Patient" Width="1.5" PointX="9.375" PointY="5.875" />
         <AssociationConnector Association="RMSEntities.PatientPrescription" />
         <EntityTypeShape EntityType="RMSEntities.TransactionBase" Width="1.5" PointX="5.375" PointY="0.875" />
@@ -36,21 +34,7 @@
         <EntityTypeShape EntityType="RMSEntities.TransactionEntryItem" Width="1.5" PointX="19.75" PointY="8.25" />
         <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_Item" />
         <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_TransactionEntryBase" />
-        <EntityTypeShape EntityType="RMSEntities.Company" Width="1.5" PointX="3.375" PointY="6.75" />
-        <EntityTypeShape EntityType="RMSEntities.Batch" Width="1.5" PointX="0.75" PointY="9.125" />
-        <AssociationConnector Association="RMSEntities.BatchTransactionBase" />
-        <AssociationConnector Association="RMSEntities.BatchTransactionBase1" />
-        <EntityTypeShape EntityType="RMSEntities.Store" Width="1.5" PointX="5.625" PointY="16.625" />
-        <AssociationConnector Association="RMSEntities.CompanyStore" />
-        <EntityTypeShape EntityType="RMSEntities.Station" Width="1.5" PointX="7.875" PointY="16.375" />
-        <AssociationConnector Association="RMSEntities.StoreStation" />
-        <AssociationConnector Association="RMSEntities.StationTransactionBase" />
-        <AssociationConnector Association="RMSEntities.StationBatch" />
-        <EntityTypeShape EntityType="RMSEntities.CashierLog" Width="1.5" PointX="7.375" PointY="0.75" />
-        <EntityTypeShape EntityType="RMSEntities.DoctorsView" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="RMSEntities.PatientView" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="RMSEntities.SearchView1" Width="1.5" PointX="7.75" PointY="11.75" />
-        <EntityTypeShape EntityType="RMSEntities.TransactionsView1" Width="1.5" PointX="9.75" PointY="12.75" />
+        <EntityTypeShape EntityType="RMSEntities.QBInventoryItem" Width="1.5" PointX="0.75" PointY="5.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

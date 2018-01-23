@@ -22,40 +22,6 @@ namespace RMSDataAccessLayer
     
     public partial class QBInventoryItem : BaseEntity<QBInventoryItem>
     {
-        
-        public QBInventoryItem()
-        {
-            this.Items = new ObservableCollection<Item>();
-            CustomStartup();
-            this.PropertyChanged += UpdatePropertyChanged;
-            
-        }
-        partial void CustomStartup();
-    
-            private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
-            {
-                if (!string.IsNullOrEmpty(e.PropertyName) && (!Environment.StackTrace.Contains("Internal.Materialization")) && TrackingState == TrackingState.Unchanged)
-                {
-                    TrackingState = TrackingState.Modified;
-                }
-            }
-    
-            ChangeTrackingCollection<QBInventoryItem> _changeTracker;
-    
-            [NotMapped]
-            [IgnoreDataMember]
-            public ChangeTrackingCollection<QBInventoryItem> ChangeTracker
-            {
-                get
-                {
-                    return _changeTracker;
-                }
-            }
-            
-            public void StartTracking()
-            {
-                _changeTracker = new ChangeTrackingCollection<QBInventoryItem>(this);
-            }
         [DataMember]
                     [Required(ErrorMessage="ListID is required")]
                 [StringLength(50)]
@@ -203,17 +169,5 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private byte[] _EntryTimeStamp;
-        [DataMember]
-    	public ObservableCollection<Item> Items
-    	{
-    		get { return _Items; }
-    		set
-    		{
-    			if (Equals(value, _Items)) return;
-    			_Items = value;
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private ObservableCollection<Item> _Items;
     }
 }

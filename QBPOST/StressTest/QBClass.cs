@@ -268,6 +268,7 @@ namespace QS2QBPost
                     if (p.Doctor != null)
                     {
                         doctor = p.Doctor.DisplayName;
+                        s.Discount = p.Doctor.Discount == null ? "" : p.Doctor.Discount.ToString();
                     }
                     if (p.Patient != null)
                     {

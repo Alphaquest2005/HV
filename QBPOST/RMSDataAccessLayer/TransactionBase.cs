@@ -27,10 +27,12 @@ namespace RMSDataAccessLayer
         {
             this.TransactionEntries = new ObservableCollection<TransactionEntryBase>();
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -40,8 +42,8 @@ namespace RMSDataAccessLayer
                 }
             }
     
+            
             ChangeTrackingCollection<TransactionBase> _changeTracker;
-    
             [NotMapped]
             [IgnoreDataMember]
             public ChangeTrackingCollection<TransactionBase> ChangeTracker
@@ -52,7 +54,7 @@ namespace RMSDataAccessLayer
                 }
             }
             
-            public void StartTracking()
+            public new void StartTracking()
             {
                 _changeTracker = new ChangeTrackingCollection<TransactionBase>(this);
             }
@@ -222,7 +224,7 @@ namespace RMSDataAccessLayer
     	}
     	private Nullable<int> _PharmacistId;
         [DataMember]
-                    [StringLength(255)]
+                    [StringLength(50)]
     	public string Status
     	{ 
     		get { return _Status; }
@@ -290,51 +292,6 @@ namespace RMSDataAccessLayer
     	}
     	private Cashier _Cashier;
     	private ChangeTrackingCollection<Cashier> CashierChangeTracker { get; set; }
-        [DataMember]
-    	public Batch Batch
-    	{
-    		get { return _Batch; }
-    		set
-    		{
-    			if (Equals(value, _Batch)) return;
-    			_Batch = value;
-    			BatchChangeTracker = _Batch == null ? null
-    				: new ChangeTrackingCollection<Batch> { _Batch };
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private Batch _Batch;
-    	private ChangeTrackingCollection<Batch> BatchChangeTracker { get; set; }
-        [DataMember]
-    	public Station Station
-    	{
-    		get { return _Station; }
-    		set
-    		{
-    			if (Equals(value, _Station)) return;
-    			_Station = value;
-    			StationChangeTracker = _Station == null ? null
-    				: new ChangeTrackingCollection<Station> { _Station };
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private Station _Station;
-    	private ChangeTrackingCollection<Station> StationChangeTracker { get; set; }
-        [DataMember]
-    	public Batch CloseBatch
-    	{
-    		get { return _CloseBatch; }
-    		set
-    		{
-    			if (Equals(value, _CloseBatch)) return;
-    			_CloseBatch = value;
-    			CloseBatchChangeTracker = _CloseBatch == null ? null
-    				: new ChangeTrackingCollection<Batch> { _CloseBatch };
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private Batch _CloseBatch;
-    	private ChangeTrackingCollection<Batch> CloseBatchChangeTracker { get; set; }
         [DataMember]
     	public Cashier Pharmacist
     	{

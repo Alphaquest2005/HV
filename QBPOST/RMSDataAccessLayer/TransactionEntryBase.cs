@@ -27,10 +27,12 @@ namespace RMSDataAccessLayer
         {
             this.Taxable = true;
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -40,8 +42,8 @@ namespace RMSDataAccessLayer
                 }
             }
     
+            
             ChangeTrackingCollection<TransactionEntryBase> _changeTracker;
-    
             [NotMapped]
             [IgnoreDataMember]
             public ChangeTrackingCollection<TransactionEntryBase> ChangeTracker
@@ -52,7 +54,7 @@ namespace RMSDataAccessLayer
                 }
             }
             
-            public void StartTracking()
+            public new void StartTracking()
             {
                 _changeTracker = new ChangeTrackingCollection<TransactionEntryBase>(this);
             }

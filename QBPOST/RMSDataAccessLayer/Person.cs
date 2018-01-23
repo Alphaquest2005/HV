@@ -28,10 +28,12 @@ namespace RMSDataAccessLayer
             this.InActive = false;
             this.Transaction = new ObservableCollection<TransactionBase>();
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -41,8 +43,8 @@ namespace RMSDataAccessLayer
                 }
             }
     
+            
             ChangeTrackingCollection<Person> _changeTracker;
-    
             [NotMapped]
             [IgnoreDataMember]
             public ChangeTrackingCollection<Person> ChangeTracker
@@ -53,7 +55,7 @@ namespace RMSDataAccessLayer
                 }
             }
             
-            public void StartTracking()
+            public new void StartTracking()
             {
                 _changeTracker = new ChangeTrackingCollection<Person>(this);
             }

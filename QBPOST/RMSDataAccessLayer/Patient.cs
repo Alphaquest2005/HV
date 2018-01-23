@@ -27,10 +27,12 @@ namespace RMSDataAccessLayer
         {
             this.Prescription = new ObservableCollection<Prescription>();
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -40,22 +42,7 @@ namespace RMSDataAccessLayer
                 }
             }
     
-            ChangeTrackingCollection<Patient> _changeTracker;
-    
-            [NotMapped]
-            [IgnoreDataMember]
-            public ChangeTrackingCollection<Patient> ChangeTracker
-            {
-                get
-                {
-                    return _changeTracker;
-                }
-            }
             
-            public void StartTracking()
-            {
-                _changeTracker = new ChangeTrackingCollection<Patient>(this);
-            }
         [DataMember]
         	public string Allergies
     	{ 

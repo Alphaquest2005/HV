@@ -27,10 +27,12 @@ namespace RMSDataAccessLayer
         {
             this.TransactionEntryItems = new ObservableCollection<TransactionEntryItem>();
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -40,8 +42,8 @@ namespace RMSDataAccessLayer
                 }
             }
     
+            
             ChangeTrackingCollection<Item> _changeTracker;
-    
             [NotMapped]
             [IgnoreDataMember]
             public ChangeTrackingCollection<Item> ChangeTracker
@@ -52,7 +54,7 @@ namespace RMSDataAccessLayer
                 }
             }
             
-            public void StartTracking()
+            public new void StartTracking()
             {
                 _changeTracker = new ChangeTrackingCollection<Item>(this);
             }
@@ -327,21 +329,6 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private Nullable<bool> _QBActive;
-        [DataMember]
-    	public QBInventoryItem QBInventoryItem
-    	{
-    		get { return _QBInventoryItem; }
-    		set
-    		{
-    			if (Equals(value, _QBInventoryItem)) return;
-    			_QBInventoryItem = value;
-    			QBInventoryItemChangeTracker = _QBInventoryItem == null ? null
-    				: new ChangeTrackingCollection<QBInventoryItem> { _QBInventoryItem };
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private QBInventoryItem _QBInventoryItem;
-    	private ChangeTrackingCollection<QBInventoryItem> QBInventoryItemChangeTracker { get; set; }
         [DataMember]
     	public ObservableCollection<TransactionEntryItem> TransactionEntryItems
     	{

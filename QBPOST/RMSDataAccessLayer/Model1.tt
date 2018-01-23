@@ -60,10 +60,12 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         }
 #>
         CustomStartup();
+        CustomStartup2();
         this.PropertyChanged += UpdatePropertyChanged;
         
     }
     partial void CustomStartup();
+    partial void CustomStartup2();
 
         private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -73,8 +75,12 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
             }
         }
 
+        
+<#
+       if(entity.BaseType == null)
+       {
+#>
         ChangeTrackingCollection<<#=entity.Name #>> _changeTracker;
-
         [NotMapped]
         [IgnoreDataMember]
         public ChangeTrackingCollection<<#=entity.Name #>> ChangeTracker
@@ -85,10 +91,13 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
             }
         }
         
-        public void StartTracking()
+        public new void StartTracking()
         {
             _changeTracker = new ChangeTrackingCollection<<#=entity.Name #>>(this);
         }
+<#
+        }
+#>
 <#
     }
 

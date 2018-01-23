@@ -37,8 +37,7 @@ namespace RMSDataAccessLayer
     	}
     	private int _TransactionEntryId;
         [DataMember]
-                    [Required(ErrorMessage="QBItemListID is required")]
-                [StringLength(50)]
+                    [StringLength(50)]
     	public string QBItemListID
     	{ 
     		get { return _QBItemListID; }
@@ -52,8 +51,7 @@ namespace RMSDataAccessLayer
     	}
     	private string _QBItemListID;
         [DataMember]
-                    [Required(ErrorMessage="ItemNumber is required")]
-                [StringLength(50)]
+                    [StringLength(50)]
     	public string ItemNumber
     	{ 
     		get { return _ItemNumber; }

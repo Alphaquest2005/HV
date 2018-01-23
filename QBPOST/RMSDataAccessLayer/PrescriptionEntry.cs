@@ -27,10 +27,12 @@ namespace RMSDataAccessLayer
         {
             this.Repeat = 0;
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -40,22 +42,7 @@ namespace RMSDataAccessLayer
                 }
             }
     
-            ChangeTrackingCollection<PrescriptionEntry> _changeTracker;
-    
-            [NotMapped]
-            [IgnoreDataMember]
-            public ChangeTrackingCollection<PrescriptionEntry> ChangeTracker
-            {
-                get
-                {
-                    return _changeTracker;
-                }
-            }
             
-            public void StartTracking()
-            {
-                _changeTracker = new ChangeTrackingCollection<PrescriptionEntry>(this);
-            }
         [DataMember]
         	public string Dosage
     	{ 
@@ -95,5 +82,18 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private Nullable<int> _Repeat;
+        [DataMember]
+        	public Nullable<int> RepeatQuantity
+    	{ 
+    		get { return _RepeatQuantity; }
+    		set
+    		{
+    			if (Equals(value, _RepeatQuantity)) return;
+    			_RepeatQuantity = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<int> _RepeatQuantity;
     }
 }

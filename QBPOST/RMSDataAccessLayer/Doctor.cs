@@ -27,10 +27,12 @@ namespace RMSDataAccessLayer
         {
             this.Prescription = new ObservableCollection<Prescription>();
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -40,22 +42,7 @@ namespace RMSDataAccessLayer
                 }
             }
     
-            ChangeTrackingCollection<Doctor> _changeTracker;
-    
-            [NotMapped]
-            [IgnoreDataMember]
-            public ChangeTrackingCollection<Doctor> ChangeTracker
-            {
-                get
-                {
-                    return _changeTracker;
-                }
-            }
             
-            public void StartTracking()
-            {
-                _changeTracker = new ChangeTrackingCollection<Doctor>(this);
-            }
         [DataMember]
                     [Required(ErrorMessage="Code is required")]
     	public string Code
@@ -70,6 +57,19 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private string _Code;
+        [DataMember]
+        	public Nullable<double> Discount
+    	{ 
+    		get { return _Discount; }
+    		set
+    		{
+    			if (Equals(value, _Discount)) return;
+    			_Discount = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<double> _Discount;
         [DataMember]
     	public ObservableCollection<Prescription> Prescription
     	{

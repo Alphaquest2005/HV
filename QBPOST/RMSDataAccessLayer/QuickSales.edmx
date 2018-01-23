@@ -5,51 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="RMSEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Batches">
-          <Key>
-            <PropertyRef Name="BatchId" />
-          </Key>
-          <Property Name="BatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="OpeningCash" Type="float" Nullable="false" />
-          <Property Name="EndingCash" Type="float" />
-          <Property Name="OpeningTime" Type="datetime" Nullable="false" />
-          <Property Name="ClosingTime" Type="datetime" />
-          <Property Name="TotalTender" Type="float" />
-          <Property Name="TotalChange" Type="float" />
-          <Property Name="Status" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="StationId" Type="int" Nullable="false" />
-          <Property Name="OpeningCashier" Type="int" Nullable="false" />
-          <Property Name="ClosingCashier" Type="int" />
-          <Property Name="Sales" Type="float" Nullable="false" />
-          <Property Name="OpenTransactions" Type="int" Nullable="false" />
-          <Property Name="CloseTransactions" Type="int" Nullable="false" />
-          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
-        </EntityType>
-        <EntityType Name="CashierLogs">
-          <Key>
-            <PropertyRef Name="CashierLogId" />
-          </Key>
-          <Property Name="CashierLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="MachineName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="LoginTime" Type="datetime" Nullable="false" />
-          <Property Name="LogoutTime" Type="datetime" />
-          <Property Name="Status" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="PersonId" Type="int" Nullable="false" />
-          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Company">
-          <Key>
-            <PropertyRef Name="CompanyId" />
-          </Key>
-          <Property Name="CompanyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="CompanyName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Address" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Address1" Type="nvarchar(max)" />
-          <Property Name="SoftwareName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="PhoneNumber" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Motto" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
-        </EntityType>
         <EntityType Name="Item">
           <Key>
             <PropertyRef Name="ItemId" />
@@ -121,6 +76,7 @@
           </Key>
           <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Discount" Type="float" />
         </EntityType>
         <EntityType Name="Persons_Patient">
           <Key>
@@ -145,30 +101,6 @@
           <Property Name="Price" Type="float" />
           <Property Name="Quantity" Type="float" />
           <Property Name="UnitOfMeasure" Type="nvarchar" MaxLength="50" />
-          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Stations">
-          <Key>
-            <PropertyRef Name="StationId" />
-          </Key>
-          <Property Name="StationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="StationCode" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="StoreId" Type="int" Nullable="false" />
-          <Property Name="ReceiptPrinterName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="MachineName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="PrintServer" Type="nvarchar(max)" />
-          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Stores">
-          <Key>
-            <PropertyRef Name="StoreId" />
-          </Key>
-          <Property Name="StoreId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="StoreCode" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="StoreAddress" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="CompanyId" Type="int" Nullable="false" />
-          <Property Name="TransactionSeed" Type="int" Nullable="false" />
-          <Property Name="SeedTransaction" Type="int" Nullable="false" />
           <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
         </EntityType>
         <EntityType Name="TransactionBase">
@@ -197,6 +129,7 @@
           <Property Name="DoctorId" Type="int" Nullable="false" />
           <Property Name="PatientId" Type="int" Nullable="false" />
           <Property Name="TransactionId" Type="int" Nullable="false" />
+          <Property Name="ParentPrescriptionId" Type="int" />
         </EntityType>
         <EntityType Name="TransactionBase_QuickPrescription">
           <Key>
@@ -229,140 +162,18 @@
           <Property Name="ExpiryDate" Type="date" />
           <Property Name="TransactionEntryId" Type="int" Nullable="false" />
           <Property Name="Repeat" Type="int" />
+          <Property Name="RepeatQuantity" Type="int" />
         </EntityType>
         <EntityType Name="TransactionEntryItem">
           <Key>
             <PropertyRef Name="TransactionEntryId" />
           </Key>
           <Property Name="TransactionEntryId" Type="int" Nullable="false" />
-          <Property Name="QBItemListID" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="ItemNumber" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="QBItemListID" Type="varchar" MaxLength="50" />
+          <Property Name="ItemNumber" Type="varchar" MaxLength="50" />
           <Property Name="ItemName" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="ItemId" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.DoctorsView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="DoctorsView">
-          <Key>
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="Code" />
-            <PropertyRef Name="DoctorId" />
-          </Key>
-          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="DoctorId" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'QuickSales-Enterprise.dbo.ItemDosage' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="ItemDosage">
-          <Property Name="ItemId" Type="int" />
-          <Property Name="Dosage" Type="nvarchar(max)" />
-          <Property Name="Count" Type="int" />
-        </EntityType>-->
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="PatientView">
-          <Key>
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="PatientId" />
-          </Key>
-          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="PhoneNumber" Type="nvarchar(max)" />
-          <Property Name="Address" Type="nvarchar(max)" />
-          <Property Name="PatientId" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.SearchView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="SearchView">
-          <Key>
-            
-            <PropertyRef Name="TransactionId" />
-            <PropertyRef Name="Time" />
-            <PropertyRef Name="ItemId" />
-            <PropertyRef Name="ItemInfo" />
-            <PropertyRef Name="PatientId" />
-            <PropertyRef Name="PatientInfo" />
-            <PropertyRef Name="DoctorId" />
-            <PropertyRef Name="DoctorInfo" />
-            
-            
-            
-            
-            
-            
-          </Key>
-          <Property Name="Time" Type="datetime" Nullable="false" />
-          <Property Name="TransactionId" Type="int" Nullable="false" />
-          <Property Name="ItemId" Type="int" Nullable="false" />
-          <Property Name="ItemInfo" Type="nvarchar" MaxLength="1053" Nullable="false" />
-          <Property Name="PatientId" Type="int" Nullable="false" />
-          <Property Name="PatientInfo" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="DoctorId" Type="int" Nullable="false" />
-          <Property Name="DoctorInfo" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="SearchInfo" Type="nvarchar(max)" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="TransactionsView">
-          <Key>
-            <PropertyRef Name="TransactionId" />
-            <PropertyRef Name="Time" />
-            
-          </Key>
-          <Property Name="TransactionId" Type="int" Nullable="false" />
-          <Property Name="Time" Type="datetime" Nullable="false" />
-          <Property Name="ReferenceNumber" Type="nvarchar" MaxLength="50" />
-          <Property Name="TotalSales" Type="decimal" Precision="28" Scale="7" />
-          <Property Name="CustomerId" Type="int" />
-        </EntityType>
-        <Association Name="FK_BatchCashier">
-          <End Role="Persons_Cashier" Type="Self.Persons_Cashier" Multiplicity="1" />
-          <End Role="Batches" Type="Self.Batches" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Persons_Cashier">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Batches">
-              <PropertyRef Name="OpeningCashier" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_BatchCashier1">
-          <End Role="Persons_Cashier" Type="Self.Persons_Cashier" Multiplicity="0..1" />
-          <End Role="Batches" Type="Self.Batches" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Persons_Cashier">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Batches">
-              <PropertyRef Name="ClosingCashier" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_BatchTransactionBase">
-          <End Role="Batches" Type="Self.Batches" Multiplicity="1" />
-          <End Role="TransactionBase" Type="Self.TransactionBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Batches">
-              <PropertyRef Name="BatchId" />
-            </Principal>
-            <Dependent Role="TransactionBase">
-              <PropertyRef Name="BatchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_BatchTransactionBase1">
-          <End Role="Batches" Type="Self.Batches" Multiplicity="0..1" />
-          <End Role="TransactionBase" Type="Self.TransactionBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Batches">
-              <PropertyRef Name="BatchId" />
-            </Principal>
-            <Dependent Role="TransactionBase">
-              <PropertyRef Name="CloseBatchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Cashier_inherits_Person">
           <End Role="Persons" Type="Self.Persons" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -377,20 +188,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_CashierCashierLog">
-          <End Role="Persons_Cashier" Type="Self.Persons_Cashier" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="CashierLogs" Type="Self.CashierLogs" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Persons_Cashier">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CashierLogs">
-              <PropertyRef Name="PersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_CashierTransactionBase">
           <End Role="Persons_Cashier" Type="Self.Persons_Cashier" Multiplicity="1" />
           <End Role="TransactionBase" Type="Self.TransactionBase" Multiplicity="*" />
@@ -400,18 +197,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Principal>
             <Dependent Role="TransactionBase">
               <PropertyRef Name="CashierId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_CompanyStore">
-          <End Role="Company" Type="Self.Company" Multiplicity="1" />
-          <End Role="Stores" Type="Self.Stores" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Company">
-              <PropertyRef Name="CompanyId" />
-            </Principal>
-            <Dependent Role="Stores">
-              <PropertyRef Name="CompanyId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -537,30 +322,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_StationBatch">
-          <End Role="Stations" Type="Self.Stations" Multiplicity="1" />
-          <End Role="Batches" Type="Self.Batches" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stations">
-              <PropertyRef Name="StationId" />
-            </Principal>
-            <Dependent Role="Batches">
-              <PropertyRef Name="StationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_StationTransactionBase">
-          <End Role="Stations" Type="Self.Stations" Multiplicity="1" />
-          <End Role="TransactionBase" Type="Self.TransactionBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stations">
-              <PropertyRef Name="StationId" />
-            </Principal>
-            <Dependent Role="TransactionBase">
-              <PropertyRef Name="StationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_StockItem_inherits_Item">
           <End Role="Item" Type="Self.Item" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -572,18 +333,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Principal>
             <Dependent Role="Item_StockItem">
               <PropertyRef Name="ItemId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_StoreStation">
-          <End Role="Stores" Type="Self.Stores" Multiplicity="1" />
-          <End Role="Stations" Type="Self.Stations" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stores">
-              <PropertyRef Name="StoreId" />
-            </Principal>
-            <Dependent Role="Stations">
-              <PropertyRef Name="StoreId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -628,9 +377,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="RMSEntitiesStoreContainer">
-          <EntitySet Name="Batches" EntityType="Self.Batches" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="CashierLogs" EntityType="Self.CashierLogs" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Item_Medicine" EntityType="Self.Item_Medicine" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Item_StockItem" EntityType="Self.Item_StockItem" Schema="dbo" store:Type="Tables" />
@@ -639,82 +385,19 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <EntitySet Name="Persons_Doctor" EntityType="Self.Persons_Doctor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Persons_Patient" EntityType="Self.Persons_Patient" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QBInventoryItems" EntityType="Self.QBInventoryItems" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Stations" EntityType="Self.Stations" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Stores" EntityType="Self.Stores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionBase" EntityType="Self.TransactionBase" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionBase_Prescription" EntityType="Self.TransactionBase_Prescription" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionBase_QuickPrescription" EntityType="Self.TransactionBase_QuickPrescription" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionEntryBase" EntityType="Self.TransactionEntryBase" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionEntryBase_PrescriptionEntry" EntityType="Self.TransactionEntryBase_PrescriptionEntry" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionEntryItem" EntityType="Self.TransactionEntryItem" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="DoctorsView" EntityType="Self.DoctorsView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-[DoctorsView].[Name] AS [Name], 
-[DoctorsView].[Code] AS [Code], 
-[DoctorsView].[DoctorId] AS [DoctorId]
-FROM [dbo].[DoctorsView] AS [DoctorsView]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="PatientView" EntityType="Self.PatientView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-[PatientView].[Name] AS [Name], 
-[PatientView].[PhoneNumber] AS [PhoneNumber], 
-[PatientView].[Address] AS [Address], 
-[PatientView].[PatientId] AS [PatientId]
-FROM [dbo].[PatientView] AS [PatientView]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="SearchView" EntityType="Self.SearchView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-[SearchView].[Time] AS [Time], 
-[SearchView].[TransactionId] AS [TransactionId], 
-[SearchView].[ItemId] AS [ItemId], 
-[SearchView].[ItemInfo] AS [ItemInfo], 
-[SearchView].[PatientId] AS [PatientId], 
-[SearchView].[PatientInfo] AS [PatientInfo], 
-[SearchView].[DoctorId] AS [DoctorId], 
-[SearchView].[DoctorInfo] AS [DoctorInfo], 
-[SearchView].[SearchInfo] AS [SearchInfo]
-FROM [dbo].[SearchView] AS [SearchView]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="TransactionsView" EntityType="Self.TransactionsView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-[TransactionsView].[TransactionId] AS [TransactionId], 
-[TransactionsView].[Time] AS [Time], 
-[TransactionsView].[ReferenceNumber] AS [ReferenceNumber], 
-[TransactionsView].[TotalSales] AS [TotalSales], 
-[TransactionsView].[CustomerId] AS [CustomerId]
-FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
-          </EntitySet>
-          <AssociationSet Name="FK_BatchCashier" Association="Self.FK_BatchCashier">
-            <End Role="Persons_Cashier" EntitySet="Persons_Cashier" />
-            <End Role="Batches" EntitySet="Batches" />
-          </AssociationSet>
-          <AssociationSet Name="FK_BatchCashier1" Association="Self.FK_BatchCashier1">
-            <End Role="Persons_Cashier" EntitySet="Persons_Cashier" />
-            <End Role="Batches" EntitySet="Batches" />
-          </AssociationSet>
-          <AssociationSet Name="FK_BatchTransactionBase" Association="Self.FK_BatchTransactionBase">
-            <End Role="Batches" EntitySet="Batches" />
-            <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
-          <AssociationSet Name="FK_BatchTransactionBase1" Association="Self.FK_BatchTransactionBase1">
-            <End Role="Batches" EntitySet="Batches" />
-            <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
           <AssociationSet Name="FK_Cashier_inherits_Person" Association="Self.FK_Cashier_inherits_Person">
             <End Role="Persons" EntitySet="Persons" />
             <End Role="Persons_Cashier" EntitySet="Persons_Cashier" />
           </AssociationSet>
-          <AssociationSet Name="FK_CashierCashierLog" Association="Self.FK_CashierCashierLog">
-            <End Role="Persons_Cashier" EntitySet="Persons_Cashier" />
-            <End Role="CashierLogs" EntitySet="CashierLogs" />
-          </AssociationSet>
           <AssociationSet Name="FK_CashierTransactionBase" Association="Self.FK_CashierTransactionBase">
             <End Role="Persons_Cashier" EntitySet="Persons_Cashier" />
             <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CompanyStore" Association="Self.FK_CompanyStore">
-            <End Role="Company" EntitySet="Company" />
-            <End Role="Stores" EntitySet="Stores" />
           </AssociationSet>
           <AssociationSet Name="FK_CustomerTransaction" Association="Self.FK_CustomerTransaction">
             <End Role="Persons" EntitySet="Persons" />
@@ -752,21 +435,9 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="TransactionBase" EntitySet="TransactionBase" />
             <End Role="TransactionBase_QuickPrescription" EntitySet="TransactionBase_QuickPrescription" />
           </AssociationSet>
-          <AssociationSet Name="FK_StationBatch" Association="Self.FK_StationBatch">
-            <End Role="Stations" EntitySet="Stations" />
-            <End Role="Batches" EntitySet="Batches" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StationTransactionBase" Association="Self.FK_StationTransactionBase">
-            <End Role="Stations" EntitySet="Stations" />
-            <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
           <AssociationSet Name="FK_StockItem_inherits_Item" Association="Self.FK_StockItem_inherits_Item">
             <End Role="Item" EntitySet="Item" />
             <End Role="Item_StockItem" EntitySet="Item_StockItem" />
-          </AssociationSet>
-          <AssociationSet Name="FK_StoreStation" Association="Self.FK_StoreStation">
-            <End Role="Stores" EntitySet="Stores" />
-            <End Role="Stations" EntitySet="Stations" />
           </AssociationSet>
           <AssociationSet Name="FK_TransactionEntryItem_Item" Association="Self.FK_TransactionEntryItem_Item">
             <End Role="Item" EntitySet="Item" />
@@ -793,7 +464,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="Transaction" EntitySet="TransactionBase" />
             <End Role="TransactionEntry" EntitySet="TransactionEntryBase" />
           </AssociationSet>
-          <EntitySet Name="Company" EntityType="RMSEntities.Company" />
           <EntitySet Name="Persons" EntityType="RMSEntities.Person" />
           <AssociationSet Name="CustomerTransaction" Association="RMSEntities.CustomerTransaction">
             <End Role="Customer" EntitySet="Persons" />
@@ -803,21 +473,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="Cashier" EntitySet="Persons" />
             <End Role="TransactionBase" EntitySet="TransactionBase" />
           </AssociationSet>
-          <EntitySet Name="Batches" EntityType="RMSEntities.Batch" />
-          <AssociationSet Name="BatchTransactionBase" Association="RMSEntities.BatchTransactionBase">
-            <End Role="Batch" EntitySet="Batches" />
-            <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
-          <EntitySet Name="Stations" EntityType="RMSEntities.Station" />
-          <EntitySet Name="Stores" EntityType="RMSEntities.Store" />
-          <AssociationSet Name="StoreStation" Association="RMSEntities.StoreStation">
-            <End Role="Store" EntitySet="Stores" />
-            <End Role="Station" EntitySet="Stations" />
-          </AssociationSet>
-          <AssociationSet Name="StationTransactionBase" Association="RMSEntities.StationTransactionBase">
-            <End Role="Station" EntitySet="Stations" />
-            <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
           <AssociationSet Name="DoctorPrescription" Association="RMSEntities.DoctorPrescription">
             <End Role="Doctor" EntitySet="Persons" />
             <End Role="Prescription" EntitySet="TransactionBase" />
@@ -825,36 +480,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <AssociationSet Name="PatientPrescription" Association="RMSEntities.PatientPrescription">
             <End Role="Patient" EntitySet="Persons" />
             <End Role="Prescription" EntitySet="TransactionBase" />
-          </AssociationSet>
-          <AssociationSet Name="CompanyStore" Association="RMSEntities.CompanyStore">
-            <End Role="Company" EntitySet="Company" />
-            <End Role="Store" EntitySet="Stores" />
-          </AssociationSet>
-          <AssociationSet Name="StationBatch" Association="RMSEntities.StationBatch">
-            <End Role="Station" EntitySet="Stations" />
-            <End Role="Batch" EntitySet="Batches" />
-          </AssociationSet>
-          <EntitySet Name="CashierLogs" EntityType="RMSEntities.CashierLog" />
-          <AssociationSet Name="CashierCashierLog" Association="RMSEntities.CashierCashierLog">
-            <End Role="Cashier" EntitySet="Persons" />
-            <End Role="CashierLog" EntitySet="CashierLogs" />
-          </AssociationSet>
-          <AssociationSet Name="BatchCashier" Association="RMSEntities.BatchCashier">
-            <End Role="Batch" EntitySet="Batches" />
-            <End Role="Cashier" EntitySet="Persons" />
-          </AssociationSet>
-          <AssociationSet Name="BatchCashier1" Association="RMSEntities.BatchCashier1">
-            <End Role="Batch" EntitySet="Batches" />
-            <End Role="Cashier" EntitySet="Persons" />
-          </AssociationSet>
-          <AssociationSet Name="BatchTransactionBase1" Association="RMSEntities.BatchTransactionBase1">
-            <End Role="Batch" EntitySet="Batches" />
-            <End Role="TransactionBase" EntitySet="TransactionBase" />
-          </AssociationSet>
-          <EntitySet Name="QBInventoryItems" EntityType="RMSEntities.QBInventoryItem" />
-          <AssociationSet Name="FK_Item_QBInventoryItems" Association="RMSEntities.FK_Item_QBInventoryItems">
-            <End Role="QBInventoryItem" EntitySet="QBInventoryItems" />
-            <End Role="Item" EntitySet="Item" />
           </AssociationSet>
           <AssociationSet Name="FK_TransactionBase_Persons_Pharmacist" Association="RMSEntities.FK_TransactionBase_Persons_Pharmacist">
             <End Role="Cashier" EntitySet="Persons" />
@@ -869,10 +494,7 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="TransactionEntryBase" EntitySet="TransactionEntryBase" />
             <End Role="TransactionEntryItem" EntitySet="TransactionEntryItems" />
           </AssociationSet>
-          <EntitySet Name="DoctorsViews" EntityType="RMSEntities.DoctorsView" />
-          <EntitySet Name="PatientViews" EntityType="RMSEntities.PatientView" />
-          <EntitySet Name="SearchView1" EntityType="RMSEntities.SearchView1" />
-          <EntitySet Name="TransactionsView1" EntityType="RMSEntities.TransactionsView1" />
+          <EntitySet Name="QBInventoryItems" EntityType="RMSEntities.QBInventoryItem" />
           </EntityContainer>
         <EntityType Name="Item" Abstract="false">
           <Key>
@@ -892,7 +514,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <Property Type="DateTime" Name="DateCreated" Nullable="true" Precision="3" />
           <Property Type="Double" Name="SalesTax" Nullable="true" />
           <Property Type="String" Name="QBItemListID" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="QBInventoryItem" Relationship="RMSEntities.FK_Item_QBInventoryItems" FromRole="Item" ToRole="QBInventoryItem" />
           <Property Name="UnitOfMeasure" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -917,14 +538,11 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <Property Type="String" Name="StoreCode" MaxLength="30" FixedLength="false" Unicode="false" Nullable="true" />
           <NavigationProperty Name="Customer" Relationship="RMSEntities.CustomerTransaction" FromRole="Transaction" ToRole="Customer" />
           <NavigationProperty Name="Cashier" Relationship="RMSEntities.CashierTransactionBase" FromRole="TransactionBase" ToRole="Cashier" />
-          <NavigationProperty Name="Batch" Relationship="RMSEntities.BatchTransactionBase" FromRole="TransactionBase" ToRole="Batch" />
-          <NavigationProperty Name="Station" Relationship="RMSEntities.StationTransactionBase" FromRole="TransactionBase" ToRole="Station" />
           <Property Type="Int32" Name="TransactionId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Boolean" Name="OpenClose" Nullable="false" />
-          <NavigationProperty Name="CloseBatch" Relationship="RMSEntities.BatchTransactionBase1" FromRole="TransactionBase" ToRole="Batch" />
           <Property Type="Int32" Name="PharmacistId" />
           <NavigationProperty Name="Pharmacist" Relationship="RMSEntities.FK_TransactionBase_Persons_Pharmacist" FromRole="TransactionBase" ToRole="Cashier" />
-          <Property Name="Status" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           </EntityType>
         <EntityType Name="TransactionEntryBase" Abstract="false">
@@ -965,21 +583,8 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <Property Type="Int32" Name="PatientId" Nullable="false" />
           <NavigationProperty Name="Doctor" Relationship="RMSEntities.DoctorPrescription" FromRole="Prescription" ToRole="Doctor" />
           <NavigationProperty Name="Patient" Relationship="RMSEntities.PatientPrescription" FromRole="Prescription" ToRole="Patient" />
+          <Property Name="ParentPrescriptionId" Type="Int32" />
           </EntityType>
-        <EntityType Name="Company">
-          <Key>
-            <PropertyRef Name="CompanyId" />
-          </Key>
-          <Property Type="Int32" Name="CompanyId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="String" Name="Address" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="String" Name="Address1" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="String" Name="SoftwareName" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="String" Name="PhoneNumber" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Store" Relationship="RMSEntities.CompanyStore" FromRole="Company" ToRole="Store" />
-          <Property Type="String" Name="Motto" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        </EntityType>
         <EntityType Name="Person" Abstract="false">
           <Key>
             <PropertyRef Name="Id" />
@@ -1013,9 +618,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <NavigationProperty Name="TransactionBase" Relationship="RMSEntities.CashierTransactionBase" FromRole="Cashier" ToRole="TransactionBase" />
           <Property Type="String" Name="SPassword" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="String" Name="LoginName" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="CashierLog" Relationship="RMSEntities.CashierCashierLog" FromRole="Cashier" ToRole="CashierLog" />
-          <NavigationProperty Name="Batch" Relationship="RMSEntities.BatchCashier" FromRole="Cashier" ToRole="Batch" />
-          <NavigationProperty Name="Batch1" Relationship="RMSEntities.BatchCashier1" FromRole="Cashier" ToRole="Batch" />
           <Property Type="String" Name="Role" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Initials" MaxLength="3" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="TransactionBases1" Relationship="RMSEntities.FK_TransactionBase_Persons_Pharmacist" FromRole="Cashier" ToRole="TransactionBase" />
@@ -1032,100 +634,11 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Batch">
-          <Key>
-            <PropertyRef Name="BatchId" />
-          </Key>
-          <Property Type="Int32" Name="BatchId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="Double" Name="OpeningCash" Nullable="false" />
-          <Property Type="Double" Name="EndingCash" Nullable="true" />
-          <NavigationProperty Name="TransactionBase" Relationship="RMSEntities.BatchTransactionBase" FromRole="Batch" ToRole="TransactionBase" />
-          <Property Type="DateTime" Name="OpeningTime" Nullable="false" Precision="3" />
-          <Property Type="DateTime" Name="ClosingTime" Nullable="true" Precision="3" />
-          <Property Type="Double" Name="TotalTender" Nullable="true" />
-          <Property Type="Double" Name="TotalChange" Nullable="true" />
-          <Property Type="String" Name="Status" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="Int32" Name="StationId" Nullable="false" />
-          <NavigationProperty Name="Station" Relationship="RMSEntities.StationBatch" FromRole="Batch" ToRole="Station" />
-          <Property Type="Int32" Name="OpeningCashier" Nullable="false" />
-          <Property Type="Int32" Name="ClosingCashier" Nullable="true" />
-          <Property Type="Double" Name="Sales" Nullable="false" />
-          <Property Type="Int32" Name="OpenTransactions" Nullable="false" />
-          <Property Type="Int32" Name="CloseTransactions" Nullable="false" />
-          <NavigationProperty Name="OpenCashier" Relationship="RMSEntities.BatchCashier" FromRole="Batch" ToRole="Cashier" />
-          <NavigationProperty Name="CloseCashier" Relationship="RMSEntities.BatchCashier1" FromRole="Batch" ToRole="Cashier" />
-          <NavigationProperty Name="CloseTransactionBase" Relationship="RMSEntities.BatchTransactionBase1" FromRole="Batch" ToRole="TransactionBase" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        </EntityType>
-        <Association Name="BatchTransactionBase">
-          <End Type="RMSEntities.Batch" Role="Batch" Multiplicity="1" />
-          <End Type="RMSEntities.TransactionBase" Role="TransactionBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Batch">
-              <PropertyRef Name="BatchId" />
-            </Principal>
-            <Dependent Role="TransactionBase">
-              <PropertyRef Name="BatchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Station">
-          <Key>
-            <PropertyRef Name="StationId" />
-          </Key>
-          <Property Type="Int32" Name="StationId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="StationCode" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="Int32" Name="StoreId" Nullable="false" />
-          <NavigationProperty Name="Store" Relationship="RMSEntities.StoreStation" FromRole="Station" ToRole="Store" />
-          <NavigationProperty Name="TransactionBase" Relationship="RMSEntities.StationTransactionBase" FromRole="Station" ToRole="TransactionBase" />
-          <Property Type="String" Name="ReceiptPrinterName" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Batch" Relationship="RMSEntities.StationBatch" FromRole="Station" ToRole="Batch" />
-          <Property Type="String" Name="MachineName" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="String" Name="PrintServer" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        </EntityType>
-        <EntityType Name="Store">
-          <Key>
-            <PropertyRef Name="StoreId" />
-          </Key>
-          <Property Type="Int32" Name="StoreId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="StoreCode" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="String" Name="StoreAddress" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="Int32" Name="CompanyId" Nullable="false" />
-          <NavigationProperty Name="Station" Relationship="RMSEntities.StoreStation" FromRole="Store" ToRole="Station" />
-          <Property Type="Int32" Name="TransactionSeed" Nullable="false" DefaultValue="0" />
-          <Property Type="Int32" Name="SeedTransaction" Nullable="false" DefaultValue="0" />
-          <NavigationProperty Name="Company" Relationship="RMSEntities.CompanyStore" FromRole="Store" ToRole="Company" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        </EntityType>
-        <Association Name="StoreStation">
-          <End Type="RMSEntities.Store" Role="Store" Multiplicity="1" />
-          <End Type="RMSEntities.Station" Role="Station" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Store">
-              <PropertyRef Name="StoreId" />
-            </Principal>
-            <Dependent Role="Station">
-              <PropertyRef Name="StoreId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="StationTransactionBase">
-          <End Type="RMSEntities.Station" Role="Station" Multiplicity="1" />
-          <End Type="RMSEntities.TransactionBase" Role="TransactionBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Station">
-              <PropertyRef Name="StationId" />
-            </Principal>
-            <Dependent Role="TransactionBase">
-              <PropertyRef Name="StationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="PrescriptionEntry" BaseType="RMSEntities.TransactionEntryBase">
           <Property Type="String" Name="Dosage" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="DateTime" Name="ExpiryDate" Nullable="true" Precision="0" />
           <Property Type="Int32" Name="Repeat" Nullable="true" DefaultValue="0" />
+          <Property Name="RepeatQuantity" Type="Int32" />
         </EntityType>
         <EntityType Name="Medicine" BaseType="RMSEntities.Item">
           <Property Type="String" Name="SuggestedDosage" MaxLength="Max" Unicode="true" FixedLength="false" Nullable="true" />
@@ -1134,6 +647,7 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
         <EntityType Name="Doctor" BaseType="RMSEntities.Person">
           <Property Type="String" Name="Code" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Prescription" Relationship="RMSEntities.DoctorPrescription" FromRole="Doctor" ToRole="Prescription" />
+          <Property Name="Discount" Type="Double" />
         </EntityType>
         <EntityType Name="Patient" BaseType="RMSEntities.Person">
           <NavigationProperty Name="Prescription" Relationship="RMSEntities.PatientPrescription" FromRole="Patient" ToRole="Prescription" />
@@ -1169,120 +683,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
         </Association>
         <EntityType Name="QuickPrescription" BaseType="RMSEntities.TransactionBase">
         </EntityType>
-        <Association Name="CompanyStore">
-          <End Type="RMSEntities.Company" Role="Company" Multiplicity="1" />
-          <End Type="RMSEntities.Store" Role="Store" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Company">
-              <PropertyRef Name="CompanyId" />
-            </Principal>
-            <Dependent Role="Store">
-              <PropertyRef Name="CompanyId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="StationBatch">
-          <End Type="RMSEntities.Station" Role="Station" Multiplicity="1" />
-          <End Type="RMSEntities.Batch" Role="Batch" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Station">
-              <PropertyRef Name="StationId" />
-            </Principal>
-            <Dependent Role="Batch">
-              <PropertyRef Name="StationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="CashierLog">
-          <Key>
-            <PropertyRef Name="CashierLogId" />
-          </Key>
-          <Property Type="Int32" Name="CashierLogId" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Type="String" Name="MachineName" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="DateTime" Name="LoginTime" Nullable="false" Precision="3" />
-          <Property Type="DateTime" Name="LogoutTime" Nullable="true" Precision="3" />
-          <Property Type="String" Name="Status" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Type="Int32" Name="PersonId" Nullable="false" />
-          <NavigationProperty Name="Cashier" Relationship="RMSEntities.CashierCashierLog" FromRole="CashierLog" ToRole="Cashier" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        </EntityType>
-        <Association Name="CashierCashierLog">
-          <End Type="RMSEntities.Cashier" Role="Cashier" Multiplicity="1" />
-          <End Type="RMSEntities.CashierLog" Role="CashierLog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Cashier">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CashierLog">
-              <PropertyRef Name="PersonId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="BatchCashier">
-          <End Type="RMSEntities.Batch" Role="Batch" Multiplicity="*" />
-          <End Type="RMSEntities.Cashier" Role="Cashier" Multiplicity="1" />
-          <ReferentialConstraint>
-            <Principal Role="Cashier">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Batch">
-              <PropertyRef Name="OpeningCashier" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="BatchCashier1">
-          <End Type="RMSEntities.Batch" Role="Batch" Multiplicity="*" />
-          <End Type="RMSEntities.Cashier" Role="Cashier" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Cashier">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Batch">
-              <PropertyRef Name="ClosingCashier" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="BatchTransactionBase1">
-          <End Type="RMSEntities.Batch" Role="Batch" Multiplicity="0..1" />
-          <End Type="RMSEntities.TransactionBase" Role="TransactionBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Batch">
-              <PropertyRef Name="BatchId" />
-            </Principal>
-            <Dependent Role="TransactionBase">
-              <PropertyRef Name="CloseBatchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="QBInventoryItem">
-          <Key>
-            <PropertyRef Name="ListID" />
-          </Key>
-          <Property Type="String" Name="ListID" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="ItemDesc2" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="ItemName" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Size" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="DepartmentCode" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="ItemNumber" Nullable="false" />
-          <Property Type="String" Name="TaxCode" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Type="Double" Name="Price" />
-          <Property Type="Double" Name="Quantity" />
-          <NavigationProperty Name="Items" Relationship="RMSEntities.FK_Item_QBInventoryItems" FromRole="QBInventoryItem" ToRole="Item" />
-          <Property Name="UnitOfMeasure" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        </EntityType>
-        <Association Name="FK_Item_QBInventoryItems">
-          <End Type="RMSEntities.QBInventoryItem" Role="QBInventoryItem" Multiplicity="0..1" />
-          <End Type="RMSEntities.Item" Role="Item" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="QBInventoryItem">
-              <PropertyRef Name="ListID" />
-            </Principal>
-            <Dependent Role="Item">
-              <PropertyRef Name="QBItemListID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_TransactionBase_Persons_Pharmacist">
           <End Type="RMSEntities.Cashier" Role="Cashier" Multiplicity="0..1" />
           <End Type="RMSEntities.TransactionBase" Role="TransactionBase" Multiplicity="*" />
@@ -1300,8 +700,8 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <PropertyRef Name="TransactionEntryId" />
           </Key>
           <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
-          <Property Name="QBItemListID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ItemName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ItemId" Type="Int32" />
           <NavigationProperty Name="Item" Relationship="RMSEntities.FK_TransactionEntryItem_Item" FromRole="TransactionEntryItem" ToRole="Item" />
@@ -1333,57 +733,21 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="DoctorsView">
+        <EntityType Name="QBInventoryItem">
           <Key>
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="Code" />
-            <PropertyRef Name="DoctorId" />
+            <PropertyRef Name="ListID" />
           </Key>
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DoctorId" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="PatientView">
-          <Key>
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="PatientId" />
-          </Key>
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PatientId" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="SearchView1">
-          <Key>
-            <PropertyRef Name="Time" />
-            <PropertyRef Name="TransactionId" />
-            <PropertyRef Name="ItemId" />
-            <PropertyRef Name="ItemInfo" />
-            <PropertyRef Name="PatientId" />
-            <PropertyRef Name="PatientInfo" />
-            <PropertyRef Name="DoctorId" />
-            <PropertyRef Name="DoctorInfo" />
-          </Key>
-          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="TransactionId" Type="Int32" Nullable="false" />
-          <Property Name="ItemId" Type="Int32" Nullable="false" />
-          <Property Name="ItemInfo" Type="String" Nullable="false" MaxLength="1053" FixedLength="false" Unicode="true" />
-          <Property Name="PatientId" Type="Int32" Nullable="false" />
-          <Property Name="PatientInfo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="DoctorId" Type="Int32" Nullable="false" />
-          <Property Name="DoctorInfo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SearchInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="TransactionsView1">
-          <Key>
-            <PropertyRef Name="TransactionId" />
-            <PropertyRef Name="Time" />
-          </Key>
-          <Property Name="TransactionId" Type="Int32" Nullable="false" />
-          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="TotalSales" Type="Decimal" Precision="28" Scale="7" />
-          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="ListID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ItemDesc2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ItemName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Size" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DepartmentCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ItemNumber" Type="Int32" Nullable="false" />
+          <Property Name="TaxCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Double" />
+          <Property Name="Quantity" Type="Double" />
+          <Property Name="UnitOfMeasure" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -1450,7 +814,8 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Prescription)">
         <MappingFragment StoreEntitySet="TransactionBase_Prescription">
-          <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+          <ScalarProperty Name="ParentPrescriptionId" ColumnName="ParentPrescriptionId" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
           <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
           <ScalarProperty Name="PatientId" ColumnName="PatientId" />
         </MappingFragment>
@@ -1480,24 +845,11 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.PrescriptionEntry)">
         <MappingFragment StoreEntitySet="TransactionEntryBase_PrescriptionEntry">
-          <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
+          <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
           <ScalarProperty Name="Dosage" ColumnName="Dosage" />
           <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
           <ScalarProperty Name="Repeat" ColumnName="Repeat" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Company">
-      <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Company)">
-        <MappingFragment StoreEntitySet="Company">
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
-          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
-          <ScalarProperty Name="Address" ColumnName="Address" />
-          <ScalarProperty Name="Address1" ColumnName="Address1" />
-          <ScalarProperty Name="SoftwareName" ColumnName="SoftwareName" />
-          <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-          <ScalarProperty Name="Motto" ColumnName="Motto" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1528,7 +880,8 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Doctor)">
         <MappingFragment StoreEntitySet="Persons_Doctor">
-          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Code" ColumnName="Code" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -1538,83 +891,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <ScalarProperty Name="Allergies" ColumnName="Allergies" />
           <ScalarProperty Name="Guardian" ColumnName="Guardian" />
           <ScalarProperty Name="Discount" ColumnName="Discount" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Batches">
-      <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Batch)">
-        <MappingFragment StoreEntitySet="Batches">
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
-          <ScalarProperty Name="OpeningCash" ColumnName="OpeningCash" />
-          <ScalarProperty Name="EndingCash" ColumnName="EndingCash" />
-          <ScalarProperty Name="OpeningTime" ColumnName="OpeningTime" />
-          <ScalarProperty Name="ClosingTime" ColumnName="ClosingTime" />
-          <ScalarProperty Name="TotalTender" ColumnName="TotalTender" />
-          <ScalarProperty Name="TotalChange" ColumnName="TotalChange" />
-          <ScalarProperty Name="Status" ColumnName="Status" />
-          <ScalarProperty Name="StationId" ColumnName="StationId" />
-          <ScalarProperty Name="OpeningCashier" ColumnName="OpeningCashier" />
-          <ScalarProperty Name="ClosingCashier" ColumnName="ClosingCashier" />
-          <ScalarProperty Name="Sales" ColumnName="Sales" />
-          <ScalarProperty Name="OpenTransactions" ColumnName="OpenTransactions" />
-          <ScalarProperty Name="CloseTransactions" ColumnName="CloseTransactions" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Stations">
-      <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Station)">
-        <MappingFragment StoreEntitySet="Stations">
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="StationId" ColumnName="StationId" />
-          <ScalarProperty Name="StationCode" ColumnName="StationCode" />
-          <ScalarProperty Name="StoreId" ColumnName="StoreId" />
-          <ScalarProperty Name="ReceiptPrinterName" ColumnName="ReceiptPrinterName" />
-          <ScalarProperty Name="MachineName" ColumnName="MachineName" />
-          <ScalarProperty Name="PrintServer" ColumnName="PrintServer" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Stores">
-      <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Store)">
-        <MappingFragment StoreEntitySet="Stores">
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="StoreId" ColumnName="StoreId" />
-          <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
-          <ScalarProperty Name="StoreAddress" ColumnName="StoreAddress" />
-          <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
-          <ScalarProperty Name="TransactionSeed" ColumnName="TransactionSeed" />
-          <ScalarProperty Name="SeedTransaction" ColumnName="SeedTransaction" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="CashierLogs">
-      <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.CashierLog)">
-        <MappingFragment StoreEntitySet="CashierLogs">
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="CashierLogId" ColumnName="CashierLogId" />
-          <ScalarProperty Name="MachineName" ColumnName="MachineName" />
-          <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
-          <ScalarProperty Name="LogoutTime" ColumnName="LogoutTime" />
-          <ScalarProperty Name="Status" ColumnName="Status" />
-          <ScalarProperty Name="PersonId" ColumnName="PersonId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="QBInventoryItems">
-      <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.QBInventoryItem)">
-        <MappingFragment StoreEntitySet="QBInventoryItems">
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="UnitOfMeasure" ColumnName="UnitOfMeasure" />
-                <ScalarProperty Name="ListID" ColumnName="ListID" />
-          <ScalarProperty Name="ItemDesc2" ColumnName="ItemDesc2" />
-          <ScalarProperty Name="ItemName" ColumnName="ItemName" />
-          <ScalarProperty Name="Size" ColumnName="Size" />
-          <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
-          <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
-          <ScalarProperty Name="TaxCode" ColumnName="TaxCode" />
-          <ScalarProperty Name="Price" ColumnName="Price" />
-          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -1629,48 +905,20 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="DoctorsViews">
-            <EntityTypeMapping TypeName="RMSEntities.DoctorsView">
-              <MappingFragment StoreEntitySet="DoctorsView">
-                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PatientViews">
-            <EntityTypeMapping TypeName="RMSEntities.PatientView">
-              <MappingFragment StoreEntitySet="PatientView">
-                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SearchView1">
-            <EntityTypeMapping TypeName="RMSEntities.SearchView1">
-              <MappingFragment StoreEntitySet="SearchView">
-                <ScalarProperty Name="SearchInfo" ColumnName="SearchInfo" />
-                <ScalarProperty Name="DoctorInfo" ColumnName="DoctorInfo" />
-                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
-                <ScalarProperty Name="PatientInfo" ColumnName="PatientInfo" />
-                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
-                <ScalarProperty Name="ItemInfo" ColumnName="ItemInfo" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TransactionsView1">
-            <EntityTypeMapping TypeName="RMSEntities.TransactionsView1">
-              <MappingFragment StoreEntitySet="TransactionsView">
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="TotalSales" ColumnName="TotalSales" />
-                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+          <EntitySetMapping Name="QBInventoryItems">
+            <EntityTypeMapping TypeName="RMSEntities.QBInventoryItem">
+              <MappingFragment StoreEntitySet="QBInventoryItems">
+                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
+                <ScalarProperty Name="UnitOfMeasure" ColumnName="UnitOfMeasure" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="TaxCode" ColumnName="TaxCode" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemDesc2" ColumnName="ItemDesc2" />
+                <ScalarProperty Name="ListID" ColumnName="ListID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

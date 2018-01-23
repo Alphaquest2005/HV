@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(RMSDataAccessLayer.RMSModel),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets95314a94e1594c692a70664059189a2f8e2c72095ed68b09ce5bf11f0bc96e37))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets1ea4b819fc90100024bf2f7b7a202ec82df1107e8388d450714e294c4de6639d))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -22,15 +22,15 @@ namespace Edm_EntityMappingGeneratedViews
     /// <summary>
     /// Implements a mapping view cache.
     /// </summary>
-    [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySets95314a94e1594c692a70664059189a2f8e2c72095ed68b09ce5bf11f0bc96e37 : DbMappingViewCache
+    [GeneratedCode("Entity Framework 6 Power Tools", "0.9.2.0")]
+    internal sealed class ViewsForBaseEntitySets1ea4b819fc90100024bf2f7b7a202ec82df1107e8388d450714e294c4de6639d : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "95314a94e1594c692a70664059189a2f8e2c72095ed68b09ce5bf11f0bc96e37"; }
+            get { return "1ea4b819fc90100024bf2f7b7a202ec82df1107e8388d450714e294c4de6639d"; }
         }
 
         /// <summary>
@@ -87,154 +87,64 @@ namespace Edm_EntityMappingGeneratedViews
                 return GetView7();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Company")
+            if (extentName == "RMSEntitiesStoreContainer.Persons")
             {
                 return GetView8();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Persons")
+            if (extentName == "RMSEntitiesStoreContainer.Persons_Cashier")
             {
                 return GetView9();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Persons_Cashier")
+            if (extentName == "RMSEntitiesStoreContainer.Persons_Doctor")
             {
                 return GetView10();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Persons_Doctor")
+            if (extentName == "RMSEntitiesStoreContainer.Persons_Patient")
             {
                 return GetView11();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Persons_Patient")
+            if (extentName == "RMSEntitiesStoreContainer.TransactionEntryItem")
             {
                 return GetView12();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Batches")
+            if (extentName == "RMSModel.Item")
             {
                 return GetView13();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Stations")
+            if (extentName == "RMSModel.TransactionBase")
             {
                 return GetView14();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.Stores")
+            if (extentName == "RMSModel.TransactionEntryBase")
             {
                 return GetView15();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.CashierLogs")
+            if (extentName == "RMSModel.Persons")
             {
                 return GetView16();
             }
 
-            if (extentName == "RMSEntitiesStoreContainer.TransactionEntryItem")
+            if (extentName == "RMSModel.TransactionEntryItems")
             {
                 return GetView17();
             }
 
-            if (extentName == "RMSModel.Item")
+            if (extentName == "RMSEntitiesStoreContainer.QBInventoryItems")
             {
                 return GetView18();
             }
 
-            if (extentName == "RMSModel.TransactionBase")
-            {
-                return GetView19();
-            }
-
-            if (extentName == "RMSModel.TransactionEntryBase")
-            {
-                return GetView20();
-            }
-
-            if (extentName == "RMSModel.Company")
-            {
-                return GetView21();
-            }
-
-            if (extentName == "RMSModel.Persons")
-            {
-                return GetView22();
-            }
-
-            if (extentName == "RMSModel.Batches")
-            {
-                return GetView23();
-            }
-
-            if (extentName == "RMSModel.Stations")
-            {
-                return GetView24();
-            }
-
-            if (extentName == "RMSModel.Stores")
-            {
-                return GetView25();
-            }
-
-            if (extentName == "RMSModel.CashierLogs")
-            {
-                return GetView26();
-            }
-
-            if (extentName == "RMSModel.TransactionEntryItems")
-            {
-                return GetView27();
-            }
-
-            if (extentName == "RMSEntitiesStoreContainer.QBInventoryItems")
-            {
-                return GetView28();
-            }
-
             if (extentName == "RMSModel.QBInventoryItems")
             {
-                return GetView29();
-            }
-
-            if (extentName == "RMSEntitiesStoreContainer.DoctorsView")
-            {
-                return GetView30();
-            }
-
-            if (extentName == "RMSModel.DoctorsViews")
-            {
-                return GetView31();
-            }
-
-            if (extentName == "RMSEntitiesStoreContainer.PatientView")
-            {
-                return GetView32();
-            }
-
-            if (extentName == "RMSModel.PatientViews")
-            {
-                return GetView33();
-            }
-
-            if (extentName == "RMSEntitiesStoreContainer.SearchView")
-            {
-                return GetView34();
-            }
-
-            if (extentName == "RMSModel.SearchView1")
-            {
-                return GetView35();
-            }
-
-            if (extentName == "RMSEntitiesStoreContainer.TransactionsView")
-            {
-                return GetView36();
-            }
-
-            if (extentName == "RMSModel.TransactionsView1")
-            {
-                return GetView37();
+                return GetView19();
             }
 
             return null;
@@ -352,12 +262,13 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing TransactionBase_Prescription
-        [RMSEntities.Store.TransactionBase_Prescription](T1.[TransactionBase_Prescription.DoctorId], T1.[TransactionBase_Prescription.PatientId], T1.[TransactionBase_Prescription.TransactionId])
+        [RMSEntities.Store.TransactionBase_Prescription](T1.[TransactionBase_Prescription.DoctorId], T1.[TransactionBase_Prescription.PatientId], T1.[TransactionBase_Prescription.TransactionId], T1.[TransactionBase_Prescription.ParentPrescriptionId])
     FROM (
         SELECT 
             TREAT(T AS [RMSEntities.Prescription]).DoctorId AS [TransactionBase_Prescription.DoctorId], 
             TREAT(T AS [RMSEntities.Prescription]).PatientId AS [TransactionBase_Prescription.PatientId], 
             T.TransactionId AS [TransactionBase_Prescription.TransactionId], 
+            TREAT(T AS [RMSEntities.Prescription]).ParentPrescriptionId AS [TransactionBase_Prescription.ParentPrescriptionId], 
             True AS _from0
         FROM RMSModel.TransactionBase AS T
         WHERE T IS OF (ONLY [RMSEntities.Prescription])
@@ -418,13 +329,14 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing TransactionEntryBase_PrescriptionEntry
-        [RMSEntities.Store.TransactionEntryBase_PrescriptionEntry](T1.[TransactionEntryBase_PrescriptionEntry.Dosage], T1.[TransactionEntryBase_PrescriptionEntry.ExpiryDate], T1.[TransactionEntryBase_PrescriptionEntry.TransactionEntryId], T1.[TransactionEntryBase_PrescriptionEntry.Repeat])
+        [RMSEntities.Store.TransactionEntryBase_PrescriptionEntry](T1.[TransactionEntryBase_PrescriptionEntry.Dosage], T1.[TransactionEntryBase_PrescriptionEntry.ExpiryDate], T1.[TransactionEntryBase_PrescriptionEntry.TransactionEntryId], T1.[TransactionEntryBase_PrescriptionEntry.Repeat], T1.[TransactionEntryBase_PrescriptionEntry.RepeatQuantity])
     FROM (
         SELECT 
             TREAT(T AS [RMSEntities.PrescriptionEntry]).Dosage AS [TransactionEntryBase_PrescriptionEntry.Dosage], 
             TREAT(T AS [RMSEntities.PrescriptionEntry]).ExpiryDate AS [TransactionEntryBase_PrescriptionEntry.ExpiryDate], 
             T.TransactionEntryId AS [TransactionEntryBase_PrescriptionEntry.TransactionEntryId], 
             TREAT(T AS [RMSEntities.PrescriptionEntry]).Repeat AS [TransactionEntryBase_PrescriptionEntry.Repeat], 
+            TREAT(T AS [RMSEntities.PrescriptionEntry]).RepeatQuantity AS [TransactionEntryBase_PrescriptionEntry.RepeatQuantity], 
             True AS _from0
         FROM RMSModel.TransactionEntryBase AS T
         WHERE T IS OF (ONLY [RMSEntities.PrescriptionEntry])
@@ -432,34 +344,10 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.Company.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView8()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Company
-        [RMSEntities.Store.Company](T1.Company_CompanyId, T1.Company_CompanyName, T1.Company_Address, T1.Company_Address1, T1.Company_SoftwareName, T1.Company_PhoneNumber, T1.Company_Motto, T1.Company_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.CompanyId AS Company_CompanyId, 
-            T.CompanyName AS Company_CompanyName, 
-            T.Address AS Company_Address, 
-            T.Address1 AS Company_Address1, 
-            T.SoftwareName AS Company_SoftwareName, 
-            T.PhoneNumber AS Company_PhoneNumber, 
-            T.Motto AS Company_Motto, 
-            T.EntryTimeStamp AS Company_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSModel.Company AS T
-    ) AS T1");
-        }
-
-        /// <summary>
         /// Gets the view for RMSEntitiesStoreContainer.Persons.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView9()
+        private static DbMappingView GetView8()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Persons
@@ -486,7 +374,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSEntitiesStoreContainer.Persons_Cashier.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView10()
+        private static DbMappingView GetView9()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Persons_Cashier
@@ -508,15 +396,16 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSEntitiesStoreContainer.Persons_Doctor.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView11()
+        private static DbMappingView GetView10()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Persons_Doctor
-        [RMSEntities.Store.Persons_Doctor](T1.[Persons_Doctor.Code], T1.[Persons_Doctor.Id])
+        [RMSEntities.Store.Persons_Doctor](T1.[Persons_Doctor.Code], T1.[Persons_Doctor.Id], T1.[Persons_Doctor.Discount])
     FROM (
         SELECT 
             TREAT(T AS [RMSEntities.Doctor]).Code AS [Persons_Doctor.Code], 
             T.Id AS [Persons_Doctor.Id], 
+            TREAT(T AS [RMSEntities.Doctor]).Discount AS [Persons_Doctor.Discount], 
             True AS _from0
         FROM RMSModel.Persons AS T
         WHERE T IS OF (ONLY [RMSEntities.Doctor])
@@ -527,7 +416,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSEntitiesStoreContainer.Persons_Patient.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView12()
+        private static DbMappingView GetView11()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Persons_Patient
@@ -545,110 +434,10 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.Batches.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView13()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Batches
-        [RMSEntities.Store.Batches](T1.Batches_BatchId, T1.Batches_OpeningCash, T1.Batches_EndingCash, T1.Batches_OpeningTime, T1.Batches_ClosingTime, T1.Batches_TotalTender, T1.Batches_TotalChange, T1.Batches_Status, T1.Batches_StationId, T1.Batches_OpeningCashier, T1.Batches_ClosingCashier, T1.Batches_Sales, T1.Batches_OpenTransactions, T1.Batches_CloseTransactions, T1.Batches_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.BatchId AS Batches_BatchId, 
-            T.OpeningCash AS Batches_OpeningCash, 
-            T.EndingCash AS Batches_EndingCash, 
-            T.OpeningTime AS Batches_OpeningTime, 
-            T.ClosingTime AS Batches_ClosingTime, 
-            T.TotalTender AS Batches_TotalTender, 
-            T.TotalChange AS Batches_TotalChange, 
-            T.Status AS Batches_Status, 
-            T.StationId AS Batches_StationId, 
-            T.OpeningCashier AS Batches_OpeningCashier, 
-            T.ClosingCashier AS Batches_ClosingCashier, 
-            T.Sales AS Batches_Sales, 
-            T.OpenTransactions AS Batches_OpenTransactions, 
-            T.CloseTransactions AS Batches_CloseTransactions, 
-            T.EntryTimeStamp AS Batches_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSModel.Batches AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.Stations.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView14()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Stations
-        [RMSEntities.Store.Stations](T1.Stations_StationId, T1.Stations_StationCode, T1.Stations_StoreId, T1.Stations_ReceiptPrinterName, T1.Stations_MachineName, T1.Stations_PrintServer, T1.Stations_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.StationId AS Stations_StationId, 
-            T.StationCode AS Stations_StationCode, 
-            T.StoreId AS Stations_StoreId, 
-            T.ReceiptPrinterName AS Stations_ReceiptPrinterName, 
-            T.MachineName AS Stations_MachineName, 
-            T.PrintServer AS Stations_PrintServer, 
-            T.EntryTimeStamp AS Stations_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSModel.Stations AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.Stores.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView15()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Stores
-        [RMSEntities.Store.Stores](T1.Stores_StoreId, T1.Stores_StoreCode, T1.Stores_StoreAddress, T1.Stores_CompanyId, T1.Stores_TransactionSeed, T1.Stores_SeedTransaction, T1.Stores_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.StoreId AS Stores_StoreId, 
-            T.StoreCode AS Stores_StoreCode, 
-            T.StoreAddress AS Stores_StoreAddress, 
-            T.CompanyId AS Stores_CompanyId, 
-            T.TransactionSeed AS Stores_TransactionSeed, 
-            T.SeedTransaction AS Stores_SeedTransaction, 
-            T.EntryTimeStamp AS Stores_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSModel.Stores AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.CashierLogs.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView16()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing CashierLogs
-        [RMSEntities.Store.CashierLogs](T1.CashierLogs_CashierLogId, T1.CashierLogs_MachineName, T1.CashierLogs_LoginTime, T1.CashierLogs_LogoutTime, T1.CashierLogs_Status, T1.CashierLogs_PersonId, T1.CashierLogs_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.CashierLogId AS CashierLogs_CashierLogId, 
-            T.MachineName AS CashierLogs_MachineName, 
-            T.LoginTime AS CashierLogs_LoginTime, 
-            T.LogoutTime AS CashierLogs_LogoutTime, 
-            T.Status AS CashierLogs_Status, 
-            T.PersonId AS CashierLogs_PersonId, 
-            T.EntryTimeStamp AS CashierLogs_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSModel.CashierLogs AS T
-    ) AS T1");
-        }
-
-        /// <summary>
         /// Gets the view for RMSEntitiesStoreContainer.TransactionEntryItem.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView17()
+        private static DbMappingView GetView12()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing TransactionEntryItem
@@ -669,7 +458,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSModel.Item.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView18()
+        private static DbMappingView GetView13()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Item
@@ -725,17 +514,17 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSModel.TransactionBase.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView19()
+        private static DbMappingView GetView14()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing TransactionBase
         CASE
             WHEN (NOT(T4._from1) AND NOT(T4._from2)) THEN [RMSEntities.TransactionBase](T4.TransactionBase_StationId, T4.TransactionBase_BatchId, T4.TransactionBase_CloseBatchId, T4.TransactionBase_Time, T4.TransactionBase_CustomerId, T4.TransactionBase_CashierId, T4.TransactionBase_Comment, T4.TransactionBase_ReferenceNumber, T4.TransactionBase_StoreCode, T4.TransactionBase_TransactionId, T4.TransactionBase_OpenClose, T4.TransactionBase_PharmacistId, T4.TransactionBase_Status, T4.TransactionBase_EntryTimeStamp)
-            WHEN T4._from1 THEN [RMSEntities.Prescription](T4.TransactionBase_StationId, T4.TransactionBase_BatchId, T4.TransactionBase_CloseBatchId, T4.TransactionBase_Time, T4.TransactionBase_CustomerId, T4.TransactionBase_CashierId, T4.TransactionBase_Comment, T4.TransactionBase_ReferenceNumber, T4.TransactionBase_StoreCode, T4.TransactionBase_TransactionId, T4.TransactionBase_OpenClose, T4.TransactionBase_PharmacistId, T4.TransactionBase_Status, T4.TransactionBase_EntryTimeStamp, T4.Prescription_DoctorId, T4.Prescription_PatientId)
+            WHEN T4._from1 THEN [RMSEntities.Prescription](T4.TransactionBase_StationId, T4.TransactionBase_BatchId, T4.TransactionBase_CloseBatchId, T4.TransactionBase_Time, T4.TransactionBase_CustomerId, T4.TransactionBase_CashierId, T4.TransactionBase_Comment, T4.TransactionBase_ReferenceNumber, T4.TransactionBase_StoreCode, T4.TransactionBase_TransactionId, T4.TransactionBase_OpenClose, T4.TransactionBase_PharmacistId, T4.TransactionBase_Status, T4.TransactionBase_EntryTimeStamp, T4.Prescription_DoctorId, T4.Prescription_PatientId, T4.Prescription_ParentPrescriptionId)
             ELSE [RMSEntities.QuickPrescription](T4.TransactionBase_StationId, T4.TransactionBase_BatchId, T4.TransactionBase_CloseBatchId, T4.TransactionBase_Time, T4.TransactionBase_CustomerId, T4.TransactionBase_CashierId, T4.TransactionBase_Comment, T4.TransactionBase_ReferenceNumber, T4.TransactionBase_StoreCode, T4.TransactionBase_TransactionId, T4.TransactionBase_OpenClose, T4.TransactionBase_PharmacistId, T4.TransactionBase_Status, T4.TransactionBase_EntryTimeStamp)
         END
     FROM (
-        SELECT T1.TransactionBase_StationId, T1.TransactionBase_BatchId, T1.TransactionBase_CloseBatchId, T1.TransactionBase_Time, T1.TransactionBase_CustomerId, T1.TransactionBase_CashierId, T1.TransactionBase_Comment, T1.TransactionBase_ReferenceNumber, T1.TransactionBase_StoreCode, T1.TransactionBase_TransactionId, T1.TransactionBase_OpenClose, T1.TransactionBase_PharmacistId, T1.TransactionBase_Status, T1.TransactionBase_EntryTimeStamp, T2.Prescription_DoctorId, T2.Prescription_PatientId, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1, (T3._from2 AND T3._from2 IS NOT NULL) AS _from2
+        SELECT T1.TransactionBase_StationId, T1.TransactionBase_BatchId, T1.TransactionBase_CloseBatchId, T1.TransactionBase_Time, T1.TransactionBase_CustomerId, T1.TransactionBase_CashierId, T1.TransactionBase_Comment, T1.TransactionBase_ReferenceNumber, T1.TransactionBase_StoreCode, T1.TransactionBase_TransactionId, T1.TransactionBase_OpenClose, T1.TransactionBase_PharmacistId, T1.TransactionBase_Status, T1.TransactionBase_EntryTimeStamp, T2.Prescription_DoctorId, T2.Prescription_PatientId, T2.Prescription_ParentPrescriptionId, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1, (T3._from2 AND T3._from2 IS NOT NULL) AS _from2
         FROM  (
             SELECT 
                 T.StationId AS TransactionBase_StationId, 
@@ -759,6 +548,7 @@ namespace Edm_EntityMappingGeneratedViews
                 T.TransactionId AS TransactionBase_TransactionId, 
                 T.DoctorId AS Prescription_DoctorId, 
                 T.PatientId AS Prescription_PatientId, 
+                T.ParentPrescriptionId AS Prescription_ParentPrescriptionId, 
                 True AS _from1
             FROM RMSEntitiesStoreContainer.TransactionBase_Prescription AS T) AS T2
             ON T1.TransactionBase_TransactionId = T2.TransactionBase_TransactionId
@@ -775,16 +565,16 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSModel.TransactionEntryBase.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView20()
+        private static DbMappingView GetView15()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing TransactionEntryBase
         CASE
             WHEN NOT(T3._from1) THEN [RMSEntities.TransactionEntryBase](T3.TransactionEntryBase_StoreID, T3.TransactionEntryBase_TransactionEntryId, T3.TransactionEntryBase_TransactionId, T3.TransactionEntryBase_Quantity, T3.TransactionEntryBase_Taxable, T3.TransactionEntryBase_Comment, T3.TransactionEntryBase_TransactionTime, T3.TransactionEntryBase_SalesTaxPercent, T3.TransactionEntryBase_Discount, T3.TransactionEntryBase_EntryNumber, T3.TransactionEntryBase_EntryTimeStamp, T3.TransactionEntryBase_Price)
-            ELSE [RMSEntities.PrescriptionEntry](T3.TransactionEntryBase_StoreID, T3.TransactionEntryBase_TransactionEntryId, T3.TransactionEntryBase_TransactionId, T3.TransactionEntryBase_Quantity, T3.TransactionEntryBase_Taxable, T3.TransactionEntryBase_Comment, T3.TransactionEntryBase_TransactionTime, T3.TransactionEntryBase_SalesTaxPercent, T3.TransactionEntryBase_Discount, T3.TransactionEntryBase_EntryNumber, T3.TransactionEntryBase_EntryTimeStamp, T3.TransactionEntryBase_Price, T3.PrescriptionEntry_Dosage, T3.PrescriptionEntry_ExpiryDate, T3.PrescriptionEntry_Repeat)
+            ELSE [RMSEntities.PrescriptionEntry](T3.TransactionEntryBase_StoreID, T3.TransactionEntryBase_TransactionEntryId, T3.TransactionEntryBase_TransactionId, T3.TransactionEntryBase_Quantity, T3.TransactionEntryBase_Taxable, T3.TransactionEntryBase_Comment, T3.TransactionEntryBase_TransactionTime, T3.TransactionEntryBase_SalesTaxPercent, T3.TransactionEntryBase_Discount, T3.TransactionEntryBase_EntryNumber, T3.TransactionEntryBase_EntryTimeStamp, T3.TransactionEntryBase_Price, T3.PrescriptionEntry_Dosage, T3.PrescriptionEntry_ExpiryDate, T3.PrescriptionEntry_Repeat, T3.PrescriptionEntry_RepeatQuantity)
         END
     FROM (
-        SELECT T1.TransactionEntryBase_StoreID, T1.TransactionEntryBase_TransactionEntryId, T1.TransactionEntryBase_TransactionId, T1.TransactionEntryBase_Quantity, T1.TransactionEntryBase_Taxable, T1.TransactionEntryBase_Comment, T1.TransactionEntryBase_TransactionTime, T1.TransactionEntryBase_SalesTaxPercent, T1.TransactionEntryBase_Discount, T1.TransactionEntryBase_EntryNumber, T1.TransactionEntryBase_EntryTimeStamp, T1.TransactionEntryBase_Price, T2.PrescriptionEntry_Dosage, T2.PrescriptionEntry_ExpiryDate, T2.PrescriptionEntry_Repeat, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1
+        SELECT T1.TransactionEntryBase_StoreID, T1.TransactionEntryBase_TransactionEntryId, T1.TransactionEntryBase_TransactionId, T1.TransactionEntryBase_Quantity, T1.TransactionEntryBase_Taxable, T1.TransactionEntryBase_Comment, T1.TransactionEntryBase_TransactionTime, T1.TransactionEntryBase_SalesTaxPercent, T1.TransactionEntryBase_Discount, T1.TransactionEntryBase_EntryNumber, T1.TransactionEntryBase_EntryTimeStamp, T1.TransactionEntryBase_Price, T2.PrescriptionEntry_Dosage, T2.PrescriptionEntry_ExpiryDate, T2.PrescriptionEntry_Repeat, T2.PrescriptionEntry_RepeatQuantity, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1
         FROM  (
             SELECT 
                 T.StoreID AS TransactionEntryBase_StoreID, 
@@ -807,6 +597,7 @@ namespace Edm_EntityMappingGeneratedViews
                 T.Dosage AS PrescriptionEntry_Dosage, 
                 T.ExpiryDate AS PrescriptionEntry_ExpiryDate, 
                 T.Repeat AS PrescriptionEntry_Repeat, 
+                T.RepeatQuantity AS PrescriptionEntry_RepeatQuantity, 
                 True AS _from1
             FROM RMSEntitiesStoreContainer.TransactionEntryBase_PrescriptionEntry AS T) AS T2
             ON T1.TransactionEntryBase_TransactionEntryId = T2.TransactionEntryBase_TransactionEntryId
@@ -814,45 +605,21 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for RMSModel.Company.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView21()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Company
-        [RMSEntities.Company](T1.Company_CompanyId, T1.Company_CompanyName, T1.Company_Address, T1.Company_Address1, T1.Company_SoftwareName, T1.Company_PhoneNumber, T1.Company_Motto, T1.Company_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.CompanyId AS Company_CompanyId, 
-            T.CompanyName AS Company_CompanyName, 
-            T.Address AS Company_Address, 
-            T.Address1 AS Company_Address1, 
-            T.SoftwareName AS Company_SoftwareName, 
-            T.PhoneNumber AS Company_PhoneNumber, 
-            T.Motto AS Company_Motto, 
-            T.EntryTimeStamp AS Company_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.Company AS T
-    ) AS T1");
-        }
-
-        /// <summary>
         /// Gets the view for RMSModel.Persons.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView22()
+        private static DbMappingView GetView16()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Persons
         CASE
             WHEN (NOT(T5._from1) AND NOT(T5._from2) AND NOT(T5._from3)) THEN [RMSEntities.Person](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp)
             WHEN T5._from1 THEN [RMSEntities.Cashier](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Cashier_SPassword, T5.Cashier_LoginName, T5.Cashier_Role, T5.Cashier_Initials)
-            WHEN T5._from3 THEN [RMSEntities.Doctor](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Doctor_Code)
+            WHEN T5._from3 THEN [RMSEntities.Doctor](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Doctor_Code, T5.Doctor_Discount)
             ELSE [RMSEntities.Patient](T5.Person_Id, T5.Person_FirstName, T5.Person_LastName, T5.Person_CompanyName, T5.Person_Salutation, T5.Person_Address, T5.Person_PhoneNumber, T5.Person_InActive, T5.Person_Sex, T5.Person_DOB, T5.Person_EntryTimeStamp, T5.Patient_Allergies, T5.Patient_Guardian, T5.Patient_Discount)
         END
     FROM (
-        SELECT T1.Person_Id, T1.Person_FirstName, T1.Person_LastName, T1.Person_CompanyName, T1.Person_Salutation, T1.Person_Address, T1.Person_PhoneNumber, T1.Person_InActive, T1.Person_Sex, T1.Person_DOB, T1.Person_EntryTimeStamp, T2.Cashier_SPassword, T2.Cashier_LoginName, T2.Cashier_Role, T2.Cashier_Initials, T3.Doctor_Code, T4.Patient_Allergies, T4.Patient_Guardian, T4.Patient_Discount, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1, (T4._from2 AND T4._from2 IS NOT NULL) AS _from2, (T3._from3 AND T3._from3 IS NOT NULL) AS _from3
+        SELECT T1.Person_Id, T1.Person_FirstName, T1.Person_LastName, T1.Person_CompanyName, T1.Person_Salutation, T1.Person_Address, T1.Person_PhoneNumber, T1.Person_InActive, T1.Person_Sex, T1.Person_DOB, T1.Person_EntryTimeStamp, T2.Cashier_SPassword, T2.Cashier_LoginName, T2.Cashier_Role, T2.Cashier_Initials, T3.Doctor_Code, T3.Doctor_Discount, T4.Patient_Allergies, T4.Patient_Guardian, T4.Patient_Discount, T1._from0, (T2._from1 AND T2._from1 IS NOT NULL) AS _from1, (T4._from2 AND T4._from2 IS NOT NULL) AS _from2, (T3._from3 AND T3._from3 IS NOT NULL) AS _from3
         FROM  (
             SELECT 
                 T.Id AS Person_Id, 
@@ -882,6 +649,7 @@ namespace Edm_EntityMappingGeneratedViews
             SELECT 
                 T.Id AS Person_Id, 
                 T.Code AS Doctor_Code, 
+                T.Discount AS Doctor_Discount, 
                 True AS _from3
             FROM RMSEntitiesStoreContainer.Persons_Doctor AS T) AS T3
             ON T1.Person_Id = T3.Person_Id
@@ -898,110 +666,10 @@ namespace Edm_EntityMappingGeneratedViews
         }
 
         /// <summary>
-        /// Gets the view for RMSModel.Batches.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView23()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Batches
-        [RMSEntities.Batch](T1.Batch_BatchId, T1.Batch_OpeningCash, T1.Batch_EndingCash, T1.Batch_OpeningTime, T1.Batch_ClosingTime, T1.Batch_TotalTender, T1.Batch_TotalChange, T1.Batch_Status, T1.Batch_StationId, T1.Batch_OpeningCashier, T1.Batch_ClosingCashier, T1.Batch_Sales, T1.Batch_OpenTransactions, T1.Batch_CloseTransactions, T1.Batch_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.BatchId AS Batch_BatchId, 
-            T.OpeningCash AS Batch_OpeningCash, 
-            T.EndingCash AS Batch_EndingCash, 
-            T.OpeningTime AS Batch_OpeningTime, 
-            T.ClosingTime AS Batch_ClosingTime, 
-            T.TotalTender AS Batch_TotalTender, 
-            T.TotalChange AS Batch_TotalChange, 
-            T.Status AS Batch_Status, 
-            T.StationId AS Batch_StationId, 
-            T.OpeningCashier AS Batch_OpeningCashier, 
-            T.ClosingCashier AS Batch_ClosingCashier, 
-            T.Sales AS Batch_Sales, 
-            T.OpenTransactions AS Batch_OpenTransactions, 
-            T.CloseTransactions AS Batch_CloseTransactions, 
-            T.EntryTimeStamp AS Batch_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.Batches AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.Stations.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView24()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Stations
-        [RMSEntities.Station](T1.Station_StationId, T1.Station_StationCode, T1.Station_StoreId, T1.Station_ReceiptPrinterName, T1.Station_MachineName, T1.Station_PrintServer, T1.Station_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.StationId AS Station_StationId, 
-            T.StationCode AS Station_StationCode, 
-            T.StoreId AS Station_StoreId, 
-            T.ReceiptPrinterName AS Station_ReceiptPrinterName, 
-            T.MachineName AS Station_MachineName, 
-            T.PrintServer AS Station_PrintServer, 
-            T.EntryTimeStamp AS Station_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.Stations AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.Stores.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView25()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing Stores
-        [RMSEntities.Store](T1.Store_StoreId, T1.Store_StoreCode, T1.Store_StoreAddress, T1.Store_CompanyId, T1.Store_TransactionSeed, T1.Store_SeedTransaction, T1.Store_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.StoreId AS Store_StoreId, 
-            T.StoreCode AS Store_StoreCode, 
-            T.StoreAddress AS Store_StoreAddress, 
-            T.CompanyId AS Store_CompanyId, 
-            T.TransactionSeed AS Store_TransactionSeed, 
-            T.SeedTransaction AS Store_SeedTransaction, 
-            T.EntryTimeStamp AS Store_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.Stores AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.CashierLogs.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView26()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing CashierLogs
-        [RMSEntities.CashierLog](T1.CashierLog_CashierLogId, T1.CashierLog_MachineName, T1.CashierLog_LoginTime, T1.CashierLog_LogoutTime, T1.CashierLog_Status, T1.CashierLog_PersonId, T1.CashierLog_EntryTimeStamp)
-    FROM (
-        SELECT 
-            T.CashierLogId AS CashierLog_CashierLogId, 
-            T.MachineName AS CashierLog_MachineName, 
-            T.LoginTime AS CashierLog_LoginTime, 
-            T.LogoutTime AS CashierLog_LogoutTime, 
-            T.Status AS CashierLog_Status, 
-            T.PersonId AS CashierLog_PersonId, 
-            T.EntryTimeStamp AS CashierLog_EntryTimeStamp, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.CashierLogs AS T
-    ) AS T1");
-        }
-
-        /// <summary>
         /// Gets the view for RMSModel.TransactionEntryItems.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView27()
+        private static DbMappingView GetView17()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing TransactionEntryItems
@@ -1022,7 +690,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSEntitiesStoreContainer.QBInventoryItems.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView28()
+        private static DbMappingView GetView18()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing QBInventoryItems
@@ -1049,7 +717,7 @@ namespace Edm_EntityMappingGeneratedViews
         /// Gets the view for RMSModel.QBInventoryItems.
         /// </summary>
         /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView29()
+        private static DbMappingView GetView19()
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing QBInventoryItems
@@ -1069,176 +737,6 @@ namespace Edm_EntityMappingGeneratedViews
             T.EntryTimeStamp AS QBInventoryItem_EntryTimeStamp, 
             True AS _from0
         FROM RMSEntitiesStoreContainer.QBInventoryItems AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.DoctorsView.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView30()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing DoctorsView
-        [RMSEntities.Store.DoctorsView](T1.DoctorsView_Name, T1.DoctorsView_Code, T1.DoctorsView_DoctorId)
-    FROM (
-        SELECT 
-            T.Name AS DoctorsView_Name, 
-            T.Code AS DoctorsView_Code, 
-            T.DoctorId AS DoctorsView_DoctorId, 
-            True AS _from0
-        FROM RMSModel.DoctorsViews AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.DoctorsViews.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView31()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing DoctorsViews
-        [RMSEntities.DoctorsView](T1.DoctorsView_Name, T1.DoctorsView_Code, T1.DoctorsView_DoctorId)
-    FROM (
-        SELECT 
-            T.Name AS DoctorsView_Name, 
-            T.Code AS DoctorsView_Code, 
-            T.DoctorId AS DoctorsView_DoctorId, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.DoctorsView AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.PatientView.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView32()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing PatientView
-        [RMSEntities.Store.PatientView](T1.PatientView_Name, T1.PatientView_PhoneNumber, T1.PatientView_Address, T1.PatientView_PatientId)
-    FROM (
-        SELECT 
-            T.Name AS PatientView_Name, 
-            T.PhoneNumber AS PatientView_PhoneNumber, 
-            T.Address AS PatientView_Address, 
-            T.PatientId AS PatientView_PatientId, 
-            True AS _from0
-        FROM RMSModel.PatientViews AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.PatientViews.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView33()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing PatientViews
-        [RMSEntities.PatientView](T1.PatientView_Name, T1.PatientView_PhoneNumber, T1.PatientView_Address, T1.PatientView_PatientId)
-    FROM (
-        SELECT 
-            T.Name AS PatientView_Name, 
-            T.PhoneNumber AS PatientView_PhoneNumber, 
-            T.Address AS PatientView_Address, 
-            T.PatientId AS PatientView_PatientId, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.PatientView AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.SearchView.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView34()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing SearchView
-        [RMSEntities.Store.SearchView](T1.SearchView_Time, T1.SearchView_TransactionId, T1.SearchView_ItemId, T1.SearchView_ItemInfo, T1.SearchView_PatientId, T1.SearchView_PatientInfo, T1.SearchView_DoctorId, T1.SearchView_DoctorInfo, T1.SearchView_SearchInfo)
-    FROM (
-        SELECT 
-            T.Time AS SearchView_Time, 
-            T.TransactionId AS SearchView_TransactionId, 
-            T.ItemId AS SearchView_ItemId, 
-            T.ItemInfo AS SearchView_ItemInfo, 
-            T.PatientId AS SearchView_PatientId, 
-            T.PatientInfo AS SearchView_PatientInfo, 
-            T.DoctorId AS SearchView_DoctorId, 
-            T.DoctorInfo AS SearchView_DoctorInfo, 
-            T.SearchInfo AS SearchView_SearchInfo, 
-            True AS _from0
-        FROM RMSModel.SearchView1 AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.SearchView1.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView35()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing SearchView1
-        [RMSEntities.SearchView1](T1.SearchView1_Time, T1.SearchView1_TransactionId, T1.SearchView1_ItemId, T1.SearchView1_ItemInfo, T1.SearchView1_PatientId, T1.SearchView1_PatientInfo, T1.SearchView1_DoctorId, T1.SearchView1_DoctorInfo, T1.SearchView1_SearchInfo)
-    FROM (
-        SELECT 
-            T.Time AS SearchView1_Time, 
-            T.TransactionId AS SearchView1_TransactionId, 
-            T.ItemId AS SearchView1_ItemId, 
-            T.ItemInfo AS SearchView1_ItemInfo, 
-            T.PatientId AS SearchView1_PatientId, 
-            T.PatientInfo AS SearchView1_PatientInfo, 
-            T.DoctorId AS SearchView1_DoctorId, 
-            T.DoctorInfo AS SearchView1_DoctorInfo, 
-            T.SearchInfo AS SearchView1_SearchInfo, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.SearchView AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSEntitiesStoreContainer.TransactionsView.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView36()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing TransactionsView
-        [RMSEntities.Store.TransactionsView](T1.TransactionsView_TransactionId, T1.TransactionsView_Time, T1.TransactionsView_ReferenceNumber, T1.TransactionsView_TotalSales, T1.TransactionsView_CustomerId)
-    FROM (
-        SELECT 
-            T.TransactionId AS TransactionsView_TransactionId, 
-            T.Time AS TransactionsView_Time, 
-            T.ReferenceNumber AS TransactionsView_ReferenceNumber, 
-            T.TotalSales AS TransactionsView_TotalSales, 
-            T.CustomerId AS TransactionsView_CustomerId, 
-            True AS _from0
-        FROM RMSModel.TransactionsView1 AS T
-    ) AS T1");
-        }
-
-        /// <summary>
-        /// Gets the view for RMSModel.TransactionsView1.
-        /// </summary>
-        /// <returns>The mapping view.</returns>
-        private static DbMappingView GetView37()
-        {
-            return new DbMappingView(@"
-    SELECT VALUE -- Constructing TransactionsView1
-        [RMSEntities.TransactionsView1](T1.TransactionsView1_TransactionId, T1.TransactionsView1_Time, T1.TransactionsView1_ReferenceNumber, T1.TransactionsView1_TotalSales, T1.TransactionsView1_CustomerId)
-    FROM (
-        SELECT 
-            T.TransactionId AS TransactionsView1_TransactionId, 
-            T.Time AS TransactionsView1_Time, 
-            T.ReferenceNumber AS TransactionsView1_ReferenceNumber, 
-            T.TotalSales AS TransactionsView1_TotalSales, 
-            T.CustomerId AS TransactionsView1_CustomerId, 
-            True AS _from0
-        FROM RMSEntitiesStoreContainer.TransactionsView AS T
     ) AS T1");
         }
     }

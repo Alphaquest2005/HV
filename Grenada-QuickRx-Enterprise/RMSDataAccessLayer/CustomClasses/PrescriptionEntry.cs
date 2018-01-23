@@ -19,7 +19,11 @@ namespace RMSDataAccessLayer
         private void PrescriptionEntry_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if(e.PropertyName == nameof(Quantity)) NotifyPropertyChanged(nameof(RepeatInfo));
-            if (e.PropertyName == nameof(Repeat)) NotifyPropertyChanged(nameof(RepeatInfo));
+            if (e.PropertyName == nameof(Repeat))
+            {
+                if (Quantity > 0 && RepeatQuantity.HasValue == false) RepeatQuantity = Convert.ToInt32(Quantity);
+                NotifyPropertyChanged(nameof(RepeatInfo));
+            }
             if (e.PropertyName == nameof(RepeatQuantity)) NotifyPropertyChanged(nameof(RepeatInfo));
         }
 

@@ -126,13 +126,13 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Client, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\TrackableEntities.Client.2.5.6.1\lib\net45\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\..\..\..\packages\TrackableEntities.Client.2.5.7\lib\net45\TrackableEntities.Client.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Common, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\TrackableEntities.Common.2.5.6.1\lib\portable40-net40+sl5+win8+wp8+wpa81\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\..\..\..\packages\TrackableEntities.Common.2.5.7\lib\portable40-net40+sl5+win8+wp8+wpa81\TrackableEntities.Common.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.EF.6, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\TrackableEntities.EF.6.2.5.6.1\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <HintPath>..\..\..\..\packages\TrackableEntities.EF.6.2.5.7\lib\net45\TrackableEntities.EF.6.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
       <Private>True</Private>

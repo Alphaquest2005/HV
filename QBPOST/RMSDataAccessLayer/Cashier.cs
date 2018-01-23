@@ -26,15 +26,14 @@ namespace RMSDataAccessLayer
         public Cashier()
         {
             this.TransactionBase = new ObservableCollection<TransactionBase>();
-            this.CashierLog = new ObservableCollection<CashierLog>();
-            this.Batch = new ObservableCollection<Batch>();
-            this.Batch1 = new ObservableCollection<Batch>();
             this.TransactionBases1 = new ObservableCollection<TransactionBase>();
             CustomStartup();
+            CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
             
         }
         partial void CustomStartup();
+        partial void CustomStartup2();
     
             private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
@@ -44,22 +43,7 @@ namespace RMSDataAccessLayer
                 }
             }
     
-            ChangeTrackingCollection<Cashier> _changeTracker;
-    
-            [NotMapped]
-            [IgnoreDataMember]
-            public ChangeTrackingCollection<Cashier> ChangeTracker
-            {
-                get
-                {
-                    return _changeTracker;
-                }
-            }
             
-            public void StartTracking()
-            {
-                _changeTracker = new ChangeTrackingCollection<Cashier>(this);
-            }
         [DataMember]
         	public string SPassword
     	{ 
@@ -126,42 +110,6 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private ObservableCollection<TransactionBase> _TransactionBase;
-        [DataMember]
-    	public ObservableCollection<CashierLog> CashierLog
-    	{
-    		get { return _CashierLog; }
-    		set
-    		{
-    			if (Equals(value, _CashierLog)) return;
-    			_CashierLog = value;
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private ObservableCollection<CashierLog> _CashierLog;
-        [DataMember]
-    	public ObservableCollection<Batch> Batch
-    	{
-    		get { return _Batch; }
-    		set
-    		{
-    			if (Equals(value, _Batch)) return;
-    			_Batch = value;
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private ObservableCollection<Batch> _Batch;
-        [DataMember]
-    	public ObservableCollection<Batch> Batch1
-    	{
-    		get { return _Batch1; }
-    		set
-    		{
-    			if (Equals(value, _Batch1)) return;
-    			_Batch1 = value;
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private ObservableCollection<Batch> _Batch1;
         [DataMember]
     	public ObservableCollection<TransactionBase> TransactionBases1
     	{
