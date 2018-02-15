@@ -258,7 +258,7 @@
         <!--<wd:ListCollectionView x:Key="SearchLstView" Source="{StaticResource SearchLst}" />-->
 
 
-
+        <local:NotParentPrescriptionVisbilityConverter x:Key="ParentPrescriptionVisbilityConverter"/>
 
 
         <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
@@ -379,6 +379,7 @@
                          FontFamily="DS-Digital"
                          FontSize="16"
                          FontWeight="Bold"
+                         Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
                          Foreground="#FFD7D7D7"
                          RenderTransformOrigin="0.488,0.466"
                          Text="{Binding Repeat,
@@ -397,6 +398,7 @@
                            Foreground="White"
                            LineHeight="13.333"
                            LineStackingStrategy="BlockLineHeight"
+                           Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
                            Text="Repeat"
                            TextWrapping="Wrap" />
                 <TextBlock x:Name="PriceTxt_Copy1"
@@ -435,6 +437,7 @@
             Foreground="White"
             LineHeight="13.333"
             LineStackingStrategy="BlockLineHeight"
+                           Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
             Text="x"
             TextWrapping="Wrap" />
                 <TextBox x:Name="PriceTxt_Copy2"
@@ -447,6 +450,7 @@
             FontFamily="DS-Digital"
             FontSize="16"
             FontWeight="Bold"
+                         Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
             Foreground="#FFD7D7D7"
             RenderTransformOrigin="0.488,0.466"
             Text="{Binding RepeatQuantity, Mode=TwoWay, StringFormat=n0, TargetNullValue={x:Static sys:String.Empty}, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
@@ -1275,7 +1279,7 @@
                                               MaxHeight="400"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
-                                              ItemsSource="{Binding TransactionEntries}"
+                                              ItemsSource="{Binding TransactionEntries, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                               LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated"
                                               ScrollViewer.CanContentScroll="False"
                                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -1766,7 +1770,7 @@
                                 <Canvas>
                                     <ListView x:Name="PrescriptionEntriesRptLst"
                                               MaxHeight="400"
-                                              ItemsSource="{Binding TransactionEntries}"
+                                              ItemsSource="{Binding TransactionEntries, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                               LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated"
                                               ScrollViewer.CanContentScroll="False"
                                               ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -2025,6 +2029,17 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+            <TextBox  Margin="700,0,0,0"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Width="350"
+                      Height="200"
+                      Text="{Binding Instance.TransactionData.CurrentTransactionEntry.Comment,
+                                                     Mode=TwoWay,
+                                                    TargetNullValue='Comments',
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                     Source={StaticResource SalesVMDataSource}}"
+                />
 
             <ListView x:Name="SearchListCtl"
                       Grid.ColumnSpan="2"

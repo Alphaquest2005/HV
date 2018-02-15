@@ -71,9 +71,9 @@ namespace LeftRegion
         }
 
         
-        public void AutoRepeat()
+        public void AutoRepeat(TransactionBase transactionData)
         {
-            SalesVM.Instance.AutoRepeat();
+            SalesVM.Instance.AutoRepeat(transactionData);
         }
 
         
@@ -282,7 +282,7 @@ namespace LeftRegion
 
         //+ ToDo: Replace this with your own data fields
         private RMSDataAccessLayer.TransactionBase transactionData;
-        private int listCount = 500;
+        private int listCount = 20;
         
         public RMSDataAccessLayer.TransactionBase TransactionData
         {

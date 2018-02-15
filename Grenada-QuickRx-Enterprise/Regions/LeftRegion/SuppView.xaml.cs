@@ -73,21 +73,21 @@ namespace LeftRegion
             }
         }
 
-        private Prescription GetTransactionData(Prescription searchView)
-        {
-            using (var ctx = new RMSModel())
-            {
-                return ctx.TransactionBase.OfType<Prescription>()
-                      .Include(x => x.Prescriptions)
-                      .Include("ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                      .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
-                      .Include(x => x.TransactionEntries)
-                    .Include("TransactionEntries.TransactionEntryItem")
-                      .Include(x => x.Patient)
-                      .Include(x => x.Doctor)
-                    .FirstOrDefault(x => x.TransactionId == searchView.TransactionId);
-            }
-        }
+        //private Prescription GetTransactionData(Prescription searchView)
+        //{
+        //    using (var ctx = new RMSModel())
+        //    {
+        //        return ctx.TransactionBase.OfType<Prescription>()
+        //              .Include(x => x.Prescriptions)
+        //              .Include("ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
+        //              .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
+        //              .Include(x => x.TransactionEntries)
+        //            .Include("TransactionEntries.TransactionEntryItem")
+        //              .Include(x => x.Patient)
+        //              .Include(x => x.Doctor)
+        //            .FirstOrDefault(x => x.TransactionId == searchView.TransactionId);
+        //    }
+        //}
 
 
         private void AutoRepeatBtn_Click(object sender, RoutedEventArgs e)
@@ -95,8 +95,13 @@ namespace LeftRegion
             if (tvm == null) return;
             var i = sender as FrameworkElement;
             if (i != null)
-                tvm.TransactionData = GetTransactionData((Prescription)i.DataContext);
-            tvm.AutoRepeat();
+            {
+                var p = (Prescription) i.DataContext; //GetTransactionData()
+                var rp = p.ParentPrescription == null ? p : p.ParentPrescription;
+                tvm.TransactionData = rp;
+               tvm.AutoRepeat(rp);
+            }
+
         }
 
 
@@ -106,7 +111,7 @@ namespace LeftRegion
             {
                 var frameworkElement = sender as FrameworkElement;
                 if (frameworkElement != null)
-                    tvm.TransactionData = GetTransactionData((Prescription)frameworkElement.DataContext);
+                    tvm.TransactionData = (Prescription)frameworkElement.DataContext;//GetTransactionData()
             }
             e.Handled = true;
         }
@@ -117,7 +122,7 @@ namespace LeftRegion
             {
                 var frameworkElement = sender as FrameworkElement;
                 if (frameworkElement != null)
-                    tvm.TransactionData = GetTransactionData((Prescription)frameworkElement.DataContext);
+                    tvm.TransactionData = (Prescription)frameworkElement.DataContext;//GetTransactionData()
                 tvm.CopyPrescription();
             }
         }

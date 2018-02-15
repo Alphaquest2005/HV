@@ -21,4 +21,16 @@ namespace SalesRegion
             throw new NotImplementedException();
         }
     }
+    public class NotParentPrescriptionVisbilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is int i ? (i > 0 ? Visibility.Hidden : Visibility.Visible) : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

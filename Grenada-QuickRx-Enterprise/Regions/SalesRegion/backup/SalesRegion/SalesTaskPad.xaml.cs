@@ -510,7 +510,14 @@ namespace SalesRegion
                     {
                         var fi =
                             (FrameworkElement) plist.ItemContainerGenerator.ContainerFromItem(itm);
-                        if (fi != null) PrintEntry(fi, itm);
+                        if (fi != null)
+                        {
+                            PrintEntry(fi, itm);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Print error! Please check prints and reprint and also tell joseph you saw this error in TaskPad.");
+                        }
                     }
                 }
             }
@@ -719,6 +726,7 @@ namespace SalesRegion
                     Cashier c = (e.AddedItems[0] as Cashier);
                     if (c != null && SalesVM.Instance.TransactionData != null)
                         SalesVM.Instance.TransactionData.PharmacistId = c.Id;
+                    SalesVM.Instance.SaveTransaction();
                 }
             }
             catch (Exception ex)

@@ -42,7 +42,8 @@ namespace RMSDataAccessLayer
                {
                    return value + "-" + EntryNumber.ToString();
                }
-           }
+               
+            }
            set { NotifyPropertyChanged("TransactionEntryNumber"); }
        }
         [NotMapped]
