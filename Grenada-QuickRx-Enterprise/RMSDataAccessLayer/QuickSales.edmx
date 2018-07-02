@@ -190,6 +190,7 @@
           <Property Name="OpenClose" Type="bit" Nullable="false" />
           <Property Name="Status" Type="varchar" MaxLength="50" />
           <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="ParentTransactionId" Type="int" />
         </EntityType>
         <EntityType Name="TransactionBase_Prescription">
           <Key>
@@ -198,7 +199,6 @@
           <Property Name="DoctorId" Type="int" Nullable="false" />
           <Property Name="PatientId" Type="int" Nullable="false" />
           <Property Name="TransactionId" Type="int" Nullable="false" />
-          <Property Name="ParentPrescriptionId" Type="int" />
         </EntityType>
         <EntityType Name="TransactionBase_QuickPrescription">
           <Key>
@@ -216,7 +216,7 @@
           <Property Name="Price" Type="float" Nullable="false" />
           <Property Name="Quantity" Type="float" Nullable="false" />
           <Property Name="Taxable" Type="bit" Nullable="false" />
-          <Property Name="Comment" Type="nvarchar" MaxLength="255" />
+          <Property Name="Comment" Type="nvarchar(max)" />
           <Property Name="TransactionTime" Type="datetime" />
           <Property Name="SalesTaxPercent" Type="float" Nullable="false" />
           <Property Name="Discount" Type="float" />
@@ -247,35 +247,15 @@
 warning 6002: The table/view 'QuickSales-Enterprise.dbo.ItemDosage' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ItemDosage">
           <Key>
-            <PropertyRef Name="ItemId" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" />
           <Property Name="Dosage" Type="nvarchar(max)" />
           <Property Name="Count" Type="int" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'QuickSales-Enterprise.dbo.SearchView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="SearchView">
-          <Key>
-            
-            <PropertyRef Name="TransactionId" />
-            
-            
-            
-            
-            
-            
-          </Key>
-          <Property Name="Time" Type="datetime" Nullable="false" />
-          <Property Name="TransactionId" Type="int" Nullable="false" />
-          <Property Name="ItemId" Type="int" Nullable="false" />
-          <Property Name="ItemInfo" Type="nvarchar" MaxLength="1053" Nullable="false" />
-          <Property Name="PatientId" Type="int" Nullable="false" />
-          <Property Name="PatientInfo" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="DoctorId" Type="int" Nullable="false" />
-          <Property Name="DoctorInfo" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="SearchInfo" Type="nvarchar(max)" />
-        </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="TransactionsView">
@@ -562,15 +542,15 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TransactionBase_Prescription_TransactionBase_Prescription">
-          <End Role="TransactionBase_Prescription" Type="Self.TransactionBase_Prescription" Multiplicity="0..1" />
-          <End Role="TransactionBase_Prescription1" Type="Self.TransactionBase_Prescription" Multiplicity="*" />
+        <Association Name="FK_TransactionBase_TransactionBase">
+          <End Role="TransactionBase" Type="Self.TransactionBase" Multiplicity="0..1" />
+          <End Role="TransactionBase1" Type="Self.TransactionBase" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="TransactionBase_Prescription">
+            <Principal Role="TransactionBase">
               <PropertyRef Name="TransactionId" />
             </Principal>
-            <Dependent Role="TransactionBase_Prescription1">
-              <PropertyRef Name="ParentPrescriptionId" />
+            <Dependent Role="TransactionBase1">
+              <PropertyRef Name="ParentTransactionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -638,21 +618,9 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             <DefiningQuery>SELECT 
 [ItemDosage].[ItemId] AS [ItemId], 
 [ItemDosage].[Dosage] AS [Dosage], 
-[ItemDosage].[Count] AS [Count]
+[ItemDosage].[Count] AS [Count], 
+[ItemDosage].[ID] AS [ID]
 FROM [dbo].[ItemDosage] AS [ItemDosage]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="SearchView" EntityType="Self.SearchView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-[SearchView].[Time] AS [Time], 
-[SearchView].[TransactionId] AS [TransactionId], 
-[SearchView].[ItemId] AS [ItemId], 
-[SearchView].[ItemInfo] AS [ItemInfo], 
-[SearchView].[PatientId] AS [PatientId], 
-[SearchView].[PatientInfo] AS [PatientInfo], 
-[SearchView].[DoctorId] AS [DoctorId], 
-[SearchView].[DoctorInfo] AS [DoctorInfo], 
-[SearchView].[SearchInfo] AS [SearchInfo]
-FROM [dbo].[SearchView] AS [SearchView]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="TransactionsView" EntityType="Self.TransactionsView" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -747,9 +715,9 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="Stores" EntitySet="Stores" />
             <End Role="Stations" EntitySet="Stations" />
           </AssociationSet>
-          <AssociationSet Name="FK_TransactionBase_Prescription_TransactionBase_Prescription" Association="Self.FK_TransactionBase_Prescription_TransactionBase_Prescription">
-            <End Role="TransactionBase_Prescription" EntitySet="TransactionBase_Prescription" />
-            <End Role="TransactionBase_Prescription1" EntitySet="TransactionBase_Prescription" />
+          <AssociationSet Name="FK_TransactionBase_TransactionBase" Association="Self.FK_TransactionBase_TransactionBase">
+            <End Role="TransactionBase" EntitySet="TransactionBase" />
+            <End Role="TransactionBase1" EntitySet="TransactionBase" />
           </AssociationSet>
           <AssociationSet Name="FK_TransactionEntryItem_Item" Association="Self.FK_TransactionEntryItem_Item">
             <End Role="Item" EntitySet="Item" />
@@ -844,11 +812,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="TransactionBase" EntitySet="TransactionBase" />
           </AssociationSet>
           <EntitySet Name="TransactionsViews" EntityType="RMSEntities.TransactionsView" />
-          <EntitySet Name="SearchViews" EntityType="RMSEntities.SearchView" />
-          <AssociationSet Name="PrescriptionSearchView" Association="RMSEntities.PrescriptionSearchView">
-            <End Role="Prescription" EntitySet="TransactionBase" />
-            <End Role="SearchView" EntitySet="SearchViews" />
-          </AssociationSet>
           <EntitySet Name="TransactionEntryItems" EntityType="RMSEntities.TransactionEntryItem" />
           <AssociationSet Name="FK_TransactionEntryItem_Item" Association="RMSEntities.FK_TransactionEntryItem_Item">
             <End Role="Item" EntitySet="Item" />
@@ -858,11 +821,12 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             <End Role="TransactionEntryBase" EntitySet="TransactionEntryBase" />
             <End Role="TransactionEntryItem" EntitySet="TransactionEntryItems" />
           </AssociationSet>
-          <AssociationSet Name="FK_TransactionBase_Prescription_TransactionBase_Prescription" Association="RMSEntities.FK_TransactionBase_Prescription_TransactionBase_Prescription">
-            <End Role="Prescription" EntitySet="TransactionBase" />
-            <End Role="Prescription1" EntitySet="TransactionBase" />
-          </AssociationSet>
           <EntitySet Name="ItemDosages" EntityType="RMSEntities.ItemDosage" />
+          <AssociationSet Name="FK_TransactionBase_TransactionBase" Association="RMSEntities.FK_TransactionBase_TransactionBase">
+            <End Role="TransactionBase" EntitySet="TransactionBase" />
+            <End Role="TransactionBase1" EntitySet="TransactionBase" />
+          </AssociationSet>
+          
           </EntityContainer>
         <EntityType Name="Item" Abstract="false">
           <Key>
@@ -916,6 +880,9 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <NavigationProperty Name="Pharmacist" Relationship="RMSEntities.FK_TransactionBase_Persons_Pharmacist" FromRole="TransactionBase" ToRole="Cashier" />
           <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ParentTransactionId" Type="Int32" />
+          <NavigationProperty Name="Transactions" Relationship="RMSEntities.FK_TransactionBase_TransactionBase" FromRole="TransactionBase" ToRole="TransactionBase1" />
+          <NavigationProperty Name="ParentTransaction" Relationship="RMSEntities.FK_TransactionBase_TransactionBase" FromRole="TransactionBase1" ToRole="TransactionBase" />
           </EntityType>
         <EntityType Name="TransactionEntryBase" Abstract="false">
           <Key>
@@ -926,7 +893,7 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <Property Type="Int32" Name="TransactionId" Nullable="false" />
           <Property Type="Double" Name="Quantity" Nullable="false" />
           <Property Type="Boolean" Name="Taxable" Nullable="false" DefaultValue="True" />
-          <Property Type="String" Name="Comment" MaxLength="255" FixedLength="false" Unicode="true" Nullable="true" />
+          <Property Type="String" Name="Comment" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="true" />
           <Property Type="DateTime" Name="TransactionTime" Precision="3" />
           <NavigationProperty Name="Transaction" Relationship="RMSEntities.TransactionTransactionEntry" FromRole="TransactionEntry" ToRole="Transaction" />
           <Property Name="SalesTaxPercent" Nullable="false" Type="Double" />
@@ -955,10 +922,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <Property Type="Int32" Name="PatientId" Nullable="false" />
           <NavigationProperty Name="Doctor" Relationship="RMSEntities.DoctorPrescription" FromRole="Prescription" ToRole="Doctor" />
           <NavigationProperty Name="Patient" Relationship="RMSEntities.PatientPrescription" FromRole="Prescription" ToRole="Patient" />
-          <NavigationProperty Name="SearchViews" Relationship="RMSEntities.PrescriptionSearchView" FromRole="Prescription" ToRole="SearchView" />
-          <Property Name="ParentPrescriptionId" Type="Int32" />
-          <NavigationProperty Name="Prescriptions" Relationship="RMSEntities.FK_TransactionBase_Prescription_TransactionBase_Prescription" FromRole="Prescription" ToRole="Prescription1" />
-          <NavigationProperty Name="ParentPrescription" Relationship="RMSEntities.FK_TransactionBase_Prescription_TransactionBase_Prescription" FromRole="Prescription1" ToRole="Prescription" />
           </EntityType>
         <EntityType Name="Company">
           <Key>
@@ -1301,33 +1264,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <Property Name="TotalSales" Type="Single" Nullable="false" />
           <Property Name="CustomerId" Type="Int32" />
         </EntityType>
-        <EntityType Name="SearchView">
-          <Key>
-            <PropertyRef Name="TransactionId" />
-          </Key>
-          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="TransactionId" Type="Int32" Nullable="false" />
-          <Property Name="ItemId" Type="Int32" Nullable="false" />
-          <Property Name="ItemInfo" Type="String" MaxLength="1053" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PatientId" Type="Int32" Nullable="false" />
-          <Property Name="PatientInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DoctorId" Type="Int32" Nullable="false" />
-          <Property Name="DoctorInfo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SearchInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Prescription" Relationship="RMSEntities.PrescriptionSearchView" FromRole="SearchView" ToRole="Prescription" />
-        </EntityType>
-        <Association Name="PrescriptionSearchView">
-          <End Type="RMSEntities.Prescription" Role="Prescription" Multiplicity="1" />
-          <End Type="RMSEntities.SearchView" Role="SearchView" Multiplicity="1" />
-          <ReferentialConstraint>
-            <Principal Role="Prescription">
-              <PropertyRef Name="TransactionId" />
-            </Principal>
-            <Dependent Role="SearchView">
-              <PropertyRef Name="TransactionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="TransactionEntryItem">
           <Key>
             <PropertyRef Name="TransactionEntryId" />
@@ -1366,26 +1302,28 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TransactionBase_Prescription_TransactionBase_Prescription">
-          <End Type="RMSEntities.Prescription" Role="Prescription" Multiplicity="0..1" />
-          <End Type="RMSEntities.Prescription" Role="Prescription1" Multiplicity="*" />
+        <EntityType Name="ItemDosage">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Count" Type="Int32" />
+          <Property Name="ID" Type="Int64" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_TransactionBase_TransactionBase">
+          <End Type="RMSEntities.TransactionBase" Role="TransactionBase" Multiplicity="0..1" />
+          <End Type="RMSEntities.TransactionBase" Role="TransactionBase1" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Prescription">
+            <Principal Role="TransactionBase">
               <PropertyRef Name="TransactionId" />
             </Principal>
-            <Dependent Role="Prescription1">
-              <PropertyRef Name="ParentPrescriptionId" />
+            <Dependent Role="TransactionBase1">
+              <PropertyRef Name="ParentTransactionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ItemDosage">
-          <Key>
-            <PropertyRef Name="ItemId" />
-          </Key>
-          <Property Name="ItemId" Type="Int32" Nullable="false" />
-          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Count" Type="Int32" />
-        </EntityType>
+
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1433,7 +1371,8 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
     <EntitySetMapping Name="TransactionBase">
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.TransactionBase)">
         <MappingFragment StoreEntitySet="TransactionBase">
-          <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+          <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
           <ScalarProperty Name="StationId" ColumnName="StationId" />
           <ScalarProperty Name="BatchId" ColumnName="BatchId" />
           <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
@@ -1451,7 +1390,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Prescription)">
         <MappingFragment StoreEntitySet="TransactionBase_Prescription">
-          <ScalarProperty Name="ParentPrescriptionId" ColumnName="ParentPrescriptionId" />
                 <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
           <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
           <ScalarProperty Name="PatientId" ColumnName="PatientId" />
@@ -1633,21 +1571,6 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SearchViews">
-            <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.SearchView)">
-              <MappingFragment StoreEntitySet="SearchView">
-                <ScalarProperty Name="SearchInfo" ColumnName="SearchInfo" />
-                <ScalarProperty Name="DoctorInfo" ColumnName="DoctorInfo" />
-                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
-                <ScalarProperty Name="PatientInfo" ColumnName="PatientInfo" />
-                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
-                <ScalarProperty Name="ItemInfo" ColumnName="ItemInfo" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="TransactionEntryItems">
             <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.TransactionEntryItem)">
               <MappingFragment StoreEntitySet="TransactionEntryItem">
@@ -1662,6 +1585,7 @@ FROM [dbo].[TransactionsView] AS [TransactionsView]</DefiningQuery>
           <EntitySetMapping Name="ItemDosages">
             <EntityTypeMapping TypeName="RMSEntities.ItemDosage">
               <MappingFragment StoreEntitySet="ItemDosage">
+                <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Count" ColumnName="Count" />
                 <ScalarProperty Name="Dosage" ColumnName="Dosage" />
                 <ScalarProperty Name="ItemId" ColumnName="ItemId" />

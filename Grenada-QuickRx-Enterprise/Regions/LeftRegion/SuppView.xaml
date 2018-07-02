@@ -34,14 +34,14 @@
 
         <TextBox Name="SearchBox" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,42,10,0" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="20" FontFamily="Cordia New" Style="{DynamicResource FilterTextBoxStyle}" PreviewKeyDown="TextBox_PreviewKeyDown"/>
         <TextBlock HorizontalAlignment="Left" Height="31" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="75" FontSize="20" LineStackingStrategy="BlockLineHeight" LineHeight="32" TextAlignment="Left" Foreground="White" Margin="15,1,0,0"/>
-        <Button HorizontalAlignment="Left" Click="SearchPrescriptions"  Height="42" Margin="110,0,0,0" VerticalAlignment="Top" Width="47">
+        <Button HorizontalAlignment="Left" Click="SearchTransactions"  Height="42" Margin="110,0,0,0" VerticalAlignment="Top" Width="47">
             <Button.Background>
                 <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
             </Button.Background>
             <Image Source="{DynamicResource GreenRx}" Width="42"/>
 
         </Button>
-        <ListBox Name="SearchList" SelectedItem="{Binding TransactionData}"  ItemsSource="{Binding SearchResults}" Height="382" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ListBox Name="SearchList" SelectedItem="{Binding TransactionData}"  ItemsSource="{Binding SearchResults, IsAsync=True}" Height="382" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.Resources>
                 <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
                     <Grid Height="25" Background="#7F7182D0">
@@ -67,18 +67,18 @@
                                 <TextBlock Text="{Binding Doctor.DisplayName}" Margin="115,26,29.8,3.2"/>
                                 <TextBlock Text="{Binding TransactionNumber}" Margin="6,3,175,26.6" FontWeight="Bold"/>
                                 <Button x:Name="AutoRepeatBtn"  HorizontalAlignment="Left" Height="25" Margin="260,1,-0.2,0"  VerticalAlignment="Top" Width="25" Background="#00000000" Content="&#xE0F2;" FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF65E468" ToolTip="Repeat" RenderTransformOrigin="0.5,0.45" Click="AutoRepeatBtn_Click"/>
-                                <Button HorizontalAlignment="Left" Click="NewPrescription"  Height="25" Margin="260,27,-0.2,0" VerticalAlignment="Top" Width="25">
+                                <!--<Button HorizontalAlignment="Left" Click="NewPrescription"  Height="25" Margin="260,27,-0.2,0" VerticalAlignment="Top" Width="25">
                                     <Button.Background>
                                         <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
                                     </Button.Background>
                                     <Image Source="{DynamicResource NewTicket}"/>
 
-                                </Button>
+                                </Button>-->
                             </Grid>
                         </Expander.Header>
                         <StackPanel>
                             <ListBox ItemsSource="{Binding TransactionEntries, IsAsync=True}"/>
-                            <ListBox ItemsSource="{Binding Prescriptions, IsAsync=True}" Margin="50,0,0,0"/>
+                            <ListBox ItemsSource="{Binding Transactions, IsAsync=True}" Margin="50,0,0,0"/>
                         </StackPanel>
                         
                     </Expander>

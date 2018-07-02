@@ -258,7 +258,7 @@
         <!--<wd:ListCollectionView x:Key="SearchLstView" Source="{StaticResource SearchLst}" />-->
 
 
-        <local:NotParentPrescriptionVisbilityConverter x:Key="ParentPrescriptionVisbilityConverter"/>
+        <local:NotParentTransactionVisbilityConverter x:Key="ParentTransactionVisbilityConverter"/>
 
 
         <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
@@ -379,7 +379,7 @@
                          FontFamily="DS-Digital"
                          FontSize="16"
                          FontWeight="Bold"
-                         Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
+                         Visibility="{Binding Transaction.ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
                          Foreground="#FFD7D7D7"
                          RenderTransformOrigin="0.488,0.466"
                          Text="{Binding Repeat,
@@ -398,7 +398,7 @@
                            Foreground="White"
                            LineHeight="13.333"
                            LineStackingStrategy="BlockLineHeight"
-                           Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
+                           Visibility="{Binding Transaction.ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
                            Text="Repeat"
                            TextWrapping="Wrap" />
                 <TextBlock x:Name="PriceTxt_Copy1"
@@ -437,7 +437,7 @@
             Foreground="White"
             LineHeight="13.333"
             LineStackingStrategy="BlockLineHeight"
-                           Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
+                           Visibility="{Binding Transaction.ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
             Text="x"
             TextWrapping="Wrap" />
                 <TextBox x:Name="PriceTxt_Copy2"
@@ -450,7 +450,7 @@
             FontFamily="DS-Digital"
             FontSize="16"
             FontWeight="Bold"
-                         Visibility="{Binding Transaction.ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
+                         Visibility="{Binding Transaction.ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
             Foreground="#FFD7D7D7"
             RenderTransformOrigin="0.488,0.466"
             Text="{Binding RepeatQuantity, Mode=TwoWay, StringFormat=n0, TargetNullValue={x:Static sys:String.Empty}, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
@@ -1493,6 +1493,17 @@
                                                                                       Source={StaticResource SalesVMDataSource}}"
                                                                        TextAlignment="Right"
                                                                        TextWrapping="Wrap" />
+                                                            <TextBlock Width="197"
+                                                                       Height="16"
+                                                                       Margin="78,106,0,0"
+                                                                       HorizontalAlignment="Left"
+                                                                       VerticalAlignment="Top"
+                                                                       Background="{x:Null}"
+                                                                       FontFamily="Calibri"
+                                                                       FontSize="14"
+                                                                       Foreground="Black"
+                                                                       Text="{Binding RepeatInfo}"
+                                                                       TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" />
 
 
                                                         </Grid>
@@ -2070,7 +2081,7 @@
                                        Width="80"
                                        Foreground="Black"
                                        MouseLeftButtonDown="PatientPrescriptionBtn_MouseLeftButtonDown"
-                                       Text="Prescriptions..." />
+                                       Text="Transactions..." />
                         </StackPanel>
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type data:Patient}">
@@ -2090,7 +2101,7 @@
                                        Width="80"
                                        Foreground="Black"
                                        MouseLeftButtonDown="PatientPrescriptionBtn_MouseLeftButtonDown"
-                                       Text="Prescriptions..." />
+                                       Text="Transactions..." />
 
                         </StackPanel>
                     </DataTemplate>

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using RMSDataAccessLayer;
 using System.Threading.Tasks;
+using SalesRegion;
 
 
 namespace LeftRegion
@@ -40,7 +41,7 @@ namespace LeftRegion
 
         }
 
-        private void SearchPrescriptions(object sender, RoutedEventArgs e)
+        private void SearchTransactions(object sender, RoutedEventArgs e)
         {
 
         }
@@ -62,7 +63,7 @@ namespace LeftRegion
                             Application.Current.Dispatcher.Invoke(
                                 () => { if (SearchBox != null) tvm.SearchText = SearchBox.Text; });
 
-                        await Task.Run(() => tvm.SearchPrescriptions()).ConfigureAwait(false);
+                        await Task.Run(() => tvm.SearchTransactions()).ConfigureAwait(false);
 
                         if (Application.Current != null)
                             Application.Current.Dispatcher.Invoke(
@@ -78,9 +79,9 @@ namespace LeftRegion
         //    using (var ctx = new RMSModel())
         //    {
         //        return ctx.TransactionBase.OfType<Prescription>()
-        //              .Include(x => x.Prescriptions)
-        //              .Include("ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-        //              .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
+        //              .Include(x => x.Transactions)
+        //              .Include("ParentTransaction.Transactions.TransactionEntries.TransactionEntryItem")
+        //              .Include("Transactions.TransactionEntries.TransactionEntryItem")
         //              .Include(x => x.TransactionEntries)
         //            .Include("TransactionEntries.TransactionEntryItem")
         //              .Include(x => x.Patient)
@@ -97,9 +98,10 @@ namespace LeftRegion
             if (i != null)
             {
                 var p = (Prescription) i.DataContext; //GetTransactionData()
-                var rp = p.ParentPrescription == null ? p : p.ParentPrescription;
-                tvm.TransactionData = rp;
-               tvm.AutoRepeat(rp);
+                var rp = p.TransactionId;
+                SalesVM.Instance.GoToTransaction(rp);
+                //tvm.TransactionData = rp;
+               tvm.AutoRepeat(null);
             }
 
         }

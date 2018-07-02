@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace SalesRegion
 {
-    public class ParentPrescriptionVisbilityConverter:IValueConverter
+    public class ParentTransactionVisbilityConverter:IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -21,7 +21,7 @@ namespace SalesRegion
             throw new NotImplementedException();
         }
     }
-    public class NotParentPrescriptionVisbilityConverter : IValueConverter
+    public class NotParentTransactionVisbilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -23,8 +23,7 @@ namespace RMSDataAccessLayer
     public partial class ItemDosage : BaseEntity<ItemDosage>
     {
         [DataMember]
-                    [Required(ErrorMessage="ItemId is required")]
-    	public int ItemId
+        	public Nullable<int> ItemId
     	{ 
     		get { return _ItemId; }
     		set
@@ -35,7 +34,7 @@ namespace RMSDataAccessLayer
     			NotifyPropertyChanged();
     		}
     	}
-    	private int _ItemId;
+    	private Nullable<int> _ItemId;
         [DataMember]
         	public string Dosage
     	{ 
@@ -62,5 +61,19 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private Nullable<int> _Count;
+        [DataMember]
+                    [Required(ErrorMessage="ID is required")]
+    	public long ID
+    	{ 
+    		get { return _ID; }
+    		set
+    		{
+    			if (Equals(value, _ID)) return;
+    			_ID = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private long _ID;
     }
 }

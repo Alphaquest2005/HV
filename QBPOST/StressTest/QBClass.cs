@@ -299,10 +299,10 @@ namespace QS2QBPost
                     var qbitm = QBPOS.ValidateInventoryItemQuery(item.QBListId, Settings.Default.QBCompanyFile);
                     if (!qbitm.Any())
                     {
-                        SetQBInactive(item.QBListId);
-                        pt.TransactionData.Status = "Can't Post Because Item Not In QuickBooks";
-                        UpdateTransactionDataFromSalesRet(pt, new QBResult() { Comments = "Item Not In QuickBooks" });
-                        return;
+                        //SetQBInactive(item.QBListId);
+                        //pt.TransactionData.Status = "Can't Post Because Item Not In QuickBooks";
+                        //UpdateTransactionDataFromSalesRet(pt, new QBResult() { Comments = "Item Not In QuickBooks" });
+                        //return;
                     }
                     else
                     {
@@ -358,27 +358,27 @@ namespace QS2QBPost
             return message;
         }
 
-        private static void SetQBInactive(string listID)
-        {
-            try
-            {
-                using (var ctx = new RMSModel())
-                {
+        //private static void SetQBInactive(string listID)
+        //{
+        //    try
+        //    {
+        //        using (var ctx = new RMSModel())
+        //        {
 
-                    var r = ctx.Item.FirstOrDefault(x => x.QBItemListID == listID);
-                    if (r == null) return;
+        //            var r = ctx.Item.FirstOrDefault(x => x.QBItemListID == listID);
+        //            if (r == null) return;
 
-                    r.QBActive = false;
+        //            r.QBActive = false;
 
-                    ctx.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(LoggingLevel.Error, ex.Message + ex.StackTrace);
-                throw ex;
-            }
-        }
+        //            ctx.SaveChanges();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.Log(LoggingLevel.Error, ex.Message + ex.StackTrace);
+        //        throw ex;
+        //    }
+        //}
 
         private static void UpdateInventoryItem(List<ItemInventoryRet> qbitms)
         {
@@ -392,7 +392,7 @@ namespace QS2QBPost
                         if (r == null) continue;
                         r.Price = (double) itm.Price1;
                         r.Quantity = (double) itm.QuantityOnHand;
-                        r.QBActive = false;
+                       // r.QBActive = false;
 
                     }
                     ctx.SaveChanges();

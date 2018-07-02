@@ -388,37 +388,36 @@ namespace SalesRegion
                     string.Format("Start Create SearchList -filter Text [{0}] - StartTime:{1}", filterText,
                         DateTime.Now));
 
-                var bag = new ConcurrentBag<dynamic>();
+                var searchItemsBag = new List<dynamic>();
+                var patientsBag = new List<dynamic>();
+                var doctorsBag = new List<dynamic>();
+                var inventoryBag = new List<dynamic>();
+                var transactionBag = new List<dynamic>();
+                var qtransactionBag = new List<dynamic>();
                 var taskLst = new List<Task>();
                 taskLst.Add(Task.Run(() =>
                 {
-                    foreach (var itm in AddSearchItems())
-                    {
-                        bag.Add(itm);
-                    }
+                        searchItemsBag.AddRange(AddSearchItems());
+                   
                 }));
 
                 taskLst.Add(Task.Run(() =>
                 {
-                    foreach (var itm in GetPatients(filterText))
-                    {
-                        bag.Add(itm);
-                    }
+                    patientsBag.AddRange(GetPatients(filterText));
+                   
                 }));
 
                 taskLst.Add(Task.Run(() =>
                 {
-                    foreach (var itm in GetDoctors(filterText))
-                    {
-                        bag.Add(itm);
-                    }
+
+                    doctorsBag.AddRange(GetDoctors(filterText));
+                   
                 }));
                 taskLst.Add(Task.Run(() =>
                 {
-                    foreach (var itm in AddInventory(filterText))
-                    {
-                        bag.Add(itm);
-                    }
+                   
+                        inventoryBag.AddRange(AddInventory(filterText));
+                    
                 }));
 
 
@@ -427,18 +426,16 @@ namespace SalesRegion
                 {
                     taskLst.Add(Task.Run(() =>
                     {
-                        foreach (var itm in AddPrescriptions(filterText))
-                        {
-                            bag.Add(itm);
-                        }
+                        
+                            transactionBag.AddRange(AddTransactions(filterText));
+                        
                     }));
 
                     taskLst.Add(Task.Run(() =>
                     {
-                        foreach (var itm in AddQuickPrescriptions(filterText))
-                        {
-                            bag.Add(itm);
-                        }
+                       
+                        qtransactionBag.AddRange(AddQuickTransactions(filterText));
+                        
                     }));
 
                 }
@@ -447,7 +444,13 @@ namespace SalesRegion
                 Logger.Log(LoggingLevel.Info,
                     string.Format("Finish Create SearchList -filter Text [{0}] - StartTime:{1}", filterText,
                         DateTime.Now));
-                return bag.ToList();
+                transactionBag.AddRange(qtransactionBag);
+                inventoryBag.AddRange(transactionBag);
+                doctorsBag.AddRange(inventoryBag);
+                patientsBag.AddRange(doctorsBag);
+                searchItemsBag.AddRange(patientsBag);
+
+                return searchItemsBag;
             }
             catch (Exception ex)
             {
@@ -488,7 +491,7 @@ namespace SalesRegion
         }
 
 
-        private List<Prescription> AddPrescriptions(string filterText)
+        private List<Prescription> AddTransactions(string filterText)
         {
 
             try
@@ -511,14 +514,14 @@ namespace SalesRegion
             }
         }
 
-        private List<QuickPrescription> AddQuickPrescriptions(string filterText)
+        private List<QuickPrescription> AddQuickTransactions(string filterText)
         {
 
             try
             {
                 using (var ctx = new RMSModel())
                 {
-                    // right now any prescriptions
+                    // right now any Transactions
                     return
                         ctx.TransactionBase.OfType<QuickPrescription>()
                             .Where(x => x.TransactionId.ToString().StartsWith(filterText))
@@ -584,23 +587,7 @@ namespace SalesRegion
             }
         }
 
-
-        private bool _showInactiveItems = false;
-
-        public bool ShowInactiveItems
-        {
-            get { return _showInactiveItems; }
-            set
-            {
-                _showInactiveItems = value;
-                NotifyPropertyChanged(x => x.ShowInactiveItems);
-            }
-
-        }
-
         private int listCount = 10;
-
-
         private List<Medicine> AddInventory(string filterText)
         {
             try
@@ -618,7 +605,7 @@ namespace SalesRegion
                             && (x.Inactive == null ||
                                 (x.Inactive != null && x.Inactive == _showInactiveItems)))
                         .OrderBy(x => x.ItemName)
-                        .Take(listCount).ToList();
+                        .Take(listCount*2).ToList();
 
 
                 }
@@ -634,6 +621,22 @@ namespace SalesRegion
 
 
         }
+
+
+        private bool _showInactiveItems = false;
+
+        public bool ShowInactiveItems
+        {
+            get { return _showInactiveItems; }
+            set
+            {
+                _showInactiveItems = value;
+                NotifyPropertyChanged(x => x.ShowInactiveItems);
+            }
+
+        }
+
+        
 
 
 
@@ -809,6 +812,8 @@ namespace SalesRegion
                             .Include(x => x.Cashier)
                             .Include("TransactionEntries.TransactionEntryItem")
                             .Include("TransactionEntries.TransactionEntryItem.Item")
+                            .Include("ParentTransaction.TransactionEntries.TransactionEntryItem.Item")
+                            .Include(x => x.ParentTransaction.Transactions)
 
                         //.Include("TransactionEntries.Item.ItemDosages")
                         where t.TransactionId == TransactionId
@@ -854,9 +859,10 @@ namespace SalesRegion
                         ptrn = GetDBTransaction(ctx)
                             .FirstOrDefault(t => t.TransactionId < TransactionData.TransactionId);
                     }
-                    ptrn.StartTracking();
+                   
                     if (ptrn != null)
                     {
+                        ptrn.StartTracking();
                         IncludePrecriptionProperties(ctx, ptrn);
                         Item = null;
                         NotifyPropertyChanged(x => x.Item.DosageList);
@@ -894,8 +900,10 @@ namespace SalesRegion
                         //  .Include("Repeats.TransactionEntries")
                         .Include("TransactionEntries.TransactionEntryItem")
                         .Include("TransactionEntries.TransactionEntryItem.Item")
-                    //.Include("TransactionEntries.Item.ItemDosages")
-                    orderby t.Time descending
+                        .Include("ParentTransaction.TransactionEntries.TransactionEntryItem.Item")
+                        .Include(x => x.ParentTransaction.Transactions)
+                            //.Include("TransactionEntries.Item.ItemDosages")
+                        orderby t.Time descending
                     select t);
 
                 //return ptrn;
@@ -933,8 +941,8 @@ namespace SalesRegion
                 if (ptrn is Prescription pc)
                 {
                     tasklst.Add(Task.Run(() => { SetOtherFields(pc); }));
-                    tasklst.Add(Task.Run(() => { SetPrescriptions(pc); }));
-                    tasklst.Add(Task.Run(() => { SetParentPrescriptions(pc); }));
+                    tasklst.Add(Task.Run(() => { SetTransactions(pc); }));
+                   // tasklst.Add(Task.Run(() => { SetParentTransactions(pc); }));
                 }
                 tasklst.Add(Task.Run(() => { SetOtherTransactionFields(ptrn); }));
                 Task.WaitAll(tasklst.ToArray());
@@ -961,26 +969,26 @@ namespace SalesRegion
         }
     
 
-    private static void SetPrescriptions(Prescription pc)
+    private static void SetTransactions(Prescription pc)
         {
             using (var ctx = new RMSModel())
             {
-                pc.Prescriptions = ctx.TransactionBase.OfType<Prescription>().Include(x => x.Prescriptions)
-                    .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
+                pc.Transactions = ctx.TransactionBase.OfType<Prescription>().Include(x => x.Transactions)
+                    .Include("Transactions.TransactionEntries.TransactionEntryItem")
                     .Include(x => x.TransactionEntries)
-                    .First(x => x.TransactionId == pc.TransactionId).Prescriptions;
+                    .First(x => x.TransactionId == pc.TransactionId).Transactions;
             }
         }
 
-        private static void SetParentPrescriptions(Prescription pc)
+        private static void SetParentTransactions(Prescription pc)
         {
             using (var ctx = new RMSModel())
             {
-                pc.ParentPrescription = ctx.TransactionBase.OfType<Prescription>()
-                    .Include(x => x.Prescriptions)
-                    .Include("Prescriptions.TransactionEntries.TransactionEntryItem")
+                pc.ParentTransaction = ctx.TransactionBase.OfType<Prescription>()
+                    .Include(x => x.Transactions)
+                    .Include("Transactions.TransactionEntries.TransactionEntryItem")
                     .Include("TransactionEntries.TransactionEntryItem")
-                    .FirstOrDefault(x => x.TransactionId == pc.ParentPrescriptionId);
+                    .FirstOrDefault(x => x.TransactionId == pc.ParentTransactionId);
             }
         }
         private static void SetOtherFields(Prescription pc)
@@ -1370,25 +1378,32 @@ namespace SalesRegion
             var myTransactionData = data ?? TransactionData;
             try
             {
-                if (!(myTransactionData is Prescription))
+                //var pres = myTransactionData as Prescription;
+                //if (pres == null)
+                //{
+                //    MessageBox.Show("Only Transactions can be repeated.");
+                //    return;
+                //}
+
+                var pres = myTransactionData;
+                if (pres.ParentTransactionId != null)
                 {
-                    MessageBox.Show("Only Prescriptions can be repeated.");
-                    return;
-                }
-                if (((Prescription)myTransactionData).ParentPrescriptionId != null)
-                {
-                    GoToTransaction(((Prescription)myTransactionData).ParentPrescriptionId.GetValueOrDefault());
+                    GoToTransaction(pres.ParentTransactionId.GetValueOrDefault());
                 }
                 
 
-                var newt =(Prescription) CopyCurrentTransaction();
+                var newt = CopyCurrentTransaction();
 
-                newt.ParentPrescriptionId = myTransactionData.TransactionId;
-                newt.ParentPrescription = myTransactionData as Prescription;
+                
+                    newt.ParentTransactionId = pres.ParentTransactionId ?? pres.TransactionId;
+                    newt.ParentTransaction = pres;
+                
+
+
                 foreach (PrescriptionEntry item in newt.TransactionEntries.ToList())
                 {
                     item.Transaction = newt;
-                    if (item.Remaining == 0)
+                    if (item.Remaining == 0 && pres is Prescription)
                     {
                         newt.TransactionEntries.Remove(item);
                         continue;
@@ -1897,13 +1912,13 @@ namespace SalesRegion
                         return false;
                     }
 
-                    if (p.TransactionEntries.OfType<PrescriptionEntry>().Any(x =>
-                        (x.RepeatQuantity.GetValueOrDefault() > 0 && x.Repeat.GetValueOrDefault() == 0) ||
-                        (x.RepeatQuantity.GetValueOrDefault() == 0 && x.Repeat.GetValueOrDefault() > 0)))
-                    {
-                        MessageBox.Show("Please ensure there is both a Repeat Quantity and Repeat or both == 0!");
-                        return false;
-                    }
+                    //if (p.TransactionEntries.OfType<PrescriptionEntry>().Any(x =>
+                    //    (x.RepeatQuantity.GetValueOrDefault() > 0 && x.Repeat.GetValueOrDefault() == 0) ||
+                    //    (x.RepeatQuantity.GetValueOrDefault() == 0 && x.Repeat.GetValueOrDefault() > 0)))
+                    //{
+                    //    MessageBox.Show("Please ensure there is both a Repeat Quantity and Repeat or both == 0!");
+                    //    return false;
+                    //}
 
                 }
 
@@ -1933,9 +1948,9 @@ namespace SalesRegion
                     int res;
                     if (trans.TransactionId == 0)
                     {
-                        sql += $@"  Insert into TransactionBase (StationId, BatchId, CloseBatchId, Time, CustomerId, PharmacistId, CashierId, Comment, ReferenceNumber, StoreCode, OpenClose, Status)
+                        sql += $@"  Insert into TransactionBase (StationId, ParentTransactionId, BatchId, CloseBatchId, Time, CustomerId, PharmacistId, CashierId, Comment, ReferenceNumber, StoreCode, OpenClose, Status)
                                     OUTPUT Inserted.TransactionId
-                        VALUES        ({trans.StationId},{trans.BatchId},{trans.CloseBatchId},'{trans.Time}','{trans.CustomerId}',{trans.PharmacistId},{trans.CashierId},'{trans.Comment?.Replace("'","''")}','{trans.ReferenceNumber}','{trans.StoreCode}',{trans.OpenClose},'{trans.Status?.Replace("'", "''")}')";
+                        VALUES        ({trans.StationId},'{trans.ParentTransactionId}',{trans.BatchId},{trans.CloseBatchId},'{trans.Time}','{trans.CustomerId}',{trans.PharmacistId},{trans.CashierId},'{trans.Comment?.Replace("'","''")}','{trans.ReferenceNumber}','{trans.StoreCode}',{trans.OpenClose},'{trans.Status?.Replace("'", "''")}')";
                         sql = CleanSql(sql);
                         res = ctx.Database.SqlQuery<int>(sql).FirstOrDefault();
                         sql = "";
@@ -1943,8 +1958,8 @@ namespace SalesRegion
                         if (trans is Prescription p)
                         {
                             sql = $@"  INSERT INTO TransactionBase_Prescription
-                                                             (DoctorId, PatientId, TransactionId, ParentPrescriptionId)
-                                    VALUES        ({p.DoctorId},{p.PatientId},{p.TransactionId},'{p.ParentPrescriptionId}')";
+                                                             (DoctorId, PatientId, TransactionId)
+                                    VALUES        ({p.DoctorId},{p.PatientId},{p.TransactionId})";
                         }
                         else
                         {
@@ -1955,7 +1970,7 @@ namespace SalesRegion
                     }
                     else
                     {
-                        sql += $@"  Update TransactionBase Set StationId = {trans.StationId}, BatchId = {trans.BatchId}, CloseBatchId = {trans.CloseBatchId}, Time = '{trans.Time}',
+                        sql += $@"  Update TransactionBase Set StationId = {trans.StationId}, ParentTransactionId = '{trans.ParentTransactionId}', BatchId = {trans.BatchId}, CloseBatchId = {trans.CloseBatchId}, Time = '{trans.Time}',
                                                             CustomerId = '{trans.CustomerId}', PharmacistId = '{trans.PharmacistId}', CashierId = '{trans.CashierId}', Comment = '{trans.Comment}',
                                                             ReferenceNumber = '{trans.ReferenceNumber}', StoreCode = '{trans.StoreCode}', OpenClose = '{trans.OpenClose}', Status = '{trans.Status}'
                                  Where TransactionId = {trans.TransactionId}";      
@@ -1963,7 +1978,7 @@ namespace SalesRegion
                        
                         if (trans is Prescription p)
                         {
-                            sql += $@"  Update TransactionBase_Prescription Set DoctorId = {p.DoctorId}, PatientId = {p.PatientId}, ParentPrescriptionId = '{p.ParentPrescriptionId}'
+                            sql += $@"  Update TransactionBase_Prescription Set DoctorId = {p.DoctorId}, PatientId = {p.PatientId}
                                     Where TransactionId = {trans.TransactionId}";
 
                             

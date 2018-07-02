@@ -37,7 +37,6 @@ namespace RMSDataAccessLayer
         public virtual DbSet<CashierLog> CashierLogs { get; set; }
         public virtual DbSet<QBInventoryItem> QBInventoryItems { get; set; }
         public virtual DbSet<TransactionsView> TransactionsViews { get; set; }
-        public virtual DbSet<SearchView> SearchViews { get; set; }
         public virtual DbSet<TransactionEntryItem> TransactionEntryItems { get; set; }
         public virtual DbSet<ItemDosage> ItemDosages { get; set; }
     }

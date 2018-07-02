@@ -26,6 +26,7 @@ namespace RMSDataAccessLayer
         public TransactionBase()
         {
             this.TransactionEntries = new ObservableCollection<TransactionEntryBase>();
+            this.Transactions = new ObservableCollection<TransactionBase>();
             CustomStartup();
             CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
@@ -251,6 +252,19 @@ namespace RMSDataAccessLayer
     	}
     	private byte[] _EntryTimeStamp;
         [DataMember]
+        	public Nullable<int> ParentTransactionId
+    	{ 
+    		get { return _ParentTransactionId; }
+    		set
+    		{
+    			if (Equals(value, _ParentTransactionId)) return;
+    			_ParentTransactionId = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<int> _ParentTransactionId;
+        [DataMember]
     	public ObservableCollection<TransactionEntryBase> TransactionEntries
     	{
     		get { return _TransactionEntries; }
@@ -352,5 +366,32 @@ namespace RMSDataAccessLayer
     	}
     	private Cashier _Pharmacist;
     	private ChangeTrackingCollection<Cashier> PharmacistChangeTracker { get; set; }
+        [DataMember]
+    	public ObservableCollection<TransactionBase> Transactions
+    	{
+    		get { return _Transactions; }
+    		set
+    		{
+    			if (Equals(value, _Transactions)) return;
+    			_Transactions = value;
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private ObservableCollection<TransactionBase> _Transactions;
+        [DataMember]
+    	public TransactionBase ParentTransaction
+    	{
+    		get { return _ParentTransaction; }
+    		set
+    		{
+    			if (Equals(value, _ParentTransaction)) return;
+    			_ParentTransaction = value;
+    			ParentTransactionChangeTracker = _ParentTransaction == null ? null
+    				: new ChangeTrackingCollection<TransactionBase> { _ParentTransaction };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private TransactionBase _ParentTransaction;
+    	private ChangeTrackingCollection<TransactionBase> ParentTransactionChangeTracker { get; set; }
     }
 }

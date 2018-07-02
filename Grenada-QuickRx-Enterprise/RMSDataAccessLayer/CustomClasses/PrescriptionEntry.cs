@@ -21,7 +21,7 @@ namespace RMSDataAccessLayer
             if(e.PropertyName == nameof(Quantity)) NotifyPropertyChanged(nameof(RepeatInfo));
             if (e.PropertyName == nameof(Repeat))
             {
-               // if (Quantity > 0 && RepeatQuantity.HasValue == false) RepeatQuantity = Convert.ToInt32(Quantity);
+               
                 NotifyPropertyChanged(nameof(RepeatInfo));
             }
             if (e.PropertyName == nameof(RepeatQuantity)) NotifyPropertyChanged(nameof(RepeatInfo));
@@ -33,37 +33,14 @@ namespace RMSDataAccessLayer
         {
             get
             {
-                var pres = ((Prescription) this.Transaction);
-                if (pres == null) return 0;
+                
                 var lst = new List<PrescriptionEntry>();
-                if (pres.ParentPrescription != null)
+                if (this.Transaction?.ParentTransaction != null)
                 {
-                    //if (TransactionId == 0)
-                    //{
-                        lst.AddRange(pres.ParentPrescription.Prescriptions.SelectMany(x => x.TransactionEntries).Where(x => x.TransactionEntryId < TransactionEntryId).Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
-                        lst.AddRange(pres.ParentPrescription.TransactionEntries.Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
-                        //lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
-                    //}
-                    //else
-                    //{
-                    //     lst.AddRange(pres.ParentPrescription.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId < TransactionEntryId));
-                    //    lst.AddRange(pres.ParentPrescription.TransactionEntries.OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
-                    //    lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
-                    //}
-                    
+                    lst.AddRange(this.Transaction.ParentTransaction.Transactions.SelectMany(x => x.TransactionEntries).Where(x => x.TransactionEntryId < TransactionEntryId).Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
+                        lst.AddRange(this.Transaction.ParentTransaction.TransactionEntries.Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
                 }
                 
-
-                //if (TransactionId == 0)
-                //{
-                  //  lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
-                //}
-                //else
-                //{
-                //    lst.AddRange(pres.Prescriptions.SelectMany(x => x.TransactionEntries).OfType<PrescriptionEntry>().Where(x => x.TransactionEntryId <= TransactionEntryId));
-                //}
-
-
                 return lst.Sum(x => Convert.ToInt32(x.Quantity));
             }
         }

@@ -10,7 +10,10 @@ using Microsoft.Practices.Prism.Regions;
 using RMSDataAccessLayer;
 using System.Data.Entity;
 using System.Collections.ObjectModel;
+using System.Data.Entity.SqlServer;
 using System.Threading.Tasks;
+using System.Windows;
+using Microsoft.Practices.Prism;
 using SalesRegion;
 using SimpleMvvmToolkit;
 
@@ -32,10 +35,10 @@ namespace LeftRegion
             {
                 if (SalesVM.Instance.TransactionData is Prescription p)
                 {
-                    if (p.ParentPrescriptionId > 0 )
+                    if (p.ParentTransactionId > 0 )
                     {
-                        //if(Instance.SearchResults.All(x => x.TransactionId != p.ParentPrescriptionId)) SuppVM.Instance.SearchResults = new ObservableCollection<Prescription>(){p.ParentPrescription};
-                        //if(SuppVM.Instance?.TransactionData?.TransactionId != p?.ParentPrescription?.TransactionId) SuppVM.Instance.TransactionData = p.ParentPrescription;
+                        //if(Instance.SearchResults.All(x => x.TransactionId != p.ParentTransactionId)) SuppVM.Instance.SearchResults = new ObservableCollection<Prescription>(){p.ParentTransaction};
+                        //if(SuppVM.Instance?.TransactionData?.TransactionId != p?.ParentTransaction?.TransactionId) SuppVM.Instance.TransactionData = p.ParentTransaction;
                     }
                 }
             }
@@ -84,184 +87,167 @@ namespace LeftRegion
             //if (t != null) SalesVM.Instance.GoToTransaction(t.TransactionId);
         }
 
-        public void SearchPrescriptions()
+        public void SearchTransactions()
         {
-            SearchPrescriptions(SearchText);
+            SearchTransactions(SearchText);
         }
 
-        public void SearchPrescriptions(string searchTxt)
+        public void SearchTransactions(string searchTxt)
         {
             try
             {
-               
-                    var lst = new ConcurrentQueue<List<SearchView>>();
-                   //"m:asprin tabs, p:john doe, d:marryshow"
-                    var layers = searchTxt.Split(',');
 
-                    
-                if (layers.Any() && searchTxt.Contains(":"))
-                    {
-                        //cut up and process filter
-                        var s = "";
-                       
-                        foreach (var itm in layers)
-                        {
-                            if (itm != null)
-                            {
-                                var slst = itm.Split(':');
-                                if (slst.Count() != 2) continue;
-                                var s1 = slst[1];
-                                if (s1 != null)
-                                {
-                                    var st = s1.Trim().ToLower();
-                                    var s2 = slst[0];
-                                    if (s2 != null)
-                                        switch (s2.Trim().ToLower())
-                                        {
-                                            case "m":
-                                                //s += string.Format("and ItemInfo like '%{0}%'", slst[1].Trim());
-                                                if (lst.Count > 0)
-                                                {
-                                                    var res = lst.SelectMany(x => x).Where(x => x.ItemInfo.ToLower().Contains(st));
-                                                    lst = new ConcurrentQueue<List<SearchView>>();
-                                                    lst.Enqueue(res.ToList());
-                                                }
-                                                else
-                                                {
-                                                    using (var ctx = new RMSModel())
-                                                    {
-                                                        lst.Enqueue(
-                                                            ctx.SearchViews.Where(x => x.ItemInfo.ToLower().Contains(st))
-                                                                .Include(x => x.Prescription)
-                                                                .Include(x => x.Prescription.Prescriptions)
-                                                                .Include("Prescription.ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                                                .Include("Prescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                                                .Include(x => x.Prescription.TransactionEntries)
-                                                                .Include("Prescription.TransactionEntries.TransactionEntryItem")
-                                                                .Include(x => x.Prescription.Patient)
-                                                                .Include(x => x.Prescription.Doctor)
-                                                                .OrderByDescending(x => x.TransactionId)
-                                                                
-                                                                .Take(listCount).ToList());
-                                                    }
-                                                }
+                SearchResults = new ObservableCollection<Prescription>(GetTransactions(searchTxt));
 
-                                                break;
-                                            case "p":
-                                                //s += string.Format("and PatientInfo like '%{0}%'", slst[1].Trim());
-                                                if (lst.Count > 0)
-                                                {
-                                                    var res = lst.SelectMany(x => x).Where(x => x != null && x.PatientInfo != null && (x.PatientInfo.ToLower().Contains(st)));
-                                                    lst = new ConcurrentQueue<List<SearchView>>();
-                                                    lst.Enqueue(res.ToList());
-                                                }
-                                                else
-                                                {
-                                                    using (var ctx = new RMSModel())
-                                                    {
-                                                        lst.Enqueue(
-                                                            ctx.SearchViews.Where(x => x.PatientInfo.ToLower().Contains(st))
-                                                                .Include(x => x.Prescription)
-                                                                .Include(x => x.Prescription.Prescriptions)
-                                                                .Include("Prescription.ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                                                .Include("Prescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                                                .Include(x => x.Prescription.TransactionEntries)
-                                                                .Include("Prescription.TransactionEntries.TransactionEntryItem")
-                                                                .Include(x => x.Prescription.Patient)
-                                                                .Include(x => x.Prescription.Doctor)
-                                                                .OrderByDescending(x => x.TransactionId)
-                                                                
-                                                                .Take(listCount).ToList());
-                                                    }
-                                                }
-                                                break;
-                                            case "d":
-                                                //s += string.Format("and DoctorInfo like '%{0}%'", slst[1].Trim());
-                                                if (lst.Count > 0)
-                                                {
-                                                    var res = lst.SelectMany(x => x).Where(x => x != null && x.DoctorInfo != null && ( x.DoctorInfo.ToLower().Contains(st)));
-                                                    lst = new ConcurrentQueue<List<SearchView>>();
-                                                    lst.Enqueue(res.ToList());
-                                                }
-                                                else
-                                                {
-                                                    using (var ctx = new RMSModel())
-                                                    {
-                                                        lst.Enqueue(
-                                                            ctx.SearchViews.Where(x => x.DoctorInfo.ToLower().Contains(st))
-                                                                .Include(x => x.Prescription)
-                                                                .Include(x => x.Prescription.Prescriptions)
-                                                                .Include("Prescription.ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                                                .Include("Prescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                                                .Include(x => x.Prescription.TransactionEntries)
-                                                                .Include("Prescription.TransactionEntries.TransactionEntryItem")
-                                                                .Include(x => x.Prescription.Patient)
-                                                                .Include(x => x.Prescription.Doctor)
-                                                                .OrderByDescending(x => x.TransactionId)
-                                                                
-                                                                .Take(listCount).ToList());
-                                                    }
-                                                }
-                                                break;
-                                        }
-                                }
-                            }
-                        }
-                        
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(searchTxt))
-                        {
-                            // do basic search
-                            using (var ctx = new RMSModel())
-                            {
-                                ctx.Database.CommandTimeout = 0;
-                                lst.Enqueue(
-                                    ctx.SearchViews.Where(x => x.SearchInfo.Contains(searchTxt) )
-                                       .Include(x => x.Prescription)
-                                        .Include(x => x.Prescription.Prescriptions)
-                                        .Include("Prescription.ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                        .Include("Prescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                        .Include(x => x.Prescription.TransactionEntries)
-                                       .Include("Prescription.TransactionEntries.TransactionEntryItem")
-                                        .Include(x => x.Prescription.Patient)
-                                        .Include(x => x.Prescription.Doctor)
-                                        .OrderByDescending(x => x.TransactionId)
-                                        .Where(x => x.Prescription.ParentPrescriptionId == null)
-                                        .Take(listCount).ToList());
-
-                                
-                        }
-                        }
-                        else
-                        {
-                            using (var ctx = new RMSModel())
-                            {
-                                lst.Enqueue(
-                                    ctx.SearchViews
-                                        .Include(x => x.Prescription)
-                                        .Include(x => x.Prescription.Prescriptions)
-                                        .Include("Prescription.ParentPrescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                        .Include("Prescription.Prescriptions.TransactionEntries.TransactionEntryItem")
-                                        .Include(x => x.Prescription.TransactionEntries)
-                                      .Include("Prescription.TransactionEntries.TransactionEntryItem")
-                                        .Include(x => x.Prescription.Patient)
-                                        .Include(x => x.Prescription.Doctor)
-                                        .OrderByDescending(x => x.TransactionId)
-                                        .Where(x => x.Prescription.ParentPrescriptionId == null)
-                                        .Take(25).ToList());
-                            }
-                        }
-                    }
-
-
-                    SearchResults = new ObservableCollection<Prescription>(lst.SelectMany(x => x).Where((x => x?.Prescription != null)).Select(z => z.Prescription).OrderByDescending(x => x.Time));
-                
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        private List<Prescription> GetTransactions(string searchTxt)
+        {
+            using (var ctx = new RMSModel())
+            {
+                IQueryable<Prescription> Transactions;
+                if (Int32.TryParse(searchTxt, out int num))
+                {
+                    Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
+                        .Where(x => x.TransactionId.ToString().Contains(searchTxt));
+                }
+                else
+                {
+                    Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
+                        .Where(x => (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt) );
+                }
+
+                
+
+                var list = Transactions.OfType<Prescription>()
+                    .OrderByDescending(x => x.TransactionId)
+                    .Where(x => x.ParentTransactionId == null)
+                    .OrderByDescending(x => x.Time)
+                    .Select(x => new
+                    {
+                        TransactionId = x.TransactionId,
+                        Time = x.Time,
+                       
+                        Patient = new
+                        {
+                            FirstName = x.Patient.FirstName,
+                            LastName = x.Patient.LastName,
+                        },
+                        Doctor = new
+                        {
+                            FirstName = x.Doctor.FirstName,
+                            LastName = x.Doctor.LastName,
+                        },
+                        TransactionEntries = x.TransactionEntries
+                            .Select(z => new
+                            {
+                                Quantity = z.Quantity,
+                                Price = z.Price,
+                                SalesTaxPercent = z.SalesTaxPercent,
+                                Discount = z.Discount,
+                                TransactionEntryItem = new
+                                {
+                                    ItemName = z.TransactionEntryItem.ItemName
+                                }
+                            }).ToList(),
+                        Transactions = x.Transactions.OfType<Prescription>().Select(pp => new
+                        {
+                            TransactionId = pp.TransactionId,
+                            Time = pp.Time,
+                            Patient = new
+                            {
+                                FirstName = pp.Patient.FirstName,
+                                LastName = pp.Patient.LastName,
+                            },
+                            Doctor = new
+                            {
+                                FirstName = pp.Doctor.FirstName,
+                                LastName = pp.Doctor.LastName,
+                            },
+                            TransactionEntries = pp.TransactionEntries
+                                .Select(zz => new
+                                {
+                                    Quantity = zz.Quantity,
+                                    Price = zz.Price,
+                                    SalesTaxPercent = zz.SalesTaxPercent,
+                                    Discount = zz.Discount,
+                                    TransactionEntryItem = new
+                                    {
+                                        ItemName = zz.TransactionEntryItem.ItemName
+                                    }
+                                }),
+                        })
+
+                    })
+                    .Take(listCount)
+                    .ToList();
+                var prescriptions = list
+                    .Select(x => new Prescription()
+                    {
+                        TransactionId = x.TransactionId,
+                        Time = x.Time,
+                        Patient = new Patient()
+                        {
+                            FirstName = x.Patient.FirstName,
+                            LastName = x.Patient.LastName,
+                        },
+                        Doctor = new Doctor()
+                        {
+                            FirstName = x.Doctor.FirstName,
+                            LastName = x.Doctor.LastName,
+                        },
+                        TransactionEntries = new ObservableCollection<TransactionEntryBase>(
+                            x.TransactionEntries
+                                .Select(z => new PrescriptionEntry()
+                                {
+                                    Quantity = z.Quantity,
+                                    Price = z.Price,
+                                    SalesTaxPercent = z.SalesTaxPercent,
+                                    Discount = z.Discount,
+                                    TransactionEntryItem = new TransactionEntryItem()
+                                    {
+                                        ItemName = z.TransactionEntryItem.ItemName
+                                    }
+                                })),
+                        Transactions = new ObservableCollection<TransactionBase>(x.Transactions.Select(pp =>
+                            new Prescription()
+                            {
+                                TransactionId = pp.TransactionId,
+                                Time = pp.Time,
+                                
+                                Patient = new Patient()
+                                {
+                                    FirstName = pp.Patient.FirstName,
+                                    LastName = pp.Patient.LastName,
+                                },
+                                Doctor = new Doctor()
+                                {
+                                    FirstName = pp.Doctor.FirstName,
+                                    LastName = pp.Doctor.LastName,
+                                },
+                                TransactionEntries = new ObservableCollection<TransactionEntryBase>(
+                                    pp.TransactionEntries
+                                        .Select(q => new PrescriptionEntry()
+                                        {
+                                            Quantity = q.Quantity,
+                                            Price = q.Price,
+                                            SalesTaxPercent = q.SalesTaxPercent,
+                                            Discount = q.Discount,
+                                            TransactionEntryItem = new TransactionEntryItem()
+                                            {
+                                                ItemName = q.TransactionEntryItem.ItemName
+                                            }
+                                        })),
+                            
+                            }).ToList())
+
+                    }).ToList();
+                return prescriptions;
             }
         }
 
@@ -282,7 +268,7 @@ namespace LeftRegion
 
         //+ ToDo: Replace this with your own data fields
         private RMSDataAccessLayer.TransactionBase transactionData;
-        private int listCount = 20;
+        private int listCount = 10;
         
         public RMSDataAccessLayer.TransactionBase TransactionData
         {
@@ -298,7 +284,7 @@ namespace LeftRegion
                         {
                             if (SalesVM.Instance.TransactionData is Prescription trans)
                             {
-                                //if (trans.TransactionId != transactionData.TransactionId && trans.Prescriptions.All(x => x.TransactionId != transactionData.TransactionId))
+                                //if (trans.TransactionId != transactionData.TransactionId && trans.Transactions.All(x => x.TransactionId != transactionData.TransactionId))
                                     SalesVM.Instance.GoToTransaction(transactionData.TransactionId);
                             }
                             else

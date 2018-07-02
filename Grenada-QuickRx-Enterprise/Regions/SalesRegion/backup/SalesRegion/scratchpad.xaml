@@ -11,7 +11,7 @@
              xmlns:controls="clr-namespace:Aviad.WPF.Controls;assembly=Aviad.WPF.Controls"
              mc:Ignorable="d" Width="Auto" Height="Auto" Background="#FF565656" Foreground="#FF926D6D">
 
-            
+
 
 
 </UserControl>

@@ -291,20 +291,20 @@ namespace SalesRegion
 
                 else
                 {
-                    if (showPatientPrescriptions == true)
+                    if (showPatientTransactions == true)
                     {
                         if (itm.GetType() == typeof (RMSDataAccessLayer.Patient))
                         {
                             var lst = SalesVM.Instance.GetPatientTransactionList(itm as Patient);
                             ItemEditor.Content = lst;
-                            showPatientPrescriptions = false;
+                            showPatientTransactions = false;
                         }
 
                         if (itm.GetType() == typeof (RMSDataAccessLayer.Doctor))
                         {
                             var lst = SalesVM.Instance.GetDoctorTransactionList(itm as Doctor);
                             ItemEditor.Content = lst;
-                            showPatientPrescriptions = false;
+                            showPatientTransactions = false;
                         }
                     }
                     else
@@ -662,11 +662,11 @@ namespace SalesRegion
             edititem = true;
         }
 
-        private bool showPatientPrescriptions = false;
+        private bool showPatientTransactions = false;
 
         private void PatientPrescriptionBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            showPatientPrescriptions = true;
+            showPatientTransactions = true;
         }
 
         private void ClearBtn_Click(object sender, RoutedEventArgs e)

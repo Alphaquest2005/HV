@@ -504,7 +504,7 @@ namespace SalesRegion
         private void GoToMaster(object sender, RoutedEventArgs e)
         {
            var trans = SalesVM.Instance.TransactionData as Prescription;
-           if(trans.ParentPrescriptionId.GetValueOrDefault() > 0) SalesVM.Instance.GoToTransaction(trans.ParentPrescriptionId.GetValueOrDefault());
+           if(trans.ParentTransactionId.GetValueOrDefault() > 0) SalesVM.Instance.GoToTransaction(trans.ParentTransactionId.GetValueOrDefault());
         }
     }
 }

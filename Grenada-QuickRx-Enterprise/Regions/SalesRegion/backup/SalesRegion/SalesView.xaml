@@ -183,7 +183,7 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type data:Prescription}">
                     <DataTemplate.Resources>
-                        <local:ParentPrescriptionVisbilityConverter x:Key="ParentPrescriptionVisbilityConverter"/>
+                        <local:ParentTransactionVisbilityConverter x:Key="ParentTransactionVisbilityConverter"/>
                     </DataTemplate.Resources>
                     <Grid>
                         <TextBlock Text="Prescription" Margin="152,42,0,0" Foreground="#FF144000" LineHeight="12"
@@ -223,7 +223,7 @@
                                    TextWrapping="Wrap" Text="Edit..." VerticalAlignment="Top" Width="31"
                                    MouseLeftButtonDown="EditPatientTB_MouseLeftButtonDown" />
                         <Button x:Name="AutoRepeatBtn_Copy" HorizontalAlignment="Left" Height="24" Margin="319,76,0,0"
-            VerticalAlignment="Top" Width="24" Background="#00000000" Content="M" Visibility="{Binding ParentPrescriptionId, Converter={StaticResource ParentPrescriptionVisbilityConverter}}"
+            VerticalAlignment="Top" Width="24" Background="#00000000" Content="M" Visibility="{Binding ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
             FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FFE49F65" ToolTip="Repeat"
             RenderTransformOrigin="0.5,0.45" Click="GoToMaster" FontWeight="Bold" />
                     </Grid>

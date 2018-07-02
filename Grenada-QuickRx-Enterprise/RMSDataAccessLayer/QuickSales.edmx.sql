@@ -797,7 +797,7 @@ GO
 
 -- Creating foreign key on [TransactionId] in table 'SearchViews'
 ALTER TABLE [dbo].[SearchViews]
-ADD CONSTRAINT [FK_PrescriptionSearchView]
+ADD CONSTRAINT [FK_TransactionsearchView]
     FOREIGN KEY ([TransactionId])
     REFERENCES [dbo].[TransactionBase_Prescription]
         ([TransactionId])

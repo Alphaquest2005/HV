@@ -22,27 +22,6 @@ namespace RMSDataAccessLayer
     
     public partial class Prescription : TransactionBase
     {
-        
-        public Prescription()
-        {
-            this.Prescriptions = new ObservableCollection<Prescription>();
-            CustomStartup();
-            CustomStartup2();
-            this.PropertyChanged += UpdatePropertyChanged;
-            
-        }
-        partial void CustomStartup();
-        partial void CustomStartup2();
-    
-            private void UpdatePropertyChanged(object sender, PropertyChangedEventArgs e)
-            {
-                if (!string.IsNullOrEmpty(e.PropertyName) && (!Environment.StackTrace.Contains("Internal.Materialization")) && TrackingState == TrackingState.Unchanged)
-                {
-                    TrackingState = TrackingState.Modified;
-                }
-            }
-    
-            
         [DataMember]
                     [Required(ErrorMessage="DoctorId is required")]
     	public int DoctorId
@@ -71,19 +50,6 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private int _PatientId;
-        [DataMember]
-        	public Nullable<int> ParentPrescriptionId
-    	{ 
-    		get { return _ParentPrescriptionId; }
-    		set
-    		{
-    			if (Equals(value, _ParentPrescriptionId)) return;
-    			_ParentPrescriptionId = value;
-                ValidateModelProperty(this, value);
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private Nullable<int> _ParentPrescriptionId;
         [DataMember]
     	public Doctor Doctor
     	{
@@ -114,47 +80,5 @@ namespace RMSDataAccessLayer
     	}
     	private Patient _Patient;
     	private ChangeTrackingCollection<Patient> PatientChangeTracker { get; set; }
-        [DataMember]
-    	public SearchView SearchViews
-    	{
-    		get { return _SearchViews; }
-    		set
-    		{
-    			if (Equals(value, _SearchViews)) return;
-    			_SearchViews = value;
-    			SearchViewsChangeTracker = _SearchViews == null ? null
-    				: new ChangeTrackingCollection<SearchView> { _SearchViews };
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private SearchView _SearchViews;
-    	private ChangeTrackingCollection<SearchView> SearchViewsChangeTracker { get; set; }
-        [DataMember]
-    	public ObservableCollection<Prescription> Prescriptions
-    	{
-    		get { return _Prescriptions; }
-    		set
-    		{
-    			if (Equals(value, _Prescriptions)) return;
-    			_Prescriptions = value;
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private ObservableCollection<Prescription> _Prescriptions;
-        [DataMember]
-    	public Prescription ParentPrescription
-    	{
-    		get { return _ParentPrescription; }
-    		set
-    		{
-    			if (Equals(value, _ParentPrescription)) return;
-    			_ParentPrescription = value;
-    			ParentPrescriptionChangeTracker = _ParentPrescription == null ? null
-    				: new ChangeTrackingCollection<Prescription> { _ParentPrescription };
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private Prescription _ParentPrescription;
-    	private ChangeTrackingCollection<Prescription> ParentPrescriptionChangeTracker { get; set; }
     }
 }
