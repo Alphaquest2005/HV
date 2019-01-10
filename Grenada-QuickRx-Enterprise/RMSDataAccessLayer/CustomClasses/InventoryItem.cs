@@ -11,6 +11,12 @@ namespace RMSDataAccessLayer
         //{
         //    Department = "MISC";
         //}
+
+        public bool IsVat
+        {
+            get => SalesTax > 0;
+            set => SalesTax = value == true ? .15 : 0;
+        }
         public string SearchCriteria
         {
             get {

@@ -130,14 +130,19 @@ namespace QS2QBPost
                     }
 
                 }
+
                 Singleton.Status = "Stopped Posting waiting on timer";
-                postingTimer.Enabled = true;
-                
+               
+
             }
             catch (Exception ex)
             {
 
                 // do nothing
+            }
+            finally
+            {
+                postingTimer.Enabled = true;
             }
            
           
@@ -148,7 +153,7 @@ namespace QS2QBPost
             using (var ctx = new RMSModel())
             {
                 var trns = ctx.TransactionBase.FirstOrDefault(x => x.TransactionId == itm.TransactionData.TransactionId);
-                trns.Status = message;
+                trns.Status = message.Length > 50 ?message.Substring(0,50) : message;
                 ctx.TransactionBase.AddOrUpdate(trns);
                 ctx.SaveChanges();
             }
@@ -238,7 +243,7 @@ namespace QS2QBPost
         {
             try
             {
-                
+                //throw new ApplicationException("This is test Error");
                 IncludePrecriptionProperties(pt.TransactionData);
 
                 SalesReceipt s = new SalesReceipt();

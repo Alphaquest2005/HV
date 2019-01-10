@@ -479,6 +479,12 @@ namespace SalesRegion
                 d.DisplayName = "Add Doctor";
                 cc.Add(d);
 
+                SearchItem i = new SearchItem();
+                i.SearchObject = null;
+                i.SearchCriteria = "Add Drug";
+                i.DisplayName = "Add Drug";
+                cc.Add(i);
+
 
                 return cc;
             }
@@ -596,10 +602,11 @@ namespace SalesRegion
                 using (var ctx = new RMSModel())
                 {
 
+
                     return ctx.Item.OfType<Medicine>().Where(x =>
                             ((x.ItemName ?? x.Description).Contains(filterText) ||
                              (x.ItemNumber.ToString().StartsWith(filterText)))
-                            && x.QBItemListID != null
+                            // && x.QBItemListID != null
                             // && x.Quantity > 0                           && 
                             && x.QBActive == true
                             && (x.Inactive == null ||
@@ -1483,27 +1490,53 @@ namespace SalesRegion
         {
             try
             {
-              
+
+                if (Station.PrintServer.StartsWith("\\"))
+                {
+                    PrintServer printserver = new PrintServer(Station.PrintServer);
+
+
+                    Size visualSize;
+
+                    visualSize = new Size(288, 2 * 96); // paper size
+
+                    DrawingVisual visual =
+                        PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
+
+
+                    SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
+                        visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
+                    page.Initialize(false);
+
+                    PrintDialog pd = new PrintDialog();
+                    pd.PrintQueue = printserver.GetPrintQueue(Station.ReceiptPrinterName);
+
+                    pd.PrintDocument(page, "");
+                }
+                else
+                {
+                    LocalPrintServer printserver = new LocalPrintServer();
+
+
+                    Size visualSize;
+
+                    visualSize = new Size(288, 2 * 96); // paper size
+
+                    DrawingVisual visual =
+                        PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
+
+
+                    SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
+                        visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
+                    page.Initialize(false);
+
+                    PrintDialog pd = new PrintDialog();
+                    pd.PrintQueue = printserver.GetPrintQueue(Station.ReceiptPrinterName);
+
+                    pd.PrintDocument(page, "");
+                }
                 
-                //LocalPrintServer printserver = new LocalPrintServer();
-                PrintServer printserver = new PrintServer(Station.PrintServer);
-
-
-                Size visualSize;
-
-                visualSize = new Size(288, 2 * 96); // paper size
-
-                DrawingVisual visual = PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
-
-
-                SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
-                    visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
-                page.Initialize(false);
-
-                PrintDialog pd = new PrintDialog();
-                pd.PrintQueue = printserver.GetPrintQueue(Station.ReceiptPrinterName);
-
-                pd.PrintDocument(page, "");
+               
 
             }
             catch (Exception ex)
@@ -2211,14 +2244,33 @@ namespace SalesRegion
 
         public bool ServerMode { get; set; }
 
-        internal void SaveMedicine(Medicine medicine)
+        internal bool SaveMedicine(Medicine medicine)
         {
-            using (var ctx = new RMSModel())
+            var res = false;
+            try
             {
-                ctx.ApplyChanges(medicine);
-                ctx.SaveChanges();
-                medicine.AcceptChanges();
+
+                using (var ctx = new RMSModel())
+                {
+                    ctx.ApplyChanges(medicine);
+                    ctx.SaveChanges();
+                    medicine.AcceptChanges();
+                }
+                res = true;
+                return res;
             }
+            catch (DbEntityValidationException vex)
+            {
+                var str = vex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Aggregate("", (current, er) => current + (er.PropertyName + ","));
+                MessageBox.Show("Please Check the following fields before saving! - " + str);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                throw ex;
+            }
+           
        
         }
 

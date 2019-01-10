@@ -26,6 +26,7 @@ namespace RMSDataAccessLayer
         public TransactionBase()
         {
             this.TransactionEntries = new ObservableCollection<TransactionEntryBase>();
+            this.TransactionBase1 = new ObservableCollection<TransactionBase>();
             CustomStartup();
             CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
@@ -251,6 +252,19 @@ namespace RMSDataAccessLayer
     	}
     	private byte[] _EntryTimeStamp;
         [DataMember]
+        	public Nullable<int> ParentTransactionId
+    	{ 
+    		get { return _ParentTransactionId; }
+    		set
+    		{
+    			if (Equals(value, _ParentTransactionId)) return;
+    			_ParentTransactionId = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<int> _ParentTransactionId;
+        [DataMember]
     	public ObservableCollection<TransactionEntryBase> TransactionEntries
     	{
     		get { return _TransactionEntries; }
@@ -307,5 +321,32 @@ namespace RMSDataAccessLayer
     	}
     	private Cashier _Pharmacist;
     	private ChangeTrackingCollection<Cashier> PharmacistChangeTracker { get; set; }
+        [DataMember]
+    	public ObservableCollection<TransactionBase> TransactionBase1
+    	{
+    		get { return _TransactionBase1; }
+    		set
+    		{
+    			if (Equals(value, _TransactionBase1)) return;
+    			_TransactionBase1 = value;
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private ObservableCollection<TransactionBase> _TransactionBase1;
+        [DataMember]
+    	public TransactionBase TransactionBase2
+    	{
+    		get { return _TransactionBase2; }
+    		set
+    		{
+    			if (Equals(value, _TransactionBase2)) return;
+    			_TransactionBase2 = value;
+    			TransactionBase2ChangeTracker = _TransactionBase2 == null ? null
+    				: new ChangeTrackingCollection<TransactionBase> { _TransactionBase2 };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private TransactionBase _TransactionBase2;
+    	private ChangeTrackingCollection<TransactionBase> TransactionBase2ChangeTracker { get; set; }
     }
 }

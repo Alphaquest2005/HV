@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using Common.Core.Logging;
 using log4netWrapper;
 using SimpleMvvmToolkit;
+using TrackableEntities;
 
 
 namespace SalesRegion
@@ -279,6 +280,13 @@ namespace SalesRegion
                             Doctor d = SalesVM.Instance.CreateNewDoctor();
                             d.StartTracking();
                             ItemEditor.Content = d;
+                            break;
+
+                        case "Add Drug":
+                            Medicine i = new Medicine() { TrackingState = TrackingState.Added };
+                            i.StartTracking();
+                            if (!string.IsNullOrEmpty(SearchBox.Text)) i.ItemName = SearchBox.Text;
+                            ItemEditor.Content = i;
                             break;
 
                         default:
@@ -648,7 +656,9 @@ namespace SalesRegion
 
         private void SaveMedicineBtn_Click(object sender, RoutedEventArgs e)
         {
-            SalesVM.Instance.SaveMedicine((Medicine) ItemEditor.Content);
+            if(ItemEditor.Content is Medicine m)
+                if (!SalesVM.Instance.SaveMedicine((Medicine) ItemEditor.Content)) return;
+            LocalProcesItem(ItemEditor.Content);
             ReBindItemEditor();
         }
 

@@ -41,7 +41,7 @@
             <Image Source="{DynamicResource GreenRx}" Width="42"/>
 
         </Button>
-        <ListBox Name="SearchList" SelectedItem="{Binding TransactionData}"  ItemsSource="{Binding SearchResults, IsAsync=True}" Height="382" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ListBox Name="SearchList" SelectedItem="{Binding TransactionData}" ScrollViewer.CanContentScroll="False"  ItemsSource="{Binding SearchResults, IsAsync=True}" Height="382" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.Resources>
                 <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
                     <Grid Height="25" Background="#7F7182D0">

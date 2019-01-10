@@ -47,6 +47,8 @@ namespace RMSDataAccessLayer
     			NotifyPropertyChanged();
     		}
     	}
-    	private Nullable<System.DateTime> _ExpiryDate;
+
+
+        private Nullable<System.DateTime> _ExpiryDate;
     }
 }

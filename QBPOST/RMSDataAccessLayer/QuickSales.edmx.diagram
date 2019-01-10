@@ -35,6 +35,7 @@
         <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_Item" />
         <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_TransactionEntryBase" />
         <EntityTypeShape EntityType="RMSEntities.QBInventoryItem" Width="1.5" PointX="0.75" PointY="5.75" />
+        <AssociationConnector Association="RMSEntities.FK_TransactionBase_TransactionBase" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

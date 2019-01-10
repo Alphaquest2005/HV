@@ -51,19 +51,6 @@ namespace RMSDataAccessLayer
     	}
     	private int _PatientId;
         [DataMember]
-        	public Nullable<int> ParentPrescriptionId
-    	{ 
-    		get { return _ParentPrescriptionId; }
-    		set
-    		{
-    			if (Equals(value, _ParentPrescriptionId)) return;
-    			_ParentPrescriptionId = value;
-                ValidateModelProperty(this, value);
-    			NotifyPropertyChanged();
-    		}
-    	}
-    	private Nullable<int> _ParentPrescriptionId;
-        [DataMember]
     	public Doctor Doctor
     	{
     		get { return _Doctor; }
