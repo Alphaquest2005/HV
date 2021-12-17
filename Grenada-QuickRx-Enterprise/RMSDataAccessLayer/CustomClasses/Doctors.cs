@@ -5,6 +5,7 @@ using System.Text;
 
 namespace RMSDataAccessLayer
 {
+
     public partial class Doctor
     {
 
@@ -26,16 +27,16 @@ namespace RMSDataAccessLayer
             get {
                 if (FirstName != null && (FirstName.IndexOf("Dr ", StringComparison.Ordinal) == -1 && FirstName.IndexOf("Dr.", StringComparison.Ordinal) == -1))
                 {
-                    return "Dr." + " " + FirstName.Trim() + " " + LastName.Trim();
+                    return "Dr." + " " + FirstName.Trim() + " " + LastName.Trim() + (string.IsNullOrEmpty(Code) ? "" : " - " + Code?.Trim());
                 }
                 else
                 {
-                    if (FirstName != null) return FirstName.Trim().Replace(".","").Replace(" ","").Replace("Dr", "Dr. ") + " " + LastName.Trim();
+                    if (FirstName != null) return FirstName.Trim().Replace(".","").Replace(" ","").Replace("Dr", "Dr. ") + " " + LastName.Trim() + (string.IsNullOrEmpty(Code) ? "" : " - " + Code?.Trim());
                 }
-                return FirstName + " " + LastName;
+                return FirstName + " " + LastName + "-" + (string.IsNullOrEmpty(Code) ? "" : " - " + Code?.Trim());
             }// base.Salutation + " " +
         }
 
-
+        public List<Patient> Patients { get; set; }
     }
 }

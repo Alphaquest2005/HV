@@ -8,11 +8,7 @@ namespace RMSDataAccessLayer
 {
    public partial class Medicine
    {
-      
-       
-
-
-
-
-    }
+       public List<Patient> Patients { get; set; }
+       public List<Doctor> Doctors { get; set; }
+   }
 }

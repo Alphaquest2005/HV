@@ -102,6 +102,19 @@ namespace RMSDataAccessLayer
     	}
     	private string _Initials;
         [DataMember]
+        	public Nullable<bool> IsActive
+    	{ 
+    		get { return _IsActive; }
+    		set
+    		{
+    			if (Equals(value, _IsActive)) return;
+    			_IsActive = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<bool> _IsActive;
+        [DataMember]
     	public ObservableCollection<TransactionBase> TransactionBase
     	{
     		get { return _TransactionBase; }

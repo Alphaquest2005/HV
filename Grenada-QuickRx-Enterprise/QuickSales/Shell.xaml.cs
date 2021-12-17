@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using log4netWrapper;
 
 namespace QuickSales
 {
@@ -20,7 +21,30 @@ namespace QuickSales
     {
         public Shell()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                var lastexception = false;
+                while (lastexception == false)
+                {
+
+                    if (ex.InnerException == null)
+                    {
+                        lastexception = true;
+                        var errorMessage = $"An unhandled Exception occurred!: {ex.Message} ---- {ex.StackTrace}";
+                        Logger.Log(LoggingLevel.Error, errorMessage);
+                        MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    }
+
+                    ex = ex.InnerException;
+
+                }
+            }
+
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

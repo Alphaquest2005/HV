@@ -31,7 +31,7 @@ namespace RMSDataAccessLayer
        {
            get
            {
-               string value = TransactionId.ToString();
+               string value = TransactionId == 0 ? Transaction?.TransactionId.ToString() : TransactionId.ToString();
                //if (value != null && value.ToString().Replace("0", "") != "")
                //    value = value.ToString().Remove(0, value.ToString().IndexOfAny("123456789".ToCharArray()));
                if (EntryNumber == null)
@@ -50,7 +50,7 @@ namespace RMSDataAccessLayer
         [IgnoreDataMember]
         public virtual double Amount
         {
-            get { return ((Quantity * Price * (1 + SalesTaxPercent) - Discount.GetValueOrDefault())); }
+            get { return (double) ((((Quantity * Price - ((Quantity * Price) * (Discount == null? 0 : Discount/100.00)))* (1 + SalesTaxPercent)))); }
         }
         decimal salestax = 0;
         //if tax is not manually set return calculated tax

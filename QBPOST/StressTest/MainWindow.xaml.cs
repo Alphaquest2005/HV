@@ -4,6 +4,7 @@ using System.Windows;
 using log4netWrapper;
 using System.Xml;
 using QBPOSXMLRPLib;
+using QuickBooks;
 
 namespace QS2QBPost
 {
@@ -34,6 +35,8 @@ namespace QS2QBPost
             }
         }
     }
+
+  
 }
 
    

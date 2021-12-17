@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Windows;
-using log4netWrapper;
 using QBPOSXMLRPLib;
 using QuickBooks.Properties;
 
@@ -16,29 +15,26 @@ namespace QuickBooks
 
         public static string ProcessXML(string input, string QBCompanyFile)
         {
-            string res = null;
+            
             ///bool started = false;
             try
             {
 
-                while (isConnected == true)
+                while (isConnected == true )
                 {
                     Thread.Sleep(1000);
                 }
 
-                if (ticket == null) ticket = BeginSession(QBCompanyFile);
+               if(ticket == null) ticket = BeginSession(QBCompanyFile);
                 isConnected = true;
-                res = rp.ProcessRequest(ticket, input).ToString();
+                var res = rp.ProcessRequest(ticket, input).ToString();
                 isConnected = false;
                 return res;
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                
-                //return string.Empty;
-                Logger.Log(LoggingLevel.Error, ex.Message + ":-Input-:" + input + ":-Response-:" + res);
-                throw new Exception(ex.Message);
-                
+                MessageBox.Show("COM Error Description = " + ex.Message, "COM error");
+                return string.Empty;
             }
             finally
             {
@@ -56,7 +52,9 @@ namespace QuickBooks
 
         private static string BeginSession(string QBCompanyFile)
         {
-            rp.OpenConnection("QB2POS", "QB2POS");
+            ///DO NOT BREAK TO CHECK THIS IT WILL NOT SHOW THE WINDOW AND STICK
+            ///  BREAK AFTER
+            rp.OpenConnection("QBPOST", "QBPOST");
             string connString = QBCompanyFile;//"Computer Name=server;Company Data=hills and valley gd;Version=11";
 
             return rp.BeginSession(connString);

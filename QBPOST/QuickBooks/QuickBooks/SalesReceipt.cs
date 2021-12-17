@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using RMSDataAccessLayer;
+
 namespace QuickBooks
 {
     using System;
@@ -31,8 +33,10 @@ namespace QuickBooks
         public string TxnID { get; set; }
         public string SalesReceiptType { get; set; }
         public string TrackingNumber { get; set; }
-        public string Discount { get; set; }
+        public string DiscountPercent { get; set; }
     
         public virtual ICollection<SalesReceiptDetail> SalesReceiptDetails { get; set; }
+        public string CustomerListId { get; set; }
+        public string Discount { get; set; }
     }
 }

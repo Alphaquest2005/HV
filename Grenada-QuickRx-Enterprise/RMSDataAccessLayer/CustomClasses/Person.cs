@@ -22,7 +22,7 @@ namespace RMSDataAccessLayer
 
         public string DisplayName
         {
-            get { return FirstName.Trim() + " " + LastName.Trim(); }
+            get { return FirstName?.Trim() + " " + LastName?.Trim(); }
         }
 
         public string Key

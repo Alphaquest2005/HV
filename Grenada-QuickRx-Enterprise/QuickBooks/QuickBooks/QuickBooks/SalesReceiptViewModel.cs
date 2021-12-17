@@ -234,6 +234,7 @@ namespace QuickBooks
             sr.TxnDate = salesreceipt.TxnDate;
             sr.TrackingNumber = salesreceipt.TrackingNumber;
             sr.DiscountPercent = Convert.ToDecimal(string.IsNullOrEmpty(salesreceipt.Discount)?"0":salesreceipt.Discount);
+            if(!string.IsNullOrEmpty(salesreceipt.CustomerListID)) sr.CustomerListID = salesreceipt.CustomerListID;
 
             //double total = 0;
             //foreach (var item in salesreceipt.SalesReceiptDetails)
@@ -250,7 +251,7 @@ namespace QuickBooks
 
 
             //sr.TenderCashRet = new SalesReceiptRetTenderCashRet() { TenderAmount = Math.Round((Decimal)total,2,MidpointRounding.AwayFromZero)};
-           // sr.= 5.865;
+            // sr.= 5.865;
             sr.SalesReceiptNumber = salesreceipt.SalesReceiptNumber;
             foreach (var item in salesreceipt.SalesReceiptDetails)
             {

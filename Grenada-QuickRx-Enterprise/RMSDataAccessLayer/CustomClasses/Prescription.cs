@@ -5,6 +5,8 @@ using System.Text;
 
 namespace RMSDataAccessLayer
 {
+
+  
     public partial class Prescription: ISearchItem
     {
      
@@ -39,4 +41,7 @@ namespace RMSDataAccessLayer
         //     }
         // }
     }
+
+
+
 }

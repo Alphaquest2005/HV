@@ -26,6 +26,7 @@ namespace RMSDataAccessLayer
         public Item()
         {
             this.TransactionEntryItems = new ObservableCollection<TransactionEntryItem>();
+            this.ItemPresetDosages = new ObservableCollection<ItemPresetDosage>();
             CustomStartup();
             CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
@@ -356,5 +357,17 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private ObservableCollection<TransactionEntryItem> _TransactionEntryItems;
+        [DataMember]
+    	public ObservableCollection<ItemPresetDosage> ItemPresetDosages
+    	{
+    		get { return _ItemPresetDosages; }
+    		set
+    		{
+    			if (Equals(value, _ItemPresetDosages)) return;
+    			_ItemPresetDosages = value;
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private ObservableCollection<ItemPresetDosage> _ItemPresetDosages;
     }
 }

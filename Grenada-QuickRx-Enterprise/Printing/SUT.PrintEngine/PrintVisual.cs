@@ -33,5 +33,10 @@ namespace SUT.PrintEngine
 
             pd.PrintDocument(page, "");
         }
+
+        public static DrawingVisual GetVisual(ref Grid fwe)
+        {
+            return PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
+        }
     }
 }

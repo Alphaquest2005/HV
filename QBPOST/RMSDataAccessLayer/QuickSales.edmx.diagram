@@ -20,7 +20,7 @@
         <AssociationConnector Association="RMSEntities.CustomerPrescription" />
         <EntityTypeShape EntityType="RMSEntities.QuickPrescription" Width="1.5" PointX="2.625" PointY="3.375" />
         <InheritanceConnector EntityType="RMSEntities.QuickPrescription" />
-        <EntityTypeShape EntityType="RMSEntities.Patient" Width="1.5" PointX="9.375" PointY="5.875" />
+        <EntityTypeShape EntityType="RMSEntities.Patient" Width="2.125" PointX="9.375" PointY="5.875" />
         <AssociationConnector Association="RMSEntities.PatientPrescription" />
         <EntityTypeShape EntityType="RMSEntities.TransactionBase" Width="1.5" PointX="5.375" PointY="0.875" />
         <InheritanceConnector EntityType="RMSEntities.Prescription" />
@@ -36,6 +36,24 @@
         <AssociationConnector Association="RMSEntities.FK_TransactionEntryItem_TransactionEntryBase" />
         <EntityTypeShape EntityType="RMSEntities.QBInventoryItem" Width="1.5" PointX="0.75" PointY="5.75" />
         <AssociationConnector Association="RMSEntities.FK_TransactionBase_TransactionBase" />
+        <EntityTypeShape EntityType="RMSEntities.QBCustomer" Width="1.5" PointX="12" PointY="9.875" />
+        <AssociationConnector Association="RMSEntities.FK_QBCustomer_Persons_Patient" />
+        <AssociationConnector Association="RMSEntities.FK_TransactionBase_QuickPrescription_Persons_Patient" />
+        <EntityTypeShape EntityType="RMSEntities.IDCardInfo" Width="1.5" PointX="7.375" PointY="0.75" />
+        <AssociationConnector Association="RMSEntities.PatientIDCardInfo" />
+        <EntityTypeShape EntityType="RMSEntities.QBSale" Width="1.5" PointX="13.875" PointY="16.25" />
+        <EntityTypeShape EntityType="RMSEntities.QBSalesDetail" Width="1.5" PointX="16.125" PointY="16.375" />
+        <AssociationConnector Association="RMSEntities.FK_QBSales_QBCustomer" />
+        <AssociationConnector Association="RMSEntities.FK_QBSalesDetail_QBSales" />
+        <EntityTypeShape EntityType="RMSEntities.PatientAvailableReward" Width="2.125" PointX="2.75" PointY="7.75" />
+        <AssociationConnector Association="RMSEntities.PatientPatientAvailableReward" />
+        <EntityTypeShape EntityType="RMSEntities.PatientRewardSale" Width="1.5" PointX="8.125" PointY="11.375" />
+        <AssociationConnector Association="RMSEntities.PatientPatientRewardSale" />
+        <EntityTypeShape EntityType="RMSEntities.Store" Width="1.5" PointX="5.375" PointY="11.75" />
+        <EntityTypeShape EntityType="RMSEntities.MembershipType" Width="1.5" PointX="0.5" PointY="12.125" />
+        <EntityTypeShape EntityType="RMSEntities.PatientMembership" Width="1.5" PointX="8.875" PointY="14.25" />
+        <AssociationConnector Association="RMSEntities.PatientPatientMembership" />
+        <AssociationConnector Association="RMSEntities.MembershipTypePatientMembership" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

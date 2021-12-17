@@ -37,8 +37,10 @@ namespace RMSDataAccessLayer
                 var lst = new List<PrescriptionEntry>();
                 if (this.Transaction?.ParentTransaction != null)
                 {
-                    lst.AddRange(this.Transaction.ParentTransaction.Transactions.SelectMany(x => x.TransactionEntries).Where(x => x.TransactionEntryId < TransactionEntryId).Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
-                        lst.AddRange(this.Transaction.ParentTransaction.TransactionEntries.Where(z => z.TransactionEntryItem.ItemId == TransactionEntryItem.ItemId).OfType<PrescriptionEntry>());
+                    var childPrescriptionEntries = this.Transaction.ParentTransaction.Transactions.SelectMany(x => x.TransactionEntries).Where(x => x.TransactionEntryId < TransactionEntryId).Where(z => z.TransactionEntryItem.ItemNumber == TransactionEntryItem.ItemNumber).OfType<PrescriptionEntry>();
+                    lst.AddRange(childPrescriptionEntries);
+                    var parentPrescriptionEntries = this.Transaction.ParentTransaction.TransactionEntries.Where(z => z.TransactionEntryItem.ItemNumber == TransactionEntryItem.ItemNumber).OfType<PrescriptionEntry>();
+                    lst.AddRange(parentPrescriptionEntries);
                 }
                 
                 return lst.Sum(x => Convert.ToInt32(x.Quantity));

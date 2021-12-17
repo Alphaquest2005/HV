@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BarCodes</RootNamespace>
     <AssemblyName>BarCodes</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -76,6 +76,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BarCodeValueConverter.cs" />
+    <Compile Include="Code128Content.cs" />
+    <Compile Include="Code128Rendering.cs" />
     <Compile Include="UPCA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

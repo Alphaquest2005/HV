@@ -13,6 +13,7 @@
 
     <UserControl.Resources>
         <local:ArithmeticConverter x:Key="mathconverter" />
+        <local:ByteArrayToImageConverter x:Key="photoConverter" />
         <local:SalesVM  x:Key="SalesVMDataSource" />
         <DataTemplate x:Key="itemTemplate">
             <Canvas Name="pcanvas" MinHeight="25"
@@ -79,7 +80,7 @@
                                     EasingFunction="{StaticResource ease}"
                                     Storyboard.TargetName="st"
                                     Storyboard.TargetProperty="ScaleY"
-                                    To="2.6" />
+                                    To="3.2" />
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -152,9 +153,62 @@
     </UserControl.Resources>
 
     <StackPanel Margin="5,5,4,0" Orientation="Vertical" DataContext="{Binding Source={StaticResource SalesVMDataSource}}">
-        <Grid Height="Auto" MaxHeight="500" Background="#FFA0A0A0" Margin="0,0,0.2,0">
-            <Grid.Resources>
+        <Canvas Height="Auto" MaxHeight="200" Background="#FFA0A0A0" Margin="0,0,0,0">
+            <Canvas.Resources>
+                <DataTemplate x:Key="NormalItemTemplate">
+                    <Grid Margin="0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Height ="10" Width="10" >
+                                <Path Margin="0"
+                                      Data="M16,0L19.8,12.200003 32,12.200003 22.1,19.700004 25.9,31.900007 16,24.400005 6.0999994,31.900007 9.9000001,19.700004 0,12.200003 12.2,12.200003z" 
+                                      Fill="Gold" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Path.Effect>
+                                        <DropShadowEffect ShadowDepth="1"/>
+                                    </Path.Effect>
+                                </Path>
+                            </Viewbox>
 
+                            <TextBlock Text="{Binding Name, Mode=TwoWay}"  Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding RewardPoints}" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Status, Mode=TwoWay}" Validation.ErrorTemplate="{x:Null}" Margin="10,0,0,0"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding StatusDate, StringFormat=d}" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                    </Grid>
+                </DataTemplate>
+                <DataTemplate x:Key="SelectionBoxTemplate">
+                    <Grid Margin="0,0">
+                        <StackPanel Orientation="Horizontal">
+                        <Viewbox Height ="10" Width="10" >
+                            <Path Margin="0"
+                                      Data="M16,0L19.8,12.200003 32,12.200003 22.1,19.700004 25.9,31.900007 16,24.400005 6.0999994,31.900007 9.9000001,19.700004 0,12.200003 12.2,12.200003z" 
+                                      Fill="Gold" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Path.Effect>
+                                    <DropShadowEffect ShadowDepth="1"/>
+                                </Path.Effect>
+                            </Path>
+                        </Viewbox>
+
+                            <TextBlock Text="{Binding Name, Mode=TwoWay}"  Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding RewardPoints}" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Status, Mode=TwoWay}" Validation.ErrorTemplate="{x:Null}" Margin="10,0,0,0"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding StatusDate, StringFormat=d}" Margin="10,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+                <DataTemplate x:Key="CombinedTemplate">
+                    <ContentPresenter x:Name="Presenter"
+                                          Content="{Binding}"
+                                          ContentTemplate="{StaticResource NormalItemTemplate}" />
+                    <DataTemplate.Triggers>
+                        <DataTrigger
+                                Binding="{Binding RelativeSource={RelativeSource FindAncestor,ComboBoxItem,1}}"
+                                Value="{x:Null}">
+                            <Setter TargetName="Presenter" Property="ContentTemplate"
+                                        Value="{StaticResource SelectionBoxTemplate}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
                 <DataTemplate DataType="{x:Type data:QuickPrescription}">
                     <Grid>
                         <TextBlock Text="Quick Sale" Margin="139,53,0,0" Foreground="#FF144000" LineHeight="12"
@@ -162,14 +216,30 @@
                                    FontFamily="Pristina" FontSize="36" />
                         <TextBlock
                             Text="{Binding Store.Company.CompanyName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
-                            Margin="0,0,0.2,0" FontFamily="Myanmar Text" TextAlignment="Center" FontSize="22"
-                            Foreground="#FF085609" Height="28" VerticalAlignment="Top" />
+                            Margin="100,0,0.2,0" FontFamily="Myanmar Text" TextAlignment="Center" FontSize="22"
+                            Foreground="#FF085609" Height="28" VerticalAlignment="Top" HorizontalAlignment="Left" />
                         <TextBlock
                             Text="{Binding Store.Company.Motto, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
-                            Margin="0,28,-0.8,0" FontFamily="Bradley Hand ITC" TextAlignment="Center" FontSize="16"
-                            Foreground="#FF015002" Height="20" VerticalAlignment="Top" />
-                        <Image Margin="12,5,358.8,0" Source="{DynamicResource HVLogo}" Stretch="Fill" Height="43"
-                               VerticalAlignment="Top" />
+                            Margin="100,28,-0.8,0" FontFamily="Bradley Hand ITC" TextAlignment="Center" FontSize="16"
+                            Foreground="#FF015002" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                        <Image Margin="0,0,0,0" Source="{DynamicResource HVLogo}" Stretch="Fill" Height="43" Width="43"
+                               VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                        <TextBlock
+                            Text="{Binding Patient.DisplayName, Mode=OneWay, StringFormat=Patient: 0, ValidatesOnDataErrors=True, FallbackValue='WALK IN CUSTOMER'}"
+                            Margin="50,99,137,0" Height="27" VerticalAlignment="Top" Foreground="Chartreuse" MouseLeftButtonDown="EditPatientTB_MouseLeftButtonDown"  HorizontalAlignment="Left"/>
+
+                        <TextBox
+                            Text="{Binding Patient.PhoneNumber, Mode=TwoWay, ValidatesOnDataErrors=True}" LostFocus="PhoneNumberUpdate"
+                            Margin="280,99,137,0" Height="27" VerticalAlignment="Top" Foreground="Chartreuse" Background="Transparent"  HorizontalAlignment="Left"/>
+                        <ComboBox
+                            ItemsSource="{Binding Instance.AgeRange, Source={StaticResource SalesVMDataSource}}"
+                            SelectedItem="{Binding Instance.PatientAgeRange, Mode=TwoWay, ValidatesOnDataErrors=True, Source={StaticResource SalesVMDataSource}}"
+                            DisplayMemberPath="Description"
+                            Background="Transparent"
+                            Margin="330,99,137,0" Height="27" VerticalAlignment="Top" Foreground="DarkGreen"  HorizontalAlignment="Left">
+                            
+                        </ComboBox>
+
                         <Button x:Name="AutoRepeatBtn" HorizontalAlignment="Left" Height="40" Margin="280,49,0,0"
                                 VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE0F2;"
                                 FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF65E468" ToolTip="Repeat"
@@ -178,6 +248,9 @@
                                 VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE106;"
                                 FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF980909"
                                 RenderTransformOrigin="0.5,0.45" Click="DeleteTranBtn_Click" />
+
+
+
                     </Grid>
 
                 </DataTemplate>
@@ -194,16 +267,25 @@
                             Margin="50,75,137,0" Height="24" VerticalAlignment="Top" FontSize="14" FontFamily="Calibri" />
                         <TextBlock
                             Text="{Binding Patient.DisplayName, Mode=OneWay, StringFormat=Patient: 0, ValidatesOnDataErrors=True}"
-                            Margin="50,99,137,0" Height="27" VerticalAlignment="Top" />
+                            Margin="50,99,137,0" Height="27" MouseLeftButtonDown="EditPatientTB_MouseLeftButtonDown" VerticalAlignment="Top" />
                         <!--<TextBox Text="{Binding Repeat}" Margin="343,99,0,0" Background="Black" Foreground="#FFF4F4F4" HorizontalAlignment="Left" Width="63" Height="32" VerticalAlignment="Top" />-->
                         <!--<TextBlock Text="Rep." Margin="310,105,0,0" Foreground="#FF202020" LineHeight="12" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="28"/>-->
-                        <Button x:Name="AutoRepeatBtn" HorizontalAlignment="Left" Height="24" Margin="348,75,0,0"
+                        <!--<Button x:Name="AutoRepeatBtn" HorizontalAlignment="Left" Height="24" Margin="348,75,0,0"
                                 VerticalAlignment="Top" Width="24" Background="#00000000" Content="&#xE0F2;"
                                 FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF65E468" ToolTip="Repeat"
                                 RenderTransformOrigin="0.5,0.45" Click="AutoRepeatBtn_Click" />
                         <Button x:Name="DeleteTranBtn" HorizontalAlignment="Left" Height="24" Margin="377,75,0,0"
                                 VerticalAlignment="Top" Width="24" Background="#00000000" Content="&#xE106;"
                                 FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF980909"
+                                RenderTransformOrigin="0.5,0.45" Click="DeleteTranBtn_Click" />-->
+
+                        <Button x:Name="AutoRepeatBtn" HorizontalAlignment="Left" Height="40" Margin="280,49,0,0"
+                                VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE0F2;"
+                                FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF65E468" ToolTip="Repeat"
+                                RenderTransformOrigin="0.5,0.45" Click="AutoRepeatBtn_Click" />
+                        <Button x:Name="DeleteTranBtn" HorizontalAlignment="Left" Height="40" Margin="340,48,0,0"
+                                VerticalAlignment="Top" Width="40" Background="#00000000" Content="&#xE106;"
+                                FontFamily="Segoe UI Symbol" FontSize="20" Foreground="#FF980909"
                                 RenderTransformOrigin="0.5,0.45" Click="DeleteTranBtn_Click" />
 
                         <TextBlock
@@ -214,8 +296,19 @@
                             Text="{Binding Store.Company.Motto, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
                             Margin="0,28,-0.8,0" FontFamily="Bradley Hand ITC" TextAlignment="Center" FontSize="16"
                             Foreground="#FF015002" Height="20" VerticalAlignment="Top" />
-                        <Image Margin="12,5,358.8,0" Source="{DynamicResource HVLogo}" Stretch="Fill" Height="43"
+                        <Image Margin="12,5,358.8,0" Source="{DynamicResource HVLogo}" Stretch="Fill" Height="43" Width="43"
                                VerticalAlignment="Top" />
+                        <TextBox
+                            Text="{Binding Patient.PhoneNumber, Mode=TwoWay, ValidatesOnDataErrors=True}" LostFocus="PhoneNumberUpdate"
+                            Margin="280,99,137,0" Height="27" VerticalAlignment="Top" Foreground="Chartreuse" Background="Transparent"  HorizontalAlignment="Left"/>
+                        <ComboBox
+                            ItemsSource="{Binding Instance.AgeRange, Source={StaticResource SalesVMDataSource}}"
+                            SelectedItem="{Binding Instance.PatientAgeRange, Mode=TwoWay, ValidatesOnDataErrors=True, Source={StaticResource SalesVMDataSource}}"
+                            DisplayMemberPath="Description"
+                            Background="Transparent"
+                            Margin="330,99,137,0" Height="27" VerticalAlignment="Top" Foreground="DarkGreen"  HorizontalAlignment="Left">
+
+                        </ComboBox>
                         <TextBlock x:Name="EditDoctorTB" HorizontalAlignment="Left" Height="18" Margin="10,77,0,0"
                                    TextWrapping="Wrap" Text="Edit..." VerticalAlignment="Top" Width="31"
                                    MouseLeftButtonDown="EditDoctorTB_MouseLeftButtonDown" />
@@ -226,14 +319,67 @@
             VerticalAlignment="Top" Width="24" Background="#00000000" Content="M" Visibility="{Binding ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
             FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FFE49F65" ToolTip="Repeat"
             RenderTransformOrigin="0.5,0.45" Click="GoToMaster" FontWeight="Bold" />
+
+                       
+
                     </Grid>
 
                 </DataTemplate>
-            </Grid.Resources>
+            </Canvas.Resources>
             <ContentControl Name="SalesHeader" Content="{Binding Instance.TransactionData, Source={StaticResource SalesVMDataSource}}" />
-        </Grid>
+            <Border x:Name="Photo" Margin="460,0,0,20" Width="150" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Height="150" Padding="5" Background="White" BorderBrush="White" PreviewMouseLeftButtonDown="AddPicture">
+
+                <Image  Stretch="UniformToFill" PreviewMouseLeftButtonDown="AddPicture" Source="{Binding Instance.TransactionData.Patient.Photo.Image, Mode=OneWay, Source={StaticResource SalesVMDataSource}, Converter={StaticResource  photoConverter}}"
+                        Margin="0,0,0,0" />
+
+
+            </Border>
+            <TextBlock Text="{Binding Instance.TransactionData.Patient.Membership.Points, Source={StaticResource SalesVMDataSource}, StringFormat=Points: 0}" FontWeight="Bold" FontSize="16" Margin="665,0,0,20" />
+            <ComboBox x:Name="RewardLst" Margin="665,30,0,20" Background="Transparent" BorderThickness="0" SelectionChanged="RewardClick"
+                     ItemsSource="{Binding Instance.TransactionData.Patient.AvailableRewards, Source={StaticResource SalesVMDataSource}}"
+                     ItemTemplate="{StaticResource CombinedTemplate}"
+                     AlternationCount="2"
+                     Width="350"
+                     ClipToBounds="False" Height="25" >
+                <ComboBox.Resources>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Transparent"/>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(ListBoxItem.IsSelected)">
+                                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                   
+                </ComboBox.Resources>
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+                
+               
+            </ComboBox>
+        </Canvas>
         
-        <Canvas x:Name="ppcan" Background="#FF424242" Width="415" Margin="0,0,0.2,0" Height="Auto" Focusable="False">
+        <!--ItemTemplate="{DynamicResource itemTemplate}"
+                     Template="{DynamicResource ListTemplate}"
+                     ItemContainerStyle="{StaticResource SalesItemStyle}"
+                     ItemsPanel="{DynamicResource ItemPanelTemplate}"-->
+        <Canvas x:Name="ppcan" Background="#FF424242" Width="415" Margin="0,150,0.2,0" Height="Auto" Focusable="False">
             <ListBox x:Name="SalesLst"
                      ItemsSource="{Binding Instance.TransactionData.TransactionEntries, Source={StaticResource SalesVMDataSource}}"
                      SelectedItem="{Binding Instance.TransactionData.CurrentTransactionEntry,Source={StaticResource SalesVMDataSource}}"

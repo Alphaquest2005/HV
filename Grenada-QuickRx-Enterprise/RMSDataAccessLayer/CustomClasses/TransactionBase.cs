@@ -4,9 +4,24 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
+using GMap.NET;
 
 namespace RMSDataAccessLayer
 {
+
+    public partial class TransactionLocation
+    {
+        public TransactionLocation()
+        {
+            PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if(propertyChangedEventArgs.PropertyName != "TransactionLocation") NotifyPropertyChanged("TransactionLocation");
+        }
+    }
+
     public partial class TransactionBase: ISearchItem, IDataErrorInfo
     {
         public void UpdatePrices()
@@ -15,6 +30,23 @@ namespace RMSDataAccessLayer
             NotifyPropertyChanged("TotalSales");
             NotifyPropertyChanged("TotalTax");
             NotifyPropertyChanged("TotalDiscount");
+        }
+
+        partial void CustomStartup()
+        {
+            PropertyChanged += TransactionBase_PropertyChanged;
+        }
+
+        private void TransactionBase_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "TransactionLocation" &&
+                (Position.Lat != TransactionLocation?.Latitude || Position.Lng != TransactionLocation?.Longitude))
+            {
+                NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("LongLat");
+            }
+
+            
         }
 
         PrescriptionEntry _currentTransactionEntry;
@@ -37,6 +69,39 @@ namespace RMSDataAccessLayer
             }
 
         }
+
+        Tuple<double,double> defaultPosition = new Tuple<double, double>(12.053076334122, -61.7540377378464);
+
+        [NotMapped]
+        [IgnoreDataMember]
+        public PointLatLng Position
+        {
+            get
+            {
+                
+                return TransactionLocation == null ? new PointLatLng(defaultPosition.Item1,defaultPosition.Item2) : new PointLatLng(TransactionLocation.Latitude, TransactionLocation.Longitude);
+            }
+            set
+            {
+                if(value == null || (value.Lat == TransactionLocation?.Latitude && value.Lng == TransactionLocation?.Longitude)) return;
+                if (TransactionLocation == null)
+                {
+                    TransactionLocation = new TransactionLocation() {Latitude = value.Lat, Longitude = value.Lng};
+                }
+                else
+                {
+                    TransactionLocation.Longitude = value.Lng;
+                    TransactionLocation.Latitude = value.Lat;
+                }
+                NotifyPropertyChanged("TransactionLocation");
+                NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("LongLat");
+            }
+        }
+
+        [NotMapped]
+        [IgnoreDataMember]
+        public string LongLat => Position == new PointLatLng(defaultPosition.Item1, defaultPosition.Item2) ? "" : $"Longitude:{Position.Lng}, Latitude:{Position.Lat}";
 
         void _currentTransactionEntry_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -93,7 +158,7 @@ namespace RMSDataAccessLayer
            get
            {
                if (TransactionEntries!= null)
-                        return (decimal)TransactionEntries.Sum(x => x.Discount);
+                        return (decimal)TransactionEntries.Sum(x => x.Price * x.Quantity * (x.Discount == null? 1 : x.Discount/100));
                return 0;
            }
        }

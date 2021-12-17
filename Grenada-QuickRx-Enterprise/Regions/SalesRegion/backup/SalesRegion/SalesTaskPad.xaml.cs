@@ -1,8 +1,11 @@
 ﻿using RMSDataAccessLayer;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -11,9 +14,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
+using Aviad.WPF.Controls;
 using Common.Core.Logging;
+using Demo.WindowsPresentation.CustomMarkers;
+using GMap.NET;
+using GMap.NET.MapProviders;
+using GMap.NET.WindowsPresentation;
 using log4netWrapper;
+using Microsoft.Win32;
+
 using SimpleMvvmToolkit;
 using TrackableEntities;
 
@@ -43,9 +54,40 @@ namespace SalesRegion
             InitializeComponent();
             this.DataContextChanged += SalesTaskPad_DataContextChanged;
 
+            gmap.MapProvider = GMapProviders.GoogleHybridMap;
+            gmap.Position = new PointLatLng(12.053076334122, -61.7540377378464);
+            gmap.Zoom = 13;
 
+            SalesVM.Instance.PropertyChanged += InstanceOnPropertyChanged;
+
+            currentMarker = new GMapMarker(gmap.Position);
+            {
+                currentMarker.Shape = new CustomMarkerRed(this, currentMarker, "custom position marker");
+                currentMarker.Offset = new Point(-15, -15);
+                currentMarker.ZIndex = int.MaxValue;
+                gmap.Markers.Add(currentMarker);
+            }
         }
 
+        private void InstanceOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == "TransactionData")
+            {
+                if (SalesVM.Instance.TransactionData == null) return;
+                currentMarker.Position = SalesVM.Instance.TransactionData.Position;
+                gmap.CenterPosition = SalesVM.Instance.TransactionData.Position;
+
+                SalesVM.Instance.TransactionData.PropertyChanged += TransactionData_PropertyChanged;
+            }
+        }
+
+        private void TransactionData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            currentMarker.Position = SalesVM.Instance.TransactionData.Position;
+            //gmap.CenterPosition = SalesVM.Instance.TransactionData.Position;
+        }
+
+        GMapMarker currentMarker;
         private void SalesLst_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ReBindItemEditor();
@@ -248,7 +290,7 @@ namespace SalesRegion
             }
         }
 
-        private void LocalProcesItem(object itm)
+        public void LocalProcesItem(object itm)
         {
             try
             {
@@ -569,16 +611,16 @@ namespace SalesRegion
 
         private void PrescriptionEntriesRptLst_LayoutUpdated(object sender, EventArgs e)
         {
-            if (SalesView != null &&
-                (SalesVM.Instance != null &&
-                 (SalesVM.Instance.TransactionData != null && SalesView.SalesPadState == SalesPadTransState.Receipt)))
-                if (SalesVM.Instance.TransactionData.TransactionEntries != null)
-                {
-                    var frameworkElement = (FrameworkElement) this.FindName("ReceiptGrd");
-                    if (frameworkElement != null)
-                        frameworkElement.Height = TemplateHeight*
-                                                  SalesVM.Instance.TransactionData.TransactionEntries.Count;
-                }
+            //if (SalesView != null &&
+            //    (SalesVM.Instance != null &&
+            //     (SalesVM.Instance.TransactionData != null && SalesView.SalesPadState == SalesPadTransState.Receipt)))
+            //    if (SalesVM.Instance.TransactionData.TransactionEntries != null)
+            //    {
+            //        var frameworkElement = (FrameworkElement) this.FindName("ReceiptGrd");
+            //        if (frameworkElement != null)
+            //            frameworkElement.Height = TemplateHeight*
+            //                                      SalesVM.Instance.TransactionData.TransactionEntries.Count;
+            //    }
         }
 
 
@@ -667,7 +709,7 @@ namespace SalesRegion
 
         private bool edititem = false;
 
-        private void EditItemTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public void EditItemTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             edititem = true;
         }
@@ -754,16 +796,260 @@ namespace SalesRegion
                 using (var ctx = new RMSModel())
                 {
                     var m =
-                        ctx.Item.OfType<Medicine>().FirstOrDefault(
+                        ctx.Item.FirstOrDefault(
                             x =>
-                                x.ItemId ==
-                                SalesVM.Instance.TransactionData.CurrentTransactionEntry.TransactionEntryItem.ItemId);
-                    m.SuggestedDosage = SalesVM.Instance.TransactionData.CurrentTransactionEntry.Dosage;
+                                x.ItemNumber ==
+                                SalesVM.Instance.TransactionData.CurrentTransactionEntry.TransactionEntryItem.ItemNumber);
+                    m.ItemPresetDosages.Add(new ItemPresetDosage()
+                    {
+                        Dosage = SalesVM.Instance.TransactionData.CurrentTransactionEntry.Dosage,
+                        ItemId = m.ItemId
+                    });
                     ctx.Item.AddOrUpdate(m);
                     ctx.SaveChanges();
-                    MessageBox.Show("Suggested Dosage Saved");
+                    MessageBox.Show("Pre-Dosage Saved");
                 }
+
+                //using (var ctx = new RMSModel())
+                //{
+                //    var m =
+                //        ctx.Item.OfType<Medicine>().FirstOrDefault(
+                //            x =>
+                //                x.ItemId ==
+                //                SalesVM.Instance.TransactionData.CurrentTransactionEntry.TransactionEntryItem.ItemId);
+                //    m.SuggestedDosage = SalesVM.Instance.TransactionData.CurrentTransactionEntry.Dosage;
+                //    ctx.Item.AddOrUpdate(m);
+                //    ctx.SaveChanges();
+                //    MessageBox.Show("Suggested Dosage Saved");
+                //}
             }
+        }
+
+        private void presetDosageChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e != null && e.AddedItems.Count > 0)
+            {
+                var c = (e.AddedItems[0] as PresetDosage);
+                SalesVM.Instance.TransactionData.CurrentTransactionEntry.Dosage += $" {c.Dosage}";
+            }
+        }
+
+        private void AddDosageCode(object sender, MouseButtonEventArgs e)
+        {
+            ComboBox box = Common.FindChild<ComboBox>(TransactionGrd, "DosageCodes");
+            AutoCompleteTextBox dosage = Common.FindChild<AutoCompleteTextBox>(TransactionGrd, "AutoCompleteTextBox");
+            if (box == null || dosage == null) return;
+            using (var ctx = new RMSModel())
+            {
+                var m =
+                    ctx.RxAbbrevations.FirstOrDefault(
+                        x =>
+                            x.Shortcut == box.Text) ?? new RxAbbrevation() { Shortcut = box.Text, Sentence = dosage.Text };
+                ctx.RxAbbrevations.AddOrUpdate(m);
+                ctx.SaveChanges();
+                SalesVM.Instance.LoadRxAbbrevations();
+                MessageBox.Show("Dosage & Code Saved");
+            }
+        }
+
+        private void DosageCodes_SelectionChanged(object sender, RoutedEventArgs routedEventArgs)
+        {
+            ComboBox box = Common.FindChild<ComboBox>(TransactionGrd, "DosageCodes");
+            AutoCompleteTextBox dosage = Common.FindChild<AutoCompleteTextBox>(TransactionGrd, "AutoCompleteTextBox");
+            if (dosage == null || SalesVM.Instance.SelectedRxAbbrevation == null) return;
+
+            dosage.Text = SalesVM.Instance.SelectedRxAbbrevation.Sentence;
+            // 
+        }
+
+
+        private void DosageCodes_OnTextInput(object sender, KeyEventArgs keyEventArgs)
+        {
+
+            //if (((int) keyEventArgs.Key >= (int) Key.A && (int) keyEventArgs.Key <= (int) Key.Z)
+            //    || ((int) keyEventArgs.Key >= (int) Key.NumPad0 && (int) keyEventArgs.Key <= (int) Key.NumPad9)
+            //    || ((int) keyEventArgs.Key >= (int) Key.D0 && (int) keyEventArgs.Key <= (int) Key.D9)
+            //    || (int)keyEventArgs.Key == (int)Key.Space
+            //    || (int)keyEventArgs.Key == (int)Key.Divide
+            //    || (int)keyEventArgs.Key == (int)Key.Escape)
+            //{
+            //    var res = keyEventArgs.Key.ToString().Replace("NumPad","").Replace("Divide","/").Replace("D","").Replace("Space"," ");
+            //    SalesVM.Instance.RxSearchText += res;
+            //    if (keyEventArgs.Key == Key.Escape) SalesVM.Instance.RxSearchText = "";
+            //SalesVM.Instance.LoadRxAbbrevations(SalesVM.Instance.RxSearchText);
+            //}
+
+        }
+
+
+        private void Gmap_OnOnPositionChanged(PointLatLng point)
+        {
+           // MapGroup.Header = "gmap: " + point;
+            //SalesVM.Instance.TransactionData.TransactionLocation = new TransactionLocation(){Longitude = point.Lng, Latitude = point.Lat};
+            //SalesVM.Instance.SaveTransaction();
+        }
+
+        private void PickUp_Click(object sender, RoutedEventArgs e)
+        {
+            SalesVM.Instance.TransactionData.DeliveryType = "Pickup";
+            SalesVM.Instance.TransactionData.TransactionLocation = null;
+            SalesVM.Instance.SaveTransaction();
+
+            PrintBtn_Click_1(null, null);
+
+            Task.Run(() =>
+            {
+
+                Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
+                {
+                    var frm = ((FrameworkElement)OrderLabel);
+                    SalesVM.Instance.Print(ref frm);
+                }));
+            }).ConfigureAwait(false);
+        }
+
+        private void Delivery_Click(object sender, RoutedEventArgs e)
+        {
+            SalesVM.Instance.TransactionData.DeliveryType = "Delivery";
+            SalesVM.Instance.SaveTransaction();
+
+            PrintBtn_Click_1(null, null);
+
+            Task.Run(() =>
+            {
+
+                Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
+                {
+                    var frm = ((FrameworkElement)OrderLabel);
+                    SalesVM.Instance.Print(ref frm);
+                }));
+            }).ConfigureAwait(false);
+            
+        }
+
+        private void Gmap_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var p = e.GetPosition(gmap);
+            currentMarker.Position = gmap.FromLocalToLatLng((int)p.X, (int)p.Y);
+            if(SalesVM.Instance.TransactionData != null) SalesVM.Instance.TransactionData.Position = currentMarker.Position;
+        }
+
+        private void CallinBtn_OnClick_Click(object sender, RoutedEventArgs e)
+        {
+            SalesVM.Instance.TransactionData.DeliveryType = "Call-In Rx";
+            SalesVM.Instance.SaveTransaction();
+
+            PrintBtn_Click_1(null, null);
+
+            Task.Run(() =>
+            {
+
+                Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
+                {
+                    var frm = ((FrameworkElement)OrderLabel);
+                    SalesVM.Instance.Print(ref frm);
+                    SalesVM.Instance.Transaction2Pdf(ref PrescriptionPad);
+                }));
+            }).ConfigureAwait(false);
+        }
+
+        private void ScanBtn_Click
+            (object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddPicture(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var patient = ((dynamic) SalesVM.Instance.TransactionData).Patient;
+                if (patient == null)
+                {
+                    MessageBox.Show("Please add Patient before selecting Picture.");
+                    return;
+                }
+
+                FileDialog fldlg = new OpenFileDialog();
+                fldlg.InitialDirectory = Environment.SpecialFolder.MyPictures.ToString();
+                fldlg.Filter = "Image File (*.jpg;*.bmp;*.gif)|*.jpg;*.bmp;*.gif";
+                fldlg.ShowDialog();
+                {
+
+                    var imageName = fldlg.FileName;
+                    if (string.IsNullOrEmpty(imageName)) return;
+                    //ImageSourceConverter isc = new ImageSourceConverter();
+                    //Photo.SetValue(Image.SourceProperty, isc.ConvertFromString(imageName));
+                    e.Handled = true;
+                    SalesVM.Instance.SavePhoto(patient, imageName);
+
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        private void AddPrescriptionPhoto(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+               
+                if (!(SalesVM.Instance.TransactionData is Prescription))
+                {
+                    MessageBox.Show("Only Prescriptions are allowed.");
+                    return;
+                }
+
+                SalesVM.Instance.SaveTransaction(SalesVM.Instance.TransactionData);
+                FileDialog fldlg = new OpenFileDialog();
+                fldlg.InitialDirectory = SalesVM.Instance.PrescriptionPhotoFolder;//Environment.SpecialFolder.MyDocuments.ToString();
+                fldlg.Filter = "Image File (*.jpg;*.bmp;*.gif)|*.jpg;*.bmp;*.gif";
+                fldlg.ShowDialog();
+                {
+
+                    var imageName = fldlg.FileName;
+                    if (string.IsNullOrEmpty(imageName)) return;
+                    //ImageSourceConverter isc = new ImageSourceConverter();
+                    //Photo.SetValue(Image.SourceProperty, isc.ConvertFromString(imageName));
+                    e.Handled = true;
+                    SalesVM.Instance.SavePrescriptionPhoto(SalesVM.Instance.TransactionData, imageName);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        private static FileInfo CurrentPhotoPath = null;
+        private void NextPhoto_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var files = new DirectoryInfo(SalesVM.Instance.PrescriptionPhotoFolder).GetFiles("*.jpg",
+                SearchOption.TopDirectoryOnly).Where(x => x.CreationTime > (CurrentPhotoPath?.CreationTime??DateTime.Today)).OrderBy(x => x.CreationTime);
+            if (!files.Any()) return;
+            CurrentPhotoPath = files.FirstOrDefault();
+            if (SalesVM.Instance.TransactionData == null)
+                SalesVM.Instance.TransactionData = new Prescription() { PrescriptionImage = new PrescriptionImage()};
+            if(CurrentPhotoPath != null )  SalesVM.Instance.SavePrescriptionPhoto(SalesVM.Instance.TransactionData, CurrentPhotoPath.FullName);
+
+            
+
+        }
+
+        private void BackPhoto_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var files = new DirectoryInfo(SalesVM.Instance.PrescriptionPhotoFolder).GetFiles("*.jpg",
+                SearchOption.TopDirectoryOnly).Where(x => x.CreationTime > DateTime.Today && x.CreationTime < (CurrentPhotoPath?.CreationTime ?? DateTime.Today)).OrderByDescending(x => x.CreationTime);
+            if (!files.Any()) return;
+            CurrentPhotoPath = files.FirstOrDefault();
+            if (SalesVM.Instance.TransactionData == null)
+                SalesVM.Instance.TransactionData = new Prescription() { PrescriptionImage = new PrescriptionImage() };
+            if (CurrentPhotoPath != null) SalesVM.Instance.SavePrescriptionPhoto(SalesVM.Instance.TransactionData, CurrentPhotoPath.FullName);
         }
     }
 

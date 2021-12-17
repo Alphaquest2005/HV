@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QS2QBPost</RootNamespace>
     <AssemblyName>QS2QBPost</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -125,9 +125,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="QBClass.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="QBPOS.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -177,7 +177,7 @@
       <Name>Common.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuickBooks\QuickBooks\QuickBooks.csproj">
-      <Project>{e9d03ce6-8e81-4dac-908a-268aba83ddba}</Project>
+      <Project>{E9D03CE6-8E81-4DAC-908A-268ABA83DDBA}</Project>
       <Name>QuickBooks</Name>
     </ProjectReference>
     <ProjectReference Include="..\RMSDataAccessLayer\RMSDataAccessLayer.csproj">
@@ -196,7 +196,7 @@
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

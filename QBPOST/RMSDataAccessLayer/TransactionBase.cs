@@ -265,6 +265,20 @@ namespace RMSDataAccessLayer
     	}
     	private Nullable<int> _ParentTransactionId;
         [DataMember]
+                    [StringLength(50)]
+    	public string DeliveryType
+    	{ 
+    		get { return _DeliveryType; }
+    		set
+    		{
+    			if (Equals(value, _DeliveryType)) return;
+    			_DeliveryType = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private string _DeliveryType;
+        [DataMember]
     	public ObservableCollection<TransactionEntryBase> TransactionEntries
     	{
     		get { return _TransactionEntries; }

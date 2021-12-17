@@ -57,62 +57,79 @@ Cashier cashier;
             }
         }
 Batch batch;
-public LogInScreen()
-{
-    try
-    {
 
-        InitializeComponent();
-
-        DataContext = this;
-        HintVisibility = Visibility.Hidden;
-        this.Height = 179;
-        xUsername.Focus();
-
-        //if (db.TransactionBase.Count() >= 12000) Application.Current.Shutdown();
-        using (var ctx = new RMSModel())
+        public LogInScreen()
         {
-            station = (from s in ctx.Stations.Include(x => x.Store).Include(x => x.Store.Company)
+            try
+            {
+
+                InitializeComponent();
+
+                DataContext = this;
+                HintVisibility = Visibility.Hidden;
+                this.Height = 179;
+                xUsername.Focus();
+
+                //if (db.TransactionBase.Count() >= 12000) Application.Current.Shutdown();
+                using (var ctx = new RMSModel())
+                {
+                    station = (from s in ctx.Stations.Include(x => x.Store).Include(x => x.Store.Company)
+
+                        where s.MachineName == Environment.MachineName
+                        select s).FirstOrDefault();
+                }
+
+                if (station == null)
+                {
+                    MessageBox.Show("Please configure WorkStation");
+                    return;
+                }
+
+                using (var ctx = new RMSModel())
+                {
+                    batch = (from b in ctx.Batches
+                        where b.StationId == station.StationId && b.Status == "Open"
+                        select b).FirstOrDefault();
+                }
+
+                if (batch == null)
+                {
+                    StatusTxt.Text = "Please Open Cash Drawer before continuing.";
+                }
+                else
+                {
+                    StatusTxt.Text = "Cash Drawer Already Open. Continue to POS or Close Drawer.";
+                }
+
+
+                OptionsRow.Height = new GridLength(0);
+                OpenDrawerRow.Height = new GridLength(0);
+                CloseDrawerRow.Height = new GridLength(0);
+                UserOptionsRow.Height = new GridLength(0);
+
+                OpenDrawerGrd.DataContext = batch;
+                CloseDrawerGrd.DataContext = batch;
+            }
+            catch (Exception ex)
+            {
+
+                var lastexception = false;
+                while (lastexception == false)
+                {
+
+                    if (ex.InnerException == null)
+                    {
+                        lastexception = true;
+                        var errorMessage = $"An unhandled Exception occurred!: {ex.Message} ---- {ex.StackTrace}";
+                        Logger.Log(LoggingLevel.Error, errorMessage);
+                        MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                        
-                where s.MachineName == Environment.MachineName
-                select s).FirstOrDefault();
-        }
-        if (station == null)
-        {
-            MessageBox.Show("Please configure WorkStation");
-            return;
-        }
-        
-       using (var ctx = new RMSModel())
-        {
-            batch = (from b in ctx.Batches
-                where b.StationId == station.StationId && b.Status == "Open"
-                select b).FirstOrDefault();
-        }
-        if (batch == null)
-        {
-            StatusTxt.Text = "Please Open Cash Drawer before continuing.";
-        }
-        else
-        {
-            StatusTxt.Text = "Cash Drawer Already Open. Continue to POS or Close Drawer.";
-        }
-      
+                    }
+                    ex = ex.InnerException;
 
-        OptionsRow.Height = new GridLength(0);
-        OpenDrawerRow.Height = new GridLength(0);
-        CloseDrawerRow.Height = new GridLength(0);
-        UserOptionsRow.Height = new GridLength(0);
-
-        OpenDrawerGrd.DataContext = batch;
-        CloseDrawerGrd.DataContext = batch;
-    }
-    catch (Exception ex)
-    {
-
-        throw ex;
-    }
-}
+                }
+            }
+        }
 
 
         /// <summary>
@@ -263,7 +280,7 @@ public LogInScreen()
                 }
                 
                 SalesRegion.SalesVM.Instance.Batch = batch;
-                //SalesRegion.SalesVM.Instance.CashierEx = cashier;
+                //SalesRegion.SalesVM.Instance.CurrentLogin = cashier;
                 SalesRegion.SalesVM.Instance.Station = station;
                 if (station != null) SalesRegion.SalesVM.Instance.Store = station.Store;
 
@@ -315,7 +332,7 @@ public LogInScreen()
 
             if (cashier == null)
             {
-                MessageBox.Show("Cashier not found. Please contact the administrator");
+                MessageBox.Show("CurrentLogin not found. Please contact the administrator");
                 return;
             }
 

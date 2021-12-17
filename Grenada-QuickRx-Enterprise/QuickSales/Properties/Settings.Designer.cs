@@ -12,7 +12,7 @@ namespace QuickSales.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -35,7 +35,16 @@ namespace QuickSales.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Computer Name=alphaques;Company Data=c;Version=hills and valleys - 8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ServerMode {
+            get {
+                return ((bool)(this["ServerMode"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Computer Name=joseph-pc;Company Data=test;Version=11")]
         public string QBCompanyFile {
             get {
                 return ((string)(this["QBCompanyFile"]));
@@ -44,10 +53,10 @@ namespace QuickSales.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ServerMode {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\josep\\OneDrive\\Pictures")]
+        public string PrescriptionPhotoFolder {
             get {
-                return ((bool)(this["ServerMode"]));
+                return ((string)(this["PrescriptionPhotoFolder"]));
             }
         }
     }

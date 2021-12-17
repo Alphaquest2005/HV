@@ -53,7 +53,7 @@ namespace RMSDataAccessLayer
                         using (var ctx = new RMSModel())
                         {
                             dosageList =
-                                ctx.ItemDosages.Where(x => x.ItemId == ItemId)
+                                ctx.Database.SqlQuery<ItemDosage>("Select * from ItemDosage").Where(x => x.ItemId == ItemId)
                                     .OrderByDescending(x => x.Count)
                                     .Take(5)
                                     .Select(x => x.Dosage)

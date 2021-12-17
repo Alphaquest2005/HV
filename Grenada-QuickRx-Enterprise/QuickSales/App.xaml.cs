@@ -34,31 +34,31 @@ namespace QuickSales
                 var cashier = (from c in ctx.Persons.OfType<Cashier>()
                     where c.LoginName == user
                     select c).FirstOrDefault();
-                Logger.Log(LoggingLevel.Info, string.Format("Cashier: [{0}]", cashier != null?cashier.LoginName:""));
+                Logger.Log(LoggingLevel.Info, string.Format("CurrentLogin: [{0}]", cashier != null?cashier.LoginName:""));
                 if (cashier != null && cashier.SPassword == pass)
                 {
                     return LogIn(cashier);
                 }
                 else
                 {
-                    Logger.Log(LoggingLevel.Info, string.Format("Log in Failed for Cashier: [{0}]", cashier != null ? cashier.LoginName : ""));
+                    Logger.Log(LoggingLevel.Info, string.Format("Log in Failed for CurrentLogin: [{0}]", cashier != null ? cashier.LoginName : ""));
                     return false;
                 }
             }
         }
-        public Cashier _cashier = null;
-        public Cashier Cashier
+        public Cashier _currentLogin = null;
+        public Cashier CurrentLogin
         {
             get
             {
-                return _cashier;
+                return _currentLogin;
             }
         }
 
         private bool LogIn(Cashier cashier)
         {
-            Logger.Log(LoggingLevel.Info, string.Format("Login Cashier: [{0}]", cashier != null ? cashier.LoginName : ""));
-            _cashier = cashier;
+            Logger.Log(LoggingLevel.Info, string.Format("Login CurrentLogin: [{0}]", cashier != null ? cashier.LoginName : ""));
+            _currentLogin = cashier;
             using (var ctx = new RMSModel())
             {
                 CashierLog log =
@@ -69,7 +69,8 @@ namespace QuickSales
                 {
                     LogOut(cashier);
                 }
-                SalesRegion.SalesVM.Instance.CashierEx = cashier;
+                SalesRegion.SalesVM.Instance.CurrentLogin = cashier;
+                SalesVM.Instance.PrescriptionPhotoFolder = Settings.Default.PrescriptionPhotoFolder;
 
                 log = new CashierLog()
                 {
@@ -93,8 +94,8 @@ namespace QuickSales
         private bool LogOut(Cashier cashier)
         {
             if (cashier == null) return false;
-            
-            _cashier = cashier;
+
+            _currentLogin = cashier;
             using(var ctx = new RMSModel())
             {
                 CashierLog log = ctx.CashierLogs.OrderByDescending(x => x.LoginTime).FirstOrDefault(x => x.PersonId == cashier.Id && x.MachineName == Environment.MachineName);
@@ -105,7 +106,7 @@ namespace QuickSales
                      log.LogoutTime = DateTime.Now;
                     log.Status = "LogOut";
                     log.PersonId = cashier.Id;
-                    //log.Cashier = cashier;
+                    //log.CurrentLogin = cashier;
 
                     ctx.CashierLogs.AddOrUpdate(log);
                     ctx.SaveChanges();
@@ -120,6 +121,7 @@ namespace QuickSales
         /// </summary>
         public App()
         {
+
             Logger.Initialize();
             Logger.Log(LoggingLevel.Info, string.Format("Application Started - {0}",DateTime.Now));
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -155,7 +157,7 @@ namespace QuickSales
 
         private void OnApplicationExit(object sender, ExitEventArgs e)
         {
-            LogOut(_cashier);
+            LogOut(_currentLogin);
         }
 
         public  void LoginRoutine()
@@ -176,7 +178,7 @@ namespace QuickSales
             {
                 //StartupContainer();
                 LogInScreen logon1 = new LogInScreen();
-                logon1.Cashier = _cashier;
+                logon1.Cashier = _currentLogin;
                 logon1.Show();
                 logon1.ShowOptions();
             }

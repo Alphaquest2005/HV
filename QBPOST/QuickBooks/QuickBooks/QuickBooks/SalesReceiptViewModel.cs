@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace QuickBooks
             inputXMLDoc.AppendChild(qbXML);
             XmlElement qbXMLMsgsRq = inputXMLDoc.CreateElement("QBPOSXMLMsgsRq");
             qbXML.AppendChild(qbXMLMsgsRq);
-            qbXMLMsgsRq.SetAttribute("onError", "continueOnError");
+            qbXMLMsgsRq.SetAttribute("onError", "stopOnError");
             XmlElement saleReceiptAddRq = inputXMLDoc.CreateElement("SalesReceiptAddRq");
             qbXMLMsgsRq.AppendChild(saleReceiptAddRq);
             saleReceiptAddRq.SetAttribute("requestID", "1");
@@ -27,12 +28,17 @@ namespace QuickBooks
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("Associate")).InnerText = salesitm.Associate;
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("Cashier")).InnerText = salesitm.Cashier;
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("Comments")).InnerText = salesitm.Comments;
-            saleRecAdd.AppendChild(inputXMLDoc.CreateElement("StoreNumber")).InnerText = salesitm.StoreNumber;
+            saleRecAdd.AppendChild(inputXMLDoc.CreateElement("StoreNumber")).InnerText = salesitm.StoreNumber; 
+            if(!string.IsNullOrEmpty(salesitm.CustomerListId)) saleRecAdd.AppendChild(inputXMLDoc.CreateElement("CustomerListID")).InnerText = salesitm.CustomerListId;
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("TxnState")).InnerText = "Held";
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("SalesReceiptType")).InnerText = "Sales";// ((ENSalesReceiptType)System.Convert.ToInt16(salesitm.SalesReceiptType)).ToString();
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("TxnDate")).InnerText = DateTime.Now.Date.ToString("yyyy-MM-dd");
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("Workstation")).InnerText = salesitm.Workstation;
-            saleRecAdd.AppendChild(inputXMLDoc.CreateElement("DiscountPercent")).InnerText = string.IsNullOrEmpty(salesitm.Discount)?"0": salesitm.Discount.ToString();
+            if(!string.IsNullOrEmpty(salesitm.Discount))
+                saleRecAdd.AppendChild(inputXMLDoc.CreateElement("Discount")).InnerText = string.IsNullOrEmpty(salesitm.Discount) ? "0" : salesitm.Discount.ToString();
+            else
+                saleRecAdd.AppendChild(inputXMLDoc.CreateElement("DiscountPercent")).InnerText = string.IsNullOrEmpty(salesitm.DiscountPercent) ? "0" : salesitm.DiscountPercent.ToString();
+
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("TrackingNumber")).InnerText = salesitm.TrackingNumber;
             saleRecAdd.AppendChild(inputXMLDoc.CreateElement("Cashier")).InnerText = salesitm.Cashier;
             if (salesitm.SalesReceiptDetails.Any())
@@ -42,19 +48,19 @@ namespace QuickBooks
                     XmlElement saleLineAdd = inputXMLDoc.CreateElement("SalesReceiptItemAdd");
                     saleLineAdd.AppendChild(inputXMLDoc.CreateElement("ListID")).InnerText = item.ItemListID;
                     saleLineAdd.AppendChild(inputXMLDoc.CreateElement("Qty")).InnerText = item.QtySold.ToString();
+                    saleLineAdd.AppendChild(inputXMLDoc.CreateElement("Discount")).InnerText = item.Discount.ToString();
                     saleRecAdd.AppendChild(saleLineAdd);
                 }
             }
 
-            XmlElement tenderCashAdd = inputXMLDoc.CreateElement("TenderCashAdd");
-            tenderCashAdd.AppendChild(inputXMLDoc.CreateElement("TenderAmount")).InnerText = salesitm.SalesReceiptDetails.Sum(x => x.Price *(double)x.QtySold).ToString();
-            saleRecAdd.AppendChild(tenderCashAdd);
+            ////XmlElement tenderCashAdd = inputXMLDoc.CreateElement("TenderCashAdd");
+            ////tenderCashAdd.AppendChild(inputXMLDoc.CreateElement("TenderAmount")).InnerText = salesitm.SalesReceiptDetails.Sum(x => x.Price *(double)x.QtySold).ToString();
+            ////saleRecAdd.AppendChild(tenderCashAdd);
 
             return inputXMLDoc;
         }
 
-        
-
+     
         //        public void BuildSalesReceiptAddRq(IMsgSetRequest requestMsgSet, SalesReceiptRet salesitm )
         //        {
 
@@ -133,8 +139,8 @@ namespace QuickBooks
 
         ////                //Set field value for useMacro
         ////                SalesReceiptAddRq.useMacro.SetValue("IQBStringType");
-        ////                //Set field value for Discount
-        ////                SalesReceiptAddRq.Discount.SetValue(System.Convert.ToDouble(salesitm.Discount));
+        ////                //Set field value for DiscountPercent
+        ////                SalesReceiptAddRq.DiscountPercent.SetValue(System.Convert.ToDouble(salesitm.DiscountPercent));
         ////                //Set field value for DiscountPercent
         ////                SalesReceiptAddRq.DiscountPercent.SetValue("IQBFloatType");
         ////                //Set field value for PriceLevelNumber
@@ -193,8 +199,8 @@ namespace QuickBooks
         ////                SalesReceiptItemAdd1.Commission.SetValue(10.01);
         ////                //Set field value for Desc2
         ////                SalesReceiptItemAdd1.Desc2.SetValue("ab");
-        ////                //Set field value for Discount
-        ////                SalesReceiptItemAdd1.Discount.SetValue(10.01);
+        ////                //Set field value for DiscountPercent
+        ////                SalesReceiptItemAdd1.DiscountPercent.SetValue(10.01);
         ////                //Set field value for DiscountPercent
         ////                SalesReceiptItemAdd1.DiscountPercent.SetValue("IQBFloatType");
         ////                //Set field value for DiscountType
@@ -264,15 +270,14 @@ namespace QuickBooks
             sr.SalesReceiptType = salesreceipt.SalesReceiptType;
             sr.TxnDate = salesreceipt.TxnDate;
             sr.TrackingNumber = salesreceipt.TrackingNumber;
-            sr.DiscountPercent = Convert.ToDecimal(string.IsNullOrEmpty(salesreceipt.Discount)?"0":salesreceipt.Discount);
+            sr.DiscountPercent = Convert.ToDecimal(string.IsNullOrEmpty(salesreceipt.DiscountPercent)?"0":salesreceipt.DiscountPercent);
 
             sr.SalesReceiptNumber = salesreceipt.SalesReceiptNumber;
             foreach (var item in salesreceipt.SalesReceiptDetails)
             {
-                QuickBooks.SalesReceiptRetSalesReceiptItemRet sritm = new SalesReceiptRetSalesReceiptItemRet();
+               var sritm = new SalesReceiptRetSalesReceiptItemRet();
 
-                //sritm.ListID = item.ItemListID;
-                sritm.ItemNumber = item.ItemNumber;               
+                sritm.ListID = item.ItemListID;               
                 sritm.Qty =  item.QtySold.ToString();
                              
 
@@ -372,11 +377,10 @@ namespace QuickBooks
                     // do details
                     if (saleReceipt.SalesReceiptItems != null)
                     {
-                        foreach (QuickBooks.SalesReceiptRetSalesReceiptItemRet saleReceiptDetail in saleReceipt.SalesReceiptItems)
+                        foreach (var saleReceiptDetail in saleReceipt.SalesReceiptItems)
                         {
                             SalesReceiptDetail itm = new SalesReceiptDetail();
                             itm.ItemListID = saleReceiptDetail.ListID;
-                            itm.ItemNumber = saleReceiptDetail.ItemNumber;
                             itm.Tax = saleReceiptDetail.TaxAmount;
                             itm.QtySold = System.Convert.ToDecimal(saleReceiptDetail.Qty);
                             itm.ItemKey = saleReceiptDetail.Desc1 + "|" + saleReceiptDetail.Desc2 + "|" + saleReceiptDetail.Attribute + "|" + saleReceiptDetail.Size;
@@ -487,10 +491,10 @@ namespace QuickBooks
         //    {
         //        xSale.CustomerListID = (string)SalesReceiptRet.CustomerListID.GetValue();
         //    }
-        //    //Get value of Discount
-        //    if (SalesReceiptRet.Discount != null)
+        //    //Get value of DiscountPercent
+        //    if (SalesReceiptRet.DiscountPercent != null)
         //    {
-        //        xSale.Discount = (decimal)SalesReceiptRet.Discount.GetValue();
+        //        xSale.DiscountPercent = (decimal)SalesReceiptRet.DiscountPercent.GetValue();
         //    }
         //    //Get value of DiscountPercent
         //    if (SalesReceiptRet.DiscountPercent != null)
@@ -813,10 +817,10 @@ namespace QuickBooks
         //            {
         //                xSaleReceiptItem.Desc2 = (string)SalesReceiptItemRet.Desc2.GetValue();
         //            }
-        //            //Get value of Discount
-        //            if (SalesReceiptItemRet.Discount != null)
+        //            //Get value of DiscountPercent
+        //            if (SalesReceiptItemRet.DiscountPercent != null)
         //            {
-        //                xSaleReceiptItem.Discount = (decimal)SalesReceiptItemRet.Discount.GetValue();
+        //                xSaleReceiptItem.DiscountPercent = (decimal)SalesReceiptItemRet.DiscountPercent.GetValue();
         //            }
         //            //Get value of DiscountPercent
         //            if (SalesReceiptItemRet.DiscountPercent != null)

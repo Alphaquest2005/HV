@@ -25,7 +25,12 @@ namespace RMSDataAccessLayer
         
         public Patient()
         {
+            this.TotalSales = 0D;
+            this.StartingSales = 0D;
             this.Prescription = new ObservableCollection<Prescription>();
+            this.QuickPrescription = new ObservableCollection<QuickPrescription>();
+            this.PatientRewards = new ObservableCollection<PatientReward>();
+            this.AvailableRewards = new ObservableCollection<PatientAvailableReward>();
             CustomStartup();
             CustomStartup2();
             this.PropertyChanged += UpdatePropertyChanged;
@@ -83,6 +88,32 @@ namespace RMSDataAccessLayer
     	}
     	private Nullable<double> _Discount;
         [DataMember]
+        	public Nullable<double> TotalSales
+    	{ 
+    		get { return _TotalSales; }
+    		set
+    		{
+    			if (Equals(value, _TotalSales)) return;
+    			_TotalSales = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<double> _TotalSales;
+        [DataMember]
+        	public Nullable<double> StartingSales
+    	{ 
+    		get { return _StartingSales; }
+    		set
+    		{
+    			if (Equals(value, _StartingSales)) return;
+    			_StartingSales = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<double> _StartingSales;
+        [DataMember]
     	public ObservableCollection<Prescription> Prescription
     	{
     		get { return _Prescription; }
@@ -94,5 +125,86 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private ObservableCollection<Prescription> _Prescription;
+        [DataMember]
+    	public ObservableCollection<QuickPrescription> QuickPrescription
+    	{
+    		get { return _QuickPrescription; }
+    		set
+    		{
+    			if (Equals(value, _QuickPrescription)) return;
+    			_QuickPrescription = value;
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private ObservableCollection<QuickPrescription> _QuickPrescription;
+        [DataMember]
+    	public QBCustomer QBCustomer
+    	{
+    		get { return _QBCustomer; }
+    		set
+    		{
+    			if (Equals(value, _QBCustomer)) return;
+    			_QBCustomer = value;
+    			QBCustomerChangeTracker = _QBCustomer == null ? null
+    				: new ChangeTrackingCollection<QBCustomer> { _QBCustomer };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private QBCustomer _QBCustomer;
+    	private ChangeTrackingCollection<QBCustomer> QBCustomerChangeTracker { get; set; }
+        [DataMember]
+    	public Photo Photo
+    	{
+    		get { return _Photo; }
+    		set
+    		{
+    			if (Equals(value, _Photo)) return;
+    			_Photo = value;
+    			PhotoChangeTracker = _Photo == null ? null
+    				: new ChangeTrackingCollection<Photo> { _Photo };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Photo _Photo;
+    	private ChangeTrackingCollection<Photo> PhotoChangeTracker { get; set; }
+        [DataMember]
+    	public ObservableCollection<PatientReward> PatientRewards
+    	{
+    		get { return _PatientRewards; }
+    		set
+    		{
+    			if (Equals(value, _PatientRewards)) return;
+    			_PatientRewards = value;
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private ObservableCollection<PatientReward> _PatientRewards;
+        [DataMember]
+    	public ObservableCollection<PatientAvailableReward> AvailableRewards
+    	{
+    		get { return _AvailableRewards; }
+    		set
+    		{
+    			if (Equals(value, _AvailableRewards)) return;
+    			_AvailableRewards = value;
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private ObservableCollection<PatientAvailableReward> _AvailableRewards;
+        [DataMember]
+    	public PatientMembership Membership
+    	{
+    		get { return _Membership; }
+    		set
+    		{
+    			if (Equals(value, _Membership)) return;
+    			_Membership = value;
+    			MembershipChangeTracker = _Membership == null ? null
+    				: new ChangeTrackingCollection<PatientMembership> { _Membership };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private PatientMembership _Membership;
+    	private ChangeTrackingCollection<PatientMembership> MembershipChangeTracker { get; set; }
     }
 }

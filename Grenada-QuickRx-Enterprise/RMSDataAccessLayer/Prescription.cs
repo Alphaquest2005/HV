@@ -51,6 +51,19 @@ namespace RMSDataAccessLayer
     	}
     	private int _PatientId;
         [DataMember]
+        	public Nullable<int> ParentPrescriptionId
+    	{ 
+    		get { return _ParentPrescriptionId; }
+    		set
+    		{
+    			if (Equals(value, _ParentPrescriptionId)) return;
+    			_ParentPrescriptionId = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<int> _ParentPrescriptionId;
+        [DataMember]
     	public Doctor Doctor
     	{
     		get { return _Doctor; }
@@ -80,5 +93,20 @@ namespace RMSDataAccessLayer
     	}
     	private Patient _Patient;
     	private ChangeTrackingCollection<Patient> PatientChangeTracker { get; set; }
+        [DataMember]
+    	public PrescriptionImage PrescriptionImage
+    	{
+    		get { return _PrescriptionImage; }
+    		set
+    		{
+    			if (Equals(value, _PrescriptionImage)) return;
+    			_PrescriptionImage = value;
+    			PrescriptionImageChangeTracker = _PrescriptionImage == null ? null
+    				: new ChangeTrackingCollection<PrescriptionImage> { _PrescriptionImage };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private PrescriptionImage _PrescriptionImage;
+    	private ChangeTrackingCollection<PrescriptionImage> PrescriptionImageChangeTracker { get; set; }
     }
 }

@@ -14,6 +14,8 @@ namespace QuickBooks
     
     public partial class SalesReceipt
     {
+        public string CustomerListID { get; set; }
+
         public SalesReceipt()
         {
             this.SalesReceiptDetails = new HashSet<SalesReceiptDetail>();

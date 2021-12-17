@@ -925,7 +925,7 @@ namespace QuickBooks
                 if ((discountField.Equals(value) != true))
                 {
                     this.discountField = value;
-                    this.OnPropertyChanged("Discount", value);
+                    this.OnPropertyChanged("DiscountPercent", value);
                 }
             }
         }
@@ -3239,7 +3239,7 @@ namespace QuickBooks
                 if ((discountField.Equals(value) != true))
                 {
                     this.discountField = value;
-                    this.OnPropertyChanged("Discount", value);
+                    this.OnPropertyChanged("DiscountPercent", value);
                 }
             }
         }

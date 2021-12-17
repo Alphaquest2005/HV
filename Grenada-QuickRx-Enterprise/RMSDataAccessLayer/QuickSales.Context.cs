@@ -38,6 +38,21 @@ namespace RMSDataAccessLayer
         public virtual DbSet<QBInventoryItem> QBInventoryItems { get; set; }
         public virtual DbSet<TransactionsView> TransactionsViews { get; set; }
         public virtual DbSet<TransactionEntryItem> TransactionEntryItems { get; set; }
-        public virtual DbSet<ItemDosage> ItemDosages { get; set; }
+        public virtual DbSet<PresetDosage> PresetDosages { get; set; }
+        public virtual DbSet<ItemPresetDosage> ItemPresetDosages { get; set; }
+        public virtual DbSet<RxAbbrevation> RxAbbrevations { get; set; }
+        public virtual DbSet<LocationType> LocationTypes { get; set; }
+        public virtual DbSet<PersonLocation> PersonLocations { get; set; }
+        public virtual DbSet<TransactionLocation> TransactionLocations { get; set; }
+        public virtual DbSet<TransactionData> TransactionDatas { get; set; }
+        public virtual DbSet<IDCardInfo> IDCardInfoes { get; set; }
+        public virtual DbSet<QBCustomer> QBCustomers { get; set; }
+        public virtual DbSet<Photo> Photos { get; set; }
+        public virtual DbSet<PatientReward> PatientRewards { get; set; }
+        public virtual DbSet<PatientRewardSale> PatientRewardSales { get; set; }
+        public virtual DbSet<PatientAvailableReward> PatientAvailableRewards { get; set; }
+        public virtual DbSet<PatientMembership> PatientMemberships { get; set; }
+        public virtual DbSet<AgeRange> AgeRanges1 { get; set; }
+        public virtual DbSet<PrescriptionImage> PrescriptionImages { get; set; }
     }
 }

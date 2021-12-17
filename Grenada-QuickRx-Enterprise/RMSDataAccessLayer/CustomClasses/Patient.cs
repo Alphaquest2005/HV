@@ -12,6 +12,10 @@ namespace RMSDataAccessLayer
         //    Discount = 0;
         //}
 
+        public string SexEx => Sex == null ? "" : Sex == false ? "Male" : "Female";
+
+        public string Age => DOB == null ? "" : Convert.ToInt16((DateTime.Today-DOB.Value).TotalDays/365).ToString();
+
         public string ContactInfo
         {
             get

@@ -265,6 +265,20 @@ namespace RMSDataAccessLayer
     	}
     	private Nullable<int> _ParentTransactionId;
         [DataMember]
+                    [StringLength(50)]
+    	public string DeliveryType
+    	{ 
+    		get { return _DeliveryType; }
+    		set
+    		{
+    			if (Equals(value, _DeliveryType)) return;
+    			_DeliveryType = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private string _DeliveryType;
+        [DataMember]
     	public ObservableCollection<TransactionEntryBase> TransactionEntries
     	{
     		get { return _TransactionEntries; }
@@ -393,5 +407,20 @@ namespace RMSDataAccessLayer
     	}
     	private TransactionBase _ParentTransaction;
     	private ChangeTrackingCollection<TransactionBase> ParentTransactionChangeTracker { get; set; }
+        [DataMember]
+    	public TransactionLocation TransactionLocation
+    	{
+    		get { return _TransactionLocation; }
+    		set
+    		{
+    			if (Equals(value, _TransactionLocation)) return;
+    			_TransactionLocation = value;
+    			TransactionLocationChangeTracker = _TransactionLocation == null ? null
+    				: new ChangeTrackingCollection<TransactionLocation> { _TransactionLocation };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private TransactionLocation _TransactionLocation;
+    	private ChangeTrackingCollection<TransactionLocation> TransactionLocationChangeTracker { get; set; }
     }
 }

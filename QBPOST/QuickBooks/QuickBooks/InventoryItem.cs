@@ -26,6 +26,7 @@ namespace QuickBooks
         public int ItemNumber { get; set; }
         public string ItemType { get; set; }
         public string TaxCode { get; set; }
+        public string UnitOfMeasure { get; set; }
         public Nullable<double> Price { get; set; }
     }
 }

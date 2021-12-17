@@ -9,12 +9,255 @@
              xmlns:local="clr-namespace:SalesRegion"
              xmlns:data="clr-namespace:RMSDataAccessLayer;assembly=RMSDataAccessLayer"
              xmlns:controls="clr-namespace:Aviad.WPF.Controls;assembly=Aviad.WPF.Controls"
-             mc:Ignorable="d" Width="Auto" Height="Auto" Background="#FF565656" Foreground="#FF926D6D">
+             xmlns:windowsPresentation="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+             mc:Ignorable="d" Width="500" Height="Auto" Background="#FF565656" Foreground="#FF926D6D">
 
 
+    <Grid x:Name="rptQuickPreEntry"
+													  Background="{x:Null}"
+													  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+													  ScrollViewer.VerticalScrollBarVisibility="Hidden">
+        <Border Width="281"
+															Height="172"
+															Margin="-3,0,0,0"
+															HorizontalAlignment="Center"
+															VerticalAlignment="Center"
+															Background="White"
+															BorderBrush="{x:Null}"
+															BorderThickness="1">
+            <Grid ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="39*" />
+                    <RowDefinition Height="136*" />
+                    <RowDefinition Height="15*" />
+                </Grid.RowDefinitions>
+                <Image Width="150"
+																   Height="150"
+																   
+																   HorizontalAlignment="Center"
+																   VerticalAlignment="Center"
+																   Source="{DynamicResource HVLogo}"
+																   Stretch="Fill" Grid.RowSpan="2" OpacityMask="#72FFFFFF" />
+                <TextBlock Margin="38,2,62,9.895"
+																	   FontFamily="Candara"
+																	   FontSize="16"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.Store.Company.CompanyName,
+																					  Mode=OneWay,
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextWrapping="Wrap" />
+                <TextBlock
+																	   Margin="46,21,71.273,0.909"
+																	   FontFamily="Century Gothic"
+																	   FontSize="9"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.Store.Company.Motto,
+																					  Mode=OneWay,
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextWrapping="Wrap" />
+                <TextBlock Width="69"
+																	   Height="11"
+																	   Margin="200,3,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Calibri"
+																	   FontSize="7.5"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.Store.Company.Address,
+																					  Mode=OneWay,
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextAlignment="Right"
+																	   TextWrapping="Wrap" />
+                <TextBlock Grid.RowSpan="2"
+																	   Width="69"
+																	   Height="11"
+																	   Margin="200,25,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Calibri"
+																	   FontSize="10"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.Store.Company.PhoneNumber,
+																					  Mode=OneWay,
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextAlignment="Right"
+																	   TextWrapping="Wrap" />
+                <TextBlock Width="87"
+																	   Height="11"
+																	   Margin="180,14,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Calibri"
+																	   FontSize="7.5"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.Store.Company.Address1,
+																					  Mode=OneWay,
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextAlignment="Right"
+																	   TextWrapping="Wrap" />
+                <Rectangle Grid.Row="1"
+																	   Grid.RowSpan="2"
+																	   Width="286"
+																	   Height="1"
+																	   Margin="0,136.067,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   Fill="#FFF4F4F5"
+																	   Stroke="Black" />
+                <TextBlock Grid.Row="2"
+																	   Width="150"
+																	   Height="14"
+																	   Margin="3,2.909,0,-3.818"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Arial"
+																	   FontSize="8"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="KEEP OUT THE REACH OF CHILDREN"
+																	   TextWrapping="Wrap" />
+                <Grid Grid.Row="1" Margin="3,29,5,30">
+
+                    <TextBlock x:Name="DosageTxt"
+																		   Width="278"
+																		   Margin="0,28,-6.727,-14.818"
+																		   HorizontalAlignment="Left"
+																		   FontFamily="Calibri"
+																		   FontSize="14"
+																		   FontWeight="Bold"
+																		   Foreground="Black"
+																		   Text="{Binding Dosage,
+																						  Mode=OneWay}"
+																		   TextWrapping="Wrap" />
+                    <TextBlock Width="236"
+																		   Height="17"
+																		   Margin="36,6,-0.727,0"
+																		   HorizontalAlignment="Left"
+																		   VerticalAlignment="Top"
+																		   FontFamily="Calibri"
+																		   FontSize="14"
+                                                                           FontWeight="Bold"
+																		   Foreground="Black"
+																		   Text="{Binding TransactionEntryItem.ItemName,
+																						  Mode=OneWay}"
+																		   TextWrapping="Wrap" />
+                    <TextBlock Width="32"
+																		   Height="17"
+																		   Margin="3,6,0,0"
+																		   HorizontalAlignment="Left"
+																		   VerticalAlignment="Top"
+																		   FontFamily="Calibri"
+																		   FontSize="16"
+                                                                           FontWeight="Bold"
+																		   Foreground="Black"
+																		   RenderTransformOrigin="0.701,0.758"
+																		   Text="{Binding Quantity,
+																						  Mode=OneWay,
+																						  StringFormat=n0}"
+																		   TextWrapping="Wrap" />
+
+                </Grid>
+
+                <TextBlock Grid.Row="1"
+																	   Width="164"
+																	   Height="15"
+																	   Margin="3,4.091,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Segoe UI"
+																	   Foreground="Black"
+																	   LineHeight="12"
+																	   RenderTransformOrigin="0.527,0.538"
+																	   Text="{Binding Instance.TransactionData.Patient.DisplayName, Mode=OneWay, StringFormat=Patient: 0, ValidatesOnDataErrors=True, FallbackValue='Walk in Customer', Source={StaticResource SalesVMDataSource}}" />
+
+                <TextBlock Grid.Row="1"
+																	   Width="100"
+																	   Height="18"
+																	   Margin="190,4.105,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Calibri"
+																	   FontSize="10"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.TransactionData.Time,
+																					  Mode=OneWay,
+																					  StringFormat=Date: \{0:MMM-dd-yyyy\},
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextWrapping="NoWrap" />
+                <TextBlock Grid.Row="1"
+																	   Width="80"
+																	   Height="18"
+																	   Margin="180,16.105,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Calibri"
+																	   FontSize="10"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding TransactionEntryNumber,
+																					  Mode=OneWay,
+																					  StringFormat=Trans#:{0}}"
+																	   TextAlignment="Right"
+																	   TextWrapping="Wrap" />
+                <TextBlock Grid.Row="1"
+																	   Width="Auto"
+																	   Height="18"
+																	   Margin="260,15,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   FontFamily="Calibri"
+																	   FontSize="12"
+																	   FontWeight="Bold"
+																	   Foreground="Black"
+																	   Text="{Binding Instance.TransactionPharmacist.Initials,
+																					  Mode=OneWay,
+																					  Source={StaticResource SalesVMDataSource}}"
+																	   TextAlignment="Right"
+																	   TextWrapping="Wrap" />
+                <TextBlock Width="197"
+																	   Height="16"
+																	   Margin="78,106,0,0"
+																	   HorizontalAlignment="Left"
+																	   VerticalAlignment="Top"
+																	   Background="{x:Null}"
+																	   FontFamily="Calibri"
+																	   FontSize="14"
+																	   Foreground="Black"
+																	   Text="{Binding RepeatInfo}"
+																	   TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" />
+                <TextBlock Grid.Row="1"
+                    Width="172"
+                    Height="12"
+                    Margin="3,19.091,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    FontFamily="Segoe UI"
+                    FontSize="8"
+                    Foreground="Black"
+                    LineHeight="12"
+                    RenderTransformOrigin="0.527,0.538"
+                    Text="{Binding Instance.TransactionData.Patient.Address, FallbackValue=Walk in Customer, Mode=OneWay, Source={StaticResource SalesVMDataSource}, StringFormat=Patient: 0, ValidatesOnDataErrors=True}" />
+                <Image Grid.Row="2"
+                    Width="117"
+                    Height="10"
+                    Margin="158,2.909,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="{Binding TransactionEntryNumber, Mode=OneWay, StringFormat=Trans#:{0}, Converter={StaticResource}}"
+                     />
 
 
-   
+            </Grid>
+        </Border>
+
+    </Grid>
+
+
 
 
 

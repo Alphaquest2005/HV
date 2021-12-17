@@ -11,7 +11,9 @@ using System.Windows.Media;
 using RMSDataAccessLayer;
 
 using System.Globalization;
+using System.IO;
 using System.Reflection;
+using System.Windows.Media.Imaging;
 using Common.Core.Logging;
 using log4netWrapper;
 
@@ -132,61 +134,62 @@ namespace SalesRegion
         {
             try
             {
-                return Visibility.Visible;
+              //  return Visibility.Visible;
           
-            Cashier c = SalesVM.Instance.CashierEx; 
-            Cashier tc = (values[0] as Cashier);
-            Cashier p = (values[1] as Cashier);
+            Cashier currentLogin = SalesVM.Instance.CurrentLogin; 
+            Cashier transactionCashier = (values[0] as Cashier);
+            Cashier pharmacist = (values[1] as Cashier);
             //if (c == null || c.Role == "Pharmacist")
-            
+            if(pharmacist == null) return Visibility.Hidden;
+            return Visibility.Visible;
 
-            if (parameter.ToString() == "Button")
-            {
-                if (c != null)
-                {
-                    if (c.Role == "Pharmacist")
-                    {
-                        if (p != null && p.Id == c.Id)
-                        {
-                            return Visibility.Visible;
-                        }
-                        else
-                        {
-                            return Visibility.Hidden;
-                        }
-                    }
-                    else
-                    {
-                        if (tc != null && c.Id == tc.Id && SalesVM.Instance.Pharmacists != null && SalesVM.Instance.Pharmacists.Any() == true)
-                        {
-                            return Visibility.Visible;
-                        }
-
-                    }
-                }
-
-
-                if (c != null && (tc != null && c.Id == tc.Id && p != null && p.Role == "Pharmacist"))
-                {
-                    return Visibility.Visible;
-                }
-                return Visibility.Hidden;
-            }
-            else
-            {
-                if (c != null && (c != null && c.Role == "Pharmacist" || tc != null && c.Id != tc.Id) )
-                {
-                   // if(p != null && p.Id == c.Id)
-                    return Visibility.Hidden;
-                }
-                //if (SalesVM._pharmacists == null || SalesVM._pharmacists.Count == 0)
+                //if (parameter.ToString() == "Button")
                 //{
+                //    if (currentLogin != null)
+                //    {
+                //        if (currentLogin.Role == "Pharmacist")
+                //        {
+                //            if (pharmacist != null && pharmacist.Id == currentLogin.Id)
+                //            {
+                //                return Visibility.Visible;
+                //            }
+                //            else
+                //            {
+                //                return Visibility.Hidden;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            if (transactionCashier != null && currentLogin.Id == transactionCashier.Id && SalesVM.Instance.Pharmacists != null && SalesVM.Instance.Pharmacists.Any() == true)
+                //            {
+                //                return Visibility.Visible;
+                //            }
+
+                //        }
+                //    }
+
+
+                //    if (currentLogin != null && (transactionCashier != null && currentLogin.Id == transactionCashier.Id && pharmacist != null && pharmacist.Role == "Pharmacist"))
+                //    {
+                //        return Visibility.Visible;
+                //    }
                 //    return Visibility.Hidden;
                 //}
-                
-                    return Visibility.Visible;
-                
-            }
+                //else
+                //{
+                //    if (currentLogin != null && (currentLogin != null && currentLogin.Role == "Pharmacist" || transactionCashier != null && currentLogin.Id != transactionCashier.Id) )
+                //    {
+                //       // if(p != null && p.Id == c.Id)
+                //        return Visibility.Hidden;
+                //    }
+                //    //if (SalesVM._pharmacists == null || SalesVM._pharmacists.Count == 0)
+                //    //{
+                //    //    return Visibility.Hidden;
+                //    //}
+
+                //        return Visibility.Visible;
+
+                //}
             }
             catch (Exception ex)
             {
@@ -222,6 +225,36 @@ namespace SalesRegion
         }
     }
 
+    [ValueConversion(typeof(byte[]), typeof(BitmapSource))]
+    public class ByteArrayToImageConverter : IValueConverter
+    {
+        public static BitmapImage ConvertByteArrayToBitMapImage(byte[] imageByteArray)
+        {
+            BitmapImage img = new BitmapImage();
+            using (MemoryStream memStream = new MemoryStream(imageByteArray))
+            {
+                img.BeginInit();
+                img.CacheOption = BitmapCacheOption.OnLoad;
+                img.StreamSource = memStream;
+                img.EndInit();
+                img.Freeze();
+            }
+            return img;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var imageByteArray = value as byte[];
+            if (imageByteArray == null) return null;
+            return ConvertByteArrayToBitMapImage(imageByteArray);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
     public class DosageSourceConverter : IValueConverter
     {
         
@@ -233,8 +266,8 @@ namespace SalesRegion
                 using (var ctx = new RMSModel())
                 {
                     var dosagelst = (from pe in ctx.TransactionEntryBase.OfType<PrescriptionEntry>()
-                        where pe.TransactionEntryItem.ItemId == ((Item)value).ItemId
-                        select pe.Dosage);
+                        where pe.TransactionEntryItem.ItemNumber == ((Item)value).ItemNumber
+                                     select pe.Dosage);
                     return dosagelst;
                 }
             }

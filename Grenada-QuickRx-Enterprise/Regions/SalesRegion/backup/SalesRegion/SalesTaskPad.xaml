@@ -11,66 +11,69 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			 xmlns:wd="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+			 xmlns:windowsPresentation="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+			 xmlns:mapProviders="clr-namespace:GMap.NET.MapProviders;assembly=GMap.NET.Core"
 			 Width="2000"
-			 Height="235"
+			 Height="262.725"
 			 mc:Ignorable="d">
 
-	<UserControl.Resources>
+    <UserControl.Resources>
 
-		<local:SalesVM x:Key="SalesVMDataSource" />
-		<barcode:BarCodeValueConverter x:Key="BarCodeConverter" />
-		<local:TimeSpanValueConverter x:Key="TimeC" />
-		<local:NotNullValueConverter x:Key="NotNullConverter" />
-		<local:DosageSourceConverter x:Key="DosageLstConverter" />
-		<local:EnumMatchToBooleanConverter x:Key="EnumConverter" />
-		<local:IsPharmacistVisibleConverter x:Key="IsPharmacistVisibleConverter" />
-		<local:IsPharmacistNotVisibleConverter x:Key="IsPharmacistNotVisibleConverter" />
-		<local:StringToNullableDateValueConverter x:Key="StringToDecimalConverter" />
+        <local:SalesVM x:Key="SalesVMDataSource" />
+        <barcode:BarCodeValueConverter x:Key="BarCodeConverter" />
+        <local:TimeSpanValueConverter x:Key="TimeC" />
+        <local:ByteArrayToImageConverter x:Key="photoConverter" />
+        <local:NotNullValueConverter x:Key="NotNullConverter" />
+        <local:DosageSourceConverter x:Key="DosageLstConverter" />
+        <local:EnumMatchToBooleanConverter x:Key="EnumConverter" />
+        <local:IsPharmacistVisibleConverter x:Key="IsPharmacistVisibleConverter" />
+        <local:IsPharmacistNotVisibleConverter x:Key="IsPharmacistNotVisibleConverter" />
+        <local:StringToNullableDateValueConverter x:Key="StringToDecimalConverter" />
 
-		<Style x:Key="myLBStyle" TargetType="{x:Type ListBoxItem}">
-			<Style.Resources>
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-			</Style.Resources>
-		</Style>
+        <Style x:Key="myLBStyle" TargetType="{x:Type ListBoxItem}">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+            </Style.Resources>
+        </Style>
 
-		<!--  Style for the Clear Button  -->
-		<Style TargetType="{x:Type TextBox}">
-			<Setter Property="VerticalAlignment" Value="Center" />
-			<Setter Property="Margin" Value="0,2,40,2" />
-			<Setter Property="Validation.ErrorTemplate">
-				<Setter.Value>
-					<ControlTemplate>
-						<StackPanel>
-							<!--  Placeholder for the TextBox itself  -->
-							<AdornedElementPlaceholder x:Name="textBox" />
-							<TextBlock Foreground="Red" Text="{Binding [0].ErrorContent}" />
-						</StackPanel>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+        <!--  Style for the Clear Button  -->
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,2,40,2" />
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <StackPanel>
+                            <!--  Placeholder for the TextBox itself  -->
+                            <AdornedElementPlaceholder x:Name="textBox" />
+                            <TextBlock Foreground="Red" Text="{Binding [0].ErrorContent}" />
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-		<!--  SUPER IMPORTANT  -->
+        <!--  SUPER IMPORTANT  -->
 
-		<!--  Your project MUST reference PresentationFramework.Aero.  -->
+        <!--  Your project MUST reference PresentationFramework.Aero.  -->
 
-		<!--  SUPER IMPORTANT  -->
+        <!--  SUPER IMPORTANT  -->
 
-		<Style x:Key="checkboxLeftSideText" TargetType="{x:Type CheckBox}">
-			<Setter Property="SnapsToDevicePixels" Value="true" />
-			<Setter Property="FocusVisualStyle" Value="{DynamicResource CheckBoxFocusVisual}" />
-			<Setter Property="Background" Value="{DynamicResource NormalBrush}" />
-			<Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type CheckBox}">
+        <Style x:Key="checkboxLeftSideText" TargetType="{x:Type CheckBox}">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource CheckBoxFocusVisual}" />
+            <Setter Property="Background" Value="{DynamicResource NormalBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
 
-						<DockPanel Width="Auto"
+                        <DockPanel Width="Auto"
 								   HorizontalAlignment="Stretch"
 								   VerticalAlignment="Top"
 								   LastChildFill="True">
 
-							<Microsoft_Windows_Themes:BulletChrome Width="Auto"
+                            <Microsoft_Windows_Themes:BulletChrome Width="Auto"
 																   Height="Auto"
 																   Margin="4,0,0,0"
 																   HorizontalAlignment="Stretch"
@@ -82,24 +85,24 @@
 																   RenderMouseOver="{TemplateBinding IsMouseOver}"
 																   RenderPressed="{TemplateBinding IsPressed}" />
 
-							<ContentPresenter Height="Auto"
+                            <ContentPresenter Height="Auto"
 											  HorizontalAlignment="Left"
 											  Content="{TemplateBinding Content}"
 											  RecognizesAccessKey="True" />
 
-						</DockPanel>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-		<Style x:Key="ClearButtonStyle" TargetType="{x:Type Button}">
-			<Setter Property="BorderBrush" Value="Transparent" />
-			<Setter Property="Background" Value="Transparent" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Button}">
-						<Border x:Name="border"
+        <Style x:Key="ClearButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"
 								Width="16"
 								Height="16"
 								Background="{TemplateBinding Background}"
@@ -107,97 +110,97 @@
 								BorderThickness="1"
 								CornerRadius="2"
 								SnapsToDevicePixels="True">
-							<Grid Width="8"
+                            <Grid Width="8"
 								  Height="8"
 								  HorizontalAlignment="Center"
 								  VerticalAlignment="Center">
-								<Path x:Name="path1"
+                                <Path x:Name="path1"
 									  Data="M0,0 L8,8"
 									  Stroke="#ADADAD"
 									  StrokeThickness="2" />
-								<Path x:Name="path2"
+                                <Path x:Name="path2"
 									  Data="M8,0 L0,8"
 									  Stroke="#ADADAD"
 									  StrokeThickness="2" />
-							</Grid>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="BorderBrush" Value="#ADADAD" />
-								<Setter Property="Background" Value="DimGray" />
-								<Setter TargetName="path1" Property="Stroke" Value="DarkRed" />
-								<Setter TargetName="path2" Property="Stroke" Value="DarkRed" />
-							</Trigger>
-							<Trigger Property="IsPressed" Value="True">
-								<Setter Property="Background">
-									<Setter.Value>
-										<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-											<GradientStop Offset="0" Color="#FFADADAD" />
-											<GradientStop Offset="0.5" Color="DimGray" />
-											<GradientStop Offset="1" Color="DimGray" />
-										</LinearGradientBrush>
-									</Setter.Value>
-								</Setter>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#ADADAD" />
+                                <Setter Property="Background" Value="DimGray" />
+                                <Setter TargetName="path1" Property="Stroke" Value="DarkRed" />
+                                <Setter TargetName="path2" Property="Stroke" Value="DarkRed" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Offset="0" Color="#FFADADAD" />
+                                            <GradientStop Offset="0.5" Color="DimGray" />
+                                            <GradientStop Offset="1" Color="DimGray" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-		<SolidColorBrush x:Key="ListBorder" Color="#FF7F9DB9" />
+        <SolidColorBrush x:Key="ListBorder" Color="#FF7F9DB9" />
 
-		<LinearGradientBrush x:Key="FocusBackground" StartPoint="0.5,1.667" EndPoint="0.5,0">
-			<GradientStop Offset="0" Color="#FF073553" />
-			<GradientStop Offset="0.796" Color="#FFA7D5F4" />
-			<GradientStop Offset="1" Color="#FF5A88A8" />
-		</LinearGradientBrush>
+        <LinearGradientBrush x:Key="FocusBackground" StartPoint="0.5,1.667" EndPoint="0.5,0">
+            <GradientStop Offset="0" Color="#FF073553" />
+            <GradientStop Offset="0.796" Color="#FFA7D5F4" />
+            <GradientStop Offset="1" Color="#FF5A88A8" />
+        </LinearGradientBrush>
 
-		<Style x:Key="FilterTextBoxStyle" TargetType="{x:Type TextBox}">
-			<Setter Property="Background" Value="#FF1F1F1F" />
-			<Setter Property="BorderBrush" Value="{StaticResource ListBorder}" />
-			<Setter Property="Foreground" Value="#FFD7D7D7" />
-			<Setter Property="Padding" Value="2" />
-			<Setter Property="FocusVisualStyle" Value="{x:Null}" />
-			<Setter Property="AllowDrop" Value="true" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type TextBox}">
-						<Border x:Name="Bd"
+        <Style x:Key="FilterTextBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="#FF1F1F1F" />
+            <Setter Property="BorderBrush" Value="{StaticResource ListBorder}" />
+            <Setter Property="Foreground" Value="#FFD7D7D7" />
+            <Setter Property="Padding" Value="2" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="AllowDrop" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="Bd"
 								Background="{TemplateBinding Background}"
 								BorderBrush="{TemplateBinding BorderBrush}"
 								BorderThickness="{TemplateBinding BorderThickness}"
 								SnapsToDevicePixels="true">
-							<ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsEnabled" Value="false">
-								<Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-			<Setter Property="BorderThickness" Value="0,0,0,0" />
-		</Style>
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="0,0,0,0" />
+        </Style>
 
 
-		<LinearGradientBrush x:Key="HighlightGray" StartPoint="0.5,0" EndPoint="0.5,1">
-			<GradientStop Offset="0.002" Color="#FF484848" />
-			<GradientStop Offset="0.39" Color="#FFB9B9B9" />
-			<GradientStop Offset="1" Color="#FF4A4A4A" />
-			<GradientStop Offset="0.628" Color="#FF9A9A9A" />
-		</LinearGradientBrush>
+        <LinearGradientBrush x:Key="HighlightGray" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Offset="0.002" Color="#FF484848" />
+            <GradientStop Offset="0.39" Color="#FFB9B9B9" />
+            <GradientStop Offset="1" Color="#FF4A4A4A" />
+            <GradientStop Offset="0.628" Color="#FF9A9A9A" />
+        </LinearGradientBrush>
 
 
-	
-		<local:NotParentTransactionVisbilityConverter x:Key="ParentTransactionVisbilityConverter"/>
+
+        <local:NotParentTransactionVisbilityConverter x:Key="ParentTransactionVisbilityConverter"/>
 
 
-		<DataTemplate DataType="{x:Type data:PrescriptionEntry}">
-			<Grid Background="#FF032039">
-				<TextBox Width="52"
+        <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
+            <Grid Background="#FF032039">
+                <TextBox Width="52"
 						 Height="29"
 						 Margin="321,4,0,0"
 						 HorizontalAlignment="Left"
@@ -211,13 +214,41 @@
 										StringFormat=n0,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<!--<DatePicker Text="{Binding ExpiryDate, Mode=OneWay}" x:Name="RepeatTxt"  HorizontalAlignment="Left" Height="23" Margin="240,119,0,0"  VerticalAlignment="Top" Width="132" Background="#FF1F1F1F" Foreground="#FF303030" RenderTransformOrigin="0.488,0.466"/>-->
+                <!--<DatePicker Text="{Binding ExpiryDate, Mode=OneWay}" x:Name="RepeatTxt"  HorizontalAlignment="Left" Height="23" Margin="240,119,0,0"  VerticalAlignment="Top" Width="132" Background="#FF1F1F1F" Foreground="#FF303030" RenderTransformOrigin="0.488,0.466"/>-->
 
-
-				<acbox:AutoCompleteTextBox x:Name="AutoCompleteTextBox"
+                <!--<TextBox x:Name="AutoCompleteTextBox"
+			                               Width="215"
+			                               Height="79"
+			                               Margin="11,40,0,0"
+			                               HorizontalAlignment="Left"
+			                               VerticalAlignment="Top"
+			                               Background="#FF1F1F1F"
+			                               FontSize="13.333"
+			                               Foreground="#FFD7D7D7"
+			                               Text="{Binding Dosage,
+														  Mode=TwoWay,
+														  ValidatesOnDataErrors=True,
+														  ValidatesOnNotifyDataErrors=true,
+														  UpdateSourceTrigger=PropertyChanged}"
+			                               TextWrapping="Wrap" />-->
+                <ComboBox  Width="215"
+			               Height="20"
+			               Margin="11,153,0,0"
+			               HorizontalAlignment="Left"
+			               VerticalAlignment="Top"
+			               Background="#FF1F1F1F"
+			               FontSize="13.333"
+                           DisplayMemberPath="Dosage"
+                           SelectedValuePath="Dosage"
+			               ItemsSource="{Binding Instance.PresetDosage,
+													Mode=OneWay,
+													Source={StaticResource SalesVMDataSource}}"
+                           SelectionChanged="presetDosageChanged"
+			               Foreground="#FF030D6F" IsEditable="True" />
+                <acbox:AutoCompleteTextBox x:Name="AutoCompleteTextBox"
 										   Width="215"
 										   Height="79"
-										   Margin="11,40,0,0"
+										   Margin="11,69,0,0"
 										   HorizontalAlignment="Left"
 										   VerticalAlignment="Top"
 										   Background="#FF1F1F1F"
@@ -232,13 +263,13 @@
 														  ValidatesOnNotifyDataErrors=true,
 														  UpdateSourceTrigger=PropertyChanged}"
 										   TextWrapping="Wrap" />
-				<!--<TextBox   Text="{Binding Dosage,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true, UpdateSourceTrigger=PropertyChanged}"
+                <!--<TextBox   Text="{Binding Dosage,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true, UpdateSourceTrigger=PropertyChanged}"
 											
 						  TextWrapping="Wrap"  Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="70" Margin="11,40,0,0"  VerticalAlignment="Top" Width="215" FontSize="13.333" SpellCheck.IsEnabled="True" />-->
 
-				<TextBlock Width="77"
+                <TextBlock Width="77"
 						   Height="19"
-						   Margin="240,131,0,0"
+						   Margin="240,160,0,-0.091"
 						   HorizontalAlignment="Left"
 						   VerticalAlignment="Top"
 						   FontSize="13.333"
@@ -248,9 +279,9 @@
 						   MouseLeftButtonDown="SetDosage"
 						   Text="Set Dosage"
 						   TextWrapping="Wrap" />
-				<CheckBox Width="49"
+                <CheckBox Width="49"
 						  Height="20"
-						  Margin="322,127,0,0"
+						  Margin="322,156,0,0"
 						  HorizontalAlignment="Left"
 						  VerticalAlignment="Top"
 						  HorizontalContentAlignment="Right"
@@ -262,10 +293,10 @@
 											  Mode=TwoWay,
 											  ValidatesOnNotifyDataErrors=True}"
 						  Style="{StaticResource checkboxLeftSideText}" />
-				<TextBox x:Name="PriceTxt"
+                <TextBox x:Name="PriceTxt"
 						 Width="52"
 						 Height="22"
-						 Margin="321,72,0,0"
+						 Margin="321,101,-0.345,0"
 						 HorizontalAlignment="Left"
 						 VerticalAlignment="Top"
 						 Background="#FF1F1F1F"
@@ -280,9 +311,9 @@
 										TargetNullValue={x:Static sys:String.Empty},
 										StringFormat=c}"
 						 TextOptions.TextFormattingMode="Display" />
-				<TextBlock Width="34"
+                <TextBlock Width="34"
 						   Height="20"
-						   Margin="282,77,0,0"
+						   Margin="282,106,0,0"
 						   HorizontalAlignment="Left"
 						   VerticalAlignment="Top"
 						   FontSize="13.333"
@@ -291,7 +322,7 @@
 						   LineStackingStrategy="BlockLineHeight"
 						   Text="Price"
 						   TextWrapping="Wrap" />
-				<TextBlock Width="250"
+                <TextBlock Width="250"
 						   Height="25"
 						   Margin="11,10,0,0"
 						   HorizontalAlignment="Left"
@@ -303,10 +334,10 @@
 						   Text="{Binding Path=TransactionEntryItem.ItemName,
 										  Mode=OneWay}"
 						   TextWrapping="Wrap" />
-				<TextBox x:Name="PriceTxt_Copy"
+                <TextBox x:Name="PriceTxt_Copy"
 						 Width="20"
 						 Height="22"
-						 Margin="287,42,0,0"
+						 Margin="287,71,0,0"
 						 HorizontalAlignment="Left"
 						 VerticalAlignment="Top"
 						 Background="#FF1F1F1F"
@@ -323,9 +354,9 @@
 										TargetNullValue={x:Static sys:String.Empty},
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextOptions.TextFormattingMode="Display" />
-				<TextBlock Width="46"
+                <TextBlock Width="46"
 						   Height="25"
-						   Margin="236,42,0,0"
+						   Margin="236,71,0,0"
 						   HorizontalAlignment="Left"
 						   VerticalAlignment="Top"
 						   FontSize="13.333"
@@ -335,10 +366,10 @@
 						   Visibility="{Binding Transaction.ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
 						   Text="Repeat"
 						   TextWrapping="Wrap" />
-				<TextBlock x:Name="PriceTxt_Copy1"
+                <TextBlock x:Name="PriceTxt_Copy1"
 						   Width="52"
 						   Height="22"
-						   Margin="321,99,0,0"
+						   Margin="321,128,-0.345,0"
 						   HorizontalAlignment="Left"
 						   VerticalAlignment="Top"
 						   FontFamily="DS-Digital"
@@ -351,9 +382,9 @@
 										  StringFormat=c,
 										  TargetNullValue={x:Static sys:String.Empty}}"
 						   TextOptions.TextFormattingMode="Display" />
-				<TextBlock Width="34"
+                <TextBlock Width="34"
 						   Height="20"
-						   Margin="282,104,0,0"
+						   Margin="282,133,0,0"
 						   HorizontalAlignment="Left"
 						   VerticalAlignment="Top"
 						   FontSize="13.333"
@@ -362,9 +393,9 @@
 						   LineStackingStrategy="BlockLineHeight"
 						   Text="Total"
 						   TextWrapping="Wrap" />
-				<TextBlock Width="7"
+                <TextBlock Width="7"
 			Height="20"
-			Margin="310,42,0,0"
+			Margin="310,71,0,0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
 			FontSize="13.333"
@@ -374,10 +405,10 @@
 						   Visibility="{Binding Transaction.ParentTransactionId, Converter={StaticResource ParentTransactionVisbilityConverter}}"
 			Text="x"
 			TextWrapping="Wrap" />
-				<TextBox x:Name="PriceTxt_Copy2"
+                <TextBox x:Name="PriceTxt_Copy2"
 			Width="51"
 			Height="22"
-			Margin="322,42,0,0"
+			Margin="322,71,-0.345,0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
 			Background="#FF1F1F1F"
@@ -389,13 +420,51 @@
 			RenderTransformOrigin="0.488,0.466"
 			Text="{Binding RepeatQuantity, Mode=TwoWay, StringFormat=n0, TargetNullValue={x:Static sys:String.Empty}, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
 			TextOptions.TextFormattingMode="Display" />
+                <ComboBox x:Name="DosageCodes"
+                  IsEditable="True"
+                  DisplayMemberPath="Shortcut"
+                  ItemsSource="{Binding Instance.RxAbbrevations,
+                                            Mode=OneWay,
+                                            Source={StaticResource SalesVMDataSource}}"
+                  SelectedItem="{Binding Instance.SelectedRxAbbrevation,
+                                                Mode=OneWayToSource,
+                                                Source={StaticResource SalesVMDataSource}}"
+                  SelectedValuePath="Id"
+                  SelectionChanged="DosageCodes_SelectionChanged"
+                  PreviewKeyDown="DosageCodes_OnTextInput"
+                  Width="185"
+                  Height="22"
+                  Margin="12,41,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Background="#FF1F1F1F"
+                  FontFamily="DS-Digital"
+                  FontSize="16"
+                  
+                  FontWeight="Bold"
+                  Foreground="#FF203E02"
+                  RenderTransformOrigin="0.488,0.466"
+                  TextOptions.TextFormattingMode="Display" />
+                <TextBlock Width="24"
+                   Height="20"
+                   Margin="202,42,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   FontSize="36"
+                   FontWeight="ExtraBold"
+                   Foreground="#FF3AC72F"
+                   LineHeight="25"
+                   LineStackingStrategy="BlockLineHeight"
+                   MouseLeftButtonDown="AddDosageCode"
+                   Text="+"
+                   TextWrapping="Wrap" TextAlignment="Center" />
 
-			</Grid>
-		</DataTemplate>
+            </Grid>
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type data:TransactionBase}">
-			<Grid Background="#FF76A5C4">
-				<TextBlock Width="215"
+        <DataTemplate DataType="{x:Type data:TransactionBase}">
+            <Grid Background="#FF76A5C4">
+                <TextBlock Width="215"
 						   Height="25"
 						   Margin="11,10,0,0"
 						   HorizontalAlignment="Left"
@@ -406,7 +475,7 @@
 						   Text="{Binding Path=TransactionId,
 										  Mode=OneWay}"
 						   TextWrapping="Wrap" />
-				<TextBlock Width="215"
+                <TextBlock Width="215"
 						   Height="25"
 						   Margin="250,10,0,0"
 						   HorizontalAlignment="Left"
@@ -417,11 +486,11 @@
 										  Mode=OneWay}"
 						   TextWrapping="Wrap" />
 
-			</Grid>
-		</DataTemplate>
+            </Grid>
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type local:SalesVM}">
-			<DataGrid AlternatingRowBackground="#FFD4D4D4"
+        <DataTemplate DataType="{x:Type local:SalesVM}">
+            <DataGrid AlternatingRowBackground="#FFD4D4D4"
 					  AlternationCount="1"
 					  AreRowDetailsFrozen="True"
 					  AutoGenerateColumns="False"
@@ -433,36 +502,36 @@
 					  IsSynchronizedWithCurrentItem="False"
 					  ItemsSource="{Binding TransactionList}"
 					  SelectionChanged="DataGrid_SelectionChanged_1">
-				<DataGrid.Columns>
-					<DataGridTextColumn Binding="{Binding TransactionNumber,
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding TransactionNumber,
 														  Mode=OneWay}"
 										ClipboardContentBinding="{x:Null}"
 										Header="Trans#" />
-					<DataGridTextColumn Binding="{Binding Time,
+                    <DataGridTextColumn Binding="{Binding Time,
 														  Mode=OneWay}"
 										ClipboardContentBinding="{x:Null}"
 										Header="Time" />
-					<DataGridTextColumn Binding="{Binding TotalSales,
+                    <DataGridTextColumn Binding="{Binding TotalSales,
 														  Mode=OneWay}"
 										ClipboardContentBinding="{x:Null}"
 										Header="Total Sales" />
-				</DataGrid.Columns>
-			</DataGrid>
-		</DataTemplate>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type data:Patient}">
-			<Grid Height="200" VerticalAlignment="Top">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="41*" />
-					<ColumnDefinition Width="42*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="9*" />
-					<RowDefinition Height="9*" />
-					<RowDefinition Height="13*" />
-					<RowDefinition Height="20*" />
-				</Grid.RowDefinitions>
-				<TextBlock Width="135"
+        <DataTemplate DataType="{x:Type data:Patient}">
+            <Grid Height="200" VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="41*" />
+                    <ColumnDefinition Width="42*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*" />
+                    <RowDefinition Height="9*" />
+                    <RowDefinition Height="13*" />
+                    <RowDefinition Height="20*" />
+                </Grid.RowDefinitions>
+                <TextBlock Width="135"
 						   Height="25"
 						   Margin="10,0,0,0"
 						   HorizontalAlignment="Left"
@@ -471,7 +540,7 @@
 						   FontSize="18"
 						   Text="Add Patient"
 						   TextWrapping="Wrap" />
-				<TextBlock Grid.ColumnSpan="2"
+                <TextBlock Grid.ColumnSpan="2"
 						   Width="65"
 						   Height="16"
 						   Margin="133,8,0,0"
@@ -479,7 +548,7 @@
 						   VerticalAlignment="Top"
 						   Text="Guardian"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Column="1"
+                <TextBox Grid.Column="1"
 						 Width="180"
 						 Height="23"
 						 Margin="10.41,5,0,0"
@@ -490,7 +559,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="1"
+                <TextBlock Grid.Row="1"
 						   Width="65"
 						   Height="16"
 						   Margin="10,6,0,0"
@@ -498,7 +567,7 @@
 						   VerticalAlignment="Top"
 						   Text="First Name"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="1"
+                <TextBox Grid.Row="1"
 						 Width="120"
 						 Height="23"
 						 Margin="75,3,0,0"
@@ -509,7 +578,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBox Grid.Row="1"
+                <TextBox Grid.Row="1"
 						 Grid.RowSpan="2"
 						 Width="120"
 						 Height="23"
@@ -521,7 +590,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="1"
+                <TextBlock Grid.Row="1"
 						   Grid.Column="1"
 						   Width="65"
 						   Height="16"
@@ -530,7 +599,7 @@
 						   VerticalAlignment="Top"
 						   Text="Last Name"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="1"
+                <TextBox Grid.Row="1"
 						 Grid.Column="1"
 						 Width="120"
 						 Height="23"
@@ -542,7 +611,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
 						   Width="65"
 						   Height="16"
 						   Margin="10,2.412,0,0"
@@ -550,7 +619,7 @@
 						   VerticalAlignment="Top"
 						   Text="Address"
 						   TextWrapping="Wrap" />
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
 						   Width="65"
 						   Height="16"
 						   Margin="10,32.412,0,0"
@@ -558,7 +627,7 @@
 						   VerticalAlignment="Top"
 						   Text="Allergies"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="2"
+                <TextBox Grid.Row="2"
 						 Grid.RowSpan="2"
 						 Grid.ColumnSpan="2"
 						 Width="193"
@@ -572,7 +641,7 @@
 										TargetNullValue='',
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
 						   Grid.Column="1"
 						   Width="65"
 						   Height="16"
@@ -581,7 +650,7 @@
 						   VerticalAlignment="Top"
 						   Text="Phone No."
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="2"
+                <TextBox Grid.Row="2"
 						 Grid.Column="1"
 						 Width="120"
 						 Height="23"
@@ -593,7 +662,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
 						   Grid.Column="1"
 						   Width="27"
 						   Height="16"
@@ -602,7 +671,7 @@
 						   VerticalAlignment="Top"
 						   Text="Disc. %"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="2"
+                <TextBox Grid.Row="2"
 						 Grid.RowSpan="2"
 						 Grid.Column="1"
 						 Width="60"
@@ -615,7 +684,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="3"
+                <TextBlock Grid.Row="3"
 						   Width="70"
 						   Height="16"
 						   Margin="5,8,0,0"
@@ -623,7 +692,7 @@
 						   VerticalAlignment="Top"
 						   Text="Date of Birth"
 						   TextWrapping="Wrap" />
-				<DatePicker Grid.Row="3"
+                <DatePicker Grid.Row="3"
 							Width="120"
 							Height="23"
 							Margin="75,5,0,0"
@@ -634,7 +703,7 @@
 										   ValidatesOnNotifyDataErrors=True,
 										   UpdateSourceTrigger=PropertyChanged,
 										   TargetNullValue=''}" />
-				<Button x:Name="SavePatientBtn"
+                <Button x:Name="SavePatientBtn"
 						Grid.Row="3"
 						Grid.Column="1"
 						Width="62"
@@ -644,7 +713,7 @@
 						VerticalAlignment="Top"
 						Click="SavePatientBtn_Click"
 						Content="Save" />
-				<RadioButton Grid.Row="3"
+                <RadioButton Grid.Row="3"
 							 Grid.Column="1"
 							 Width="72"
 							 Height="25"
@@ -659,7 +728,7 @@
 												 Converter={StaticResource EnumConverter},
 												 ConverterParameter=True,
 												 UpdateSourceTrigger=PropertyChanged}" />
-				<RadioButton Grid.Row="3"
+                <RadioButton Grid.Row="3"
 							 Grid.Column="1"
 							 Width="55"
 							 Height="25"
@@ -675,23 +744,23 @@
 												 ConverterParameter=False,
 												 UpdateSourceTrigger=PropertyChanged}" />
 
-			</Grid>
+            </Grid>
 
-		</DataTemplate>
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type data:Doctor}">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="41*" />
-					<ColumnDefinition Width="42*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="25*" />
-					<RowDefinition Height="30*" />
-					<RowDefinition Height="35*" />
-					<RowDefinition Height="31*" />
-				</Grid.RowDefinitions>
-				<TextBlock Width="135"
+        <DataTemplate DataType="{x:Type data:Doctor}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="41*" />
+                    <ColumnDefinition Width="42*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25*" />
+                    <RowDefinition Height="30*" />
+                    <RowDefinition Height="35*" />
+                    <RowDefinition Height="31*" />
+                </Grid.RowDefinitions>
+                <TextBlock Width="135"
 						   Height="25"
 						   Margin="10,0,0,0"
 						   HorizontalAlignment="Left"
@@ -700,7 +769,7 @@
 						   FontSize="18"
 						   Text="Add Doctor"
 						   TextWrapping="Wrap" />
-				<TextBlock Grid.Row="1"
+                <TextBlock Grid.Row="1"
 						   Width="65"
 						   Height="16"
 						   Margin="10,6,0,0"
@@ -708,7 +777,7 @@
 						   VerticalAlignment="Top"
 						   Text="First Name"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="1"
+                <TextBox Grid.Row="1"
 						 Width="120"
 						 Height="23"
 						 Margin="75,3,0,0"
@@ -719,7 +788,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="1"
+                <TextBlock Grid.Row="1"
 						   Grid.Column="1"
 						   Width="65"
 						   Height="16"
@@ -728,7 +797,7 @@
 						   VerticalAlignment="Top"
 						   Text="Last Name"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="1"
+                <TextBox Grid.Row="1"
 						 Grid.Column="1"
 						 Width="120"
 						 Height="23"
@@ -740,7 +809,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
 						   Width="65"
 						   Height="16"
 						   Margin="10,9,0,0"
@@ -748,7 +817,7 @@
 						   VerticalAlignment="Top"
 						   Text="Address"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="2"
+                <TextBox Grid.Row="2"
 						 Width="120"
 						 Height="23"
 						 Margin="75,6,0,0"
@@ -759,7 +828,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
 						   Grid.Column="1"
 						   Width="65"
 						   Height="16"
@@ -768,7 +837,7 @@
 						   VerticalAlignment="Top"
 						   Text="Phone No."
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="2"
+                <TextBox Grid.Row="2"
 						 Grid.Column="1"
 						 Width="120"
 						 Height="23"
@@ -780,7 +849,7 @@
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}"
 						 TextWrapping="Wrap" />
-				<TextBlock Grid.Row="3"
+                <TextBlock Grid.Row="3"
 						   Width="70"
 						   Height="16"
 						   Margin="5,8,0,0"
@@ -788,7 +857,7 @@
 						   VerticalAlignment="Top"
 						   Text="Code"
 						   TextWrapping="Wrap" />
-				<TextBox Grid.Row="3"
+                <TextBox Grid.Row="3"
 						 Width="70"
 						 Height="23"
 						 Margin="75,5,0,0"
@@ -798,7 +867,7 @@
 										Mode=TwoWay,
 										ValidatesOnNotifyDataErrors=True,
 										UpdateSourceTrigger=PropertyChanged}" />
-				<Button x:Name="SavePatientBtn"
+                <Button x:Name="SavePatientBtn"
 						Grid.Row="3"
 						Grid.Column="1"
 						Width="67"
@@ -809,7 +878,7 @@
 						Click="SavePatientBtn_Click"
 						Content="Save" />
 
-				<TextBlock Grid.Row="3"
+                <TextBlock Grid.Row="3"
 						   Width="27"
 						   Height="16"
 						   Margin="7,4,0,0"
@@ -817,7 +886,7 @@
 						   VerticalAlignment="Top"
 						   Text="Disc. %"
 						   TextWrapping="Wrap" Grid.Column="1" />
-				<TextBox Grid.Row="3"
+                <TextBox Grid.Row="3"
 						 Grid.Column="1"
 						 Width="49"
 						 Height="23"
@@ -831,11 +900,11 @@
 						 TextWrapping="Wrap" />
 
 
-			</Grid>
+            </Grid>
 
-		</DataTemplate>
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type data:Medicine}">
+        <DataTemplate DataType="{x:Type data:Medicine}">
 
             <Grid Background="#FF523A04">
                 <TextBox Width="52"
@@ -985,14 +1054,14 @@
             </Grid>
 
         </DataTemplate>
-	</UserControl.Resources>
+    </UserControl.Resources>
 
-	<Border x:Name="SalesPad"
+    <Border x:Name="SalesPad"
 			Grid.Row="1"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Width="610"
-			Height="235"
+			Height="275"
 			Margin="0,0,0,0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
@@ -1003,51 +1072,55 @@
 			CornerRadius="3"
 			FocusManager.FocusedElement="{Binding ElementName=InputTxt}"
 			UIElement.PreviewKeyDown="SalesPad_PreviewKeyDown_1">
-		<Border.Effect>
-			<DropShadowEffect BlurRadius="15" Opacity="0.725" />
-		</Border.Effect>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="15" Opacity="0.725" />
+        </Border.Effect>
 
-		<Grid Margin="9.2,16.2,-1400.2,2.4">
+        <Grid Margin="9.2,16.2,-1400.2,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="313*"/>
+                <ColumnDefinition Width="1686*"/>
+            </Grid.ColumnDefinitions>
 
-			<Grid Width="1999"
-				  Height="180"
+            <Grid Width="1999"
+				  Height="235"
 				  HorizontalAlignment="Left"
 				  VerticalAlignment="Top"
 				  ClipToBounds="False"
-				  MouseLeftButtonDown="Grid_MouseLeftButtonDown">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition x:Name="EntryCol" Width="400" />
-					<ColumnDefinition x:Name="TotalsCol" Width="202" />
-					<ColumnDefinition x:Name="PaymentCol" Width="400" />
-					<ColumnDefinition x:Name="ChangeCol" Width="400" />
-					<ColumnDefinition x:Name="PrintCol" Width="200" />
-					<ColumnDefinition x:Name="ReceiptCol" Width="400" />
-				</Grid.ColumnDefinitions>
-				<TextBlock x:Name="TransStatusTxt"
-						   Grid.ColumnSpan="1"
+				  MouseLeftButtonDown="Grid_MouseLeftButtonDown" Grid.ColumnSpan="2" Margin="0,-10,0,-5.745">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="EntryCol" Width="400" />
+                    <ColumnDefinition x:Name="TotalsCol" Width="202" />
+                    <ColumnDefinition x:Name="PaymentCol" Width="400" />
+                    <ColumnDefinition x:Name="ChangeCol" Width="400" />
+                    <ColumnDefinition x:Name="PrintCol" Width="200" />
+                    <ColumnDefinition x:Name="ReceiptCol" Width="400" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TransStatusTxt"
+						   Grid.ColumnSpan="2"
 						   Width="286"
 						   Height="23"
-						   Margin="0,-16,0,0"
+						   Margin="420,-5,0,0"
 						   HorizontalAlignment="Left"
 						   VerticalAlignment="Top"
 						   Focusable="True"
-						   FontSize="16"
+						   FontSize="14"
 						   Foreground="#FFEF9D9D"
 						   LostFocus="TransStatusTxt_LostFocus_1"
 						   Text="{Binding Instance.TransactionData.Status,
 										  Mode=OneWay,
 										  Source={StaticResource SalesVMDataSource}}" />
-				<Grid x:Name="TransactionGrd"
+                <Grid x:Name="TransactionGrd"
 					  Width="382"
 					  Margin="12,49,6,-25"
 					  Background="#FF464646"
 					  Focusable="False">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="134*" />
-						<ColumnDefinition Width="57*" />
-					</Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="134*" />
+                        <ColumnDefinition Width="57*" />
+                    </Grid.ColumnDefinitions>
 
-					<Button x:Name="SearchBtn"
+                    <Button x:Name="SearchBtn"
 							Grid.ColumnSpan="2"
 							Width="38"
 							Height="35"
@@ -1055,12 +1128,27 @@
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Click="SearchBtn_Click">
-						<Button.Background>
-							<SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
-						</Button.Background>
-						<Image Source="{DynamicResource SearchImg}" />
-					</Button>
-					<TextBox x:Name="SearchBox"
+                        <Button.Background>
+                            <SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
+                        </Button.Background>
+                        <Image Source="{DynamicResource SearchImg}" />
+                    </Button>
+
+                    <Button x:Name="ScanBtn"
+                            Grid.ColumnSpan="2"
+                            Width="38"
+                            Height="35"
+                            Margin="500,-39,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Click="ScanBtn_Click">
+                        <Button.Background>
+                            <SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
+                        </Button.Background>
+                        <Image Source="{DynamicResource Scanner}" />
+                    </Button>
+
+                    <TextBox x:Name="SearchBox"
 							 Width="231"
 							 Height="35"
 							 Margin="10,-40,0,0"
@@ -1071,14 +1159,14 @@
 							 TextChanged="SearchBox_OnTextChanged"
 							 Style="{DynamicResource FilterTextBoxStyle}"
 							  />
-					<!--
+                    <!--
 					-->
-					<ContentControl x:Name="ItemEditor"
+                    <ContentControl x:Name="ItemEditor"
 									Grid.ColumnSpan="2"
 									Margin="0,0,0,0"
 									Background="#FF0B430A"
 									Content="{Binding}" />
-					<Button Grid.Column="1"
+                    <Button Grid.Column="1"
 							Width="37"
 							Height="35"
 							Margin="77,-39,0,0"
@@ -1086,13 +1174,13 @@
 							VerticalAlignment="Top"
 							Click="NewTransaction"
 							Visibility="Collapsed">
-						<Button.Background>
-							<SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
-						</Button.Background>
-						<Image Source="{DynamicResource NewTicket}" Visibility="Collapsed" />
+                        <Button.Background>
+                            <SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
+                        </Button.Background>
+                        <Image Source="{DynamicResource NewTicket}" Visibility="Collapsed" />
 
-					</Button>
-					<Button x:Name="ClearBtn"
+                    </Button>
+                    <Button x:Name="ClearBtn"
 							Grid.Column="1"
 							Width="38"
 							Height="35"
@@ -1100,20 +1188,20 @@
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Click="ClearBtn_Click">
-						<Button.Background>
-							<SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
-						</Button.Background>
-						<TextBlock Width="28"
+                        <Button.Background>
+                            <SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
+                        </Button.Background>
+                        <TextBlock Width="28"
 								   FontWeight="Bold"
 								   Foreground="#FF203A0F"
 								   Text="Clear" />
-					</Button>
+                    </Button>
 
-					<Button x:Name="NextEntry"
+                    <Button x:Name="NextEntry"
 							Grid.Column="1"
 							Width="40"
 							Height="40"
-							Margin="135,93,-61,-12"
+							Margin="135.073,133,-60.745,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Background="#00000000"
@@ -1122,11 +1210,11 @@
 							FontFamily="Segoe UI Symbol"
 							FontSize="20"
 							Foreground="#FF65E468" />
-					<Button x:Name="DeleteTranBtn"
+                    <Button x:Name="DeleteTranBtn"
 							Grid.Column="1"
 							Width="40"
 							Height="40"
-							Margin="255,93,-181,-12"
+							Margin="255.073,133,-180.745,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Background="#00000000"
@@ -1142,11 +1230,11 @@
 
 
 
-				</Grid>
+                </Grid>
 
-				<!--  ItemsSource="{Binding Source={StaticResource SearchLstView}}"  -->
-				<Canvas x:Name="ReceiptCanvas">
-					<Grid x:Name="ReceiptGrd"
+                <!--  ItemsSource="{Binding Source={StaticResource SearchLstView}}"  -->
+                <Canvas x:Name="ReceiptCanvas">
+                    <Grid x:Name="ReceiptGrd"
 						  Grid.Column="5"
 						  Grid.ColumnSpan="1"
 						  Canvas.Left="175"
@@ -1161,14 +1249,14 @@
 						  ScrollViewer.CanContentScroll="False"
 						  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 						  ScrollViewer.VerticalScrollBarVisibility="Auto">
-						<Grid.Resources>
-							<local:TransPreZeroConverter x:Key="TransPreZeroConverter" />
+                        <Grid.Resources>
+                            <local:TransPreZeroConverter x:Key="TransPreZeroConverter" />
 
-							<DataTemplate DataType="{x:Type data:QuickPrescription}">
-								<Canvas>
-									<ListView x:Name="PrescriptionEntriesRptLst"
-											  Width="288"
-											  MaxHeight="400"
+                            <DataTemplate DataType="{x:Type data:QuickPrescription}">
+                                <Canvas>
+                                    <ListView x:Name="PrescriptionEntriesRptLst"
+											  Width="281"
+											  MaxHeight="240"
 											  HorizontalAlignment="Center"
 											  VerticalAlignment="Center"
 											  ItemsSource="{Binding TransactionEntries, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -1177,35 +1265,35 @@
 											  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 											  ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-										<ListView.ItemTemplate>
-											<DataTemplate>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
 
-												<Grid x:Name="rptQuickPreEntry"
+                                                <Grid x:Name="rptQuickPreEntry"
 													  Background="{x:Null}"
 													  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 													  ScrollViewer.VerticalScrollBarVisibility="Hidden">
-													<Border Width="282"
+                                                    <Border Width="281"
 															Height="172"
-															Margin="-3,0,-1,0"
+															Margin="-3,0,0,0"
 															HorizontalAlignment="Center"
 															VerticalAlignment="Center"
 															Background="White"
 															BorderBrush="{x:Null}"
 															BorderThickness="1">
-														<Grid ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden">
-															<Grid.RowDefinitions>
-																<RowDefinition Height="39*" />
-																<RowDefinition Height="136*" />
-																<RowDefinition Height="15*" />
-															</Grid.RowDefinitions>
-															<Image Width="30"
-																   Height="30"
-																   Margin="3,3,0,0"
-																   HorizontalAlignment="Left"
-																   VerticalAlignment="Top"
+                                                        <Grid ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="39*" />
+                                                                <RowDefinition Height="136*" />
+                                                                <RowDefinition Height="15*" />
+                                                            </Grid.RowDefinitions>
+                                                            <Image Width="150"
+																   Height="150"
+																   
+																   HorizontalAlignment="Center"
+																   VerticalAlignment="Center"
 																   Source="{DynamicResource HVLogo}"
-																   Stretch="UniformToFill" />
-															<TextBlock Margin="38,2,62,9.895"
+																   Stretch="Fill" Grid.RowSpan="2" OpacityMask="#72FFFFFF" />
+                                                            <TextBlock Margin="38,2,62,9.895"
 																	   FontFamily="Candara"
 																	   FontSize="16"
 																	   FontWeight="Bold"
@@ -1214,8 +1302,8 @@
 																					  Mode=OneWay,
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextWrapping="Wrap" />
-															<TextBlock Grid.RowSpan="2"
-																	   Margin="46,21,71,118.579"
+                                                            <TextBlock
+																	   Margin="46,21,71.273,0.909"
 																	   FontFamily="Century Gothic"
 																	   FontSize="9"
 																	   FontWeight="Bold"
@@ -1224,9 +1312,9 @@
 																					  Mode=OneWay,
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextWrapping="Wrap" />
-															<TextBlock Width="69"
+                                                            <TextBlock Width="69"
 																	   Height="11"
-																	   Margin="208,3,0,0"
+																	   Margin="200,3,0,0"
 																	   HorizontalAlignment="Left"
 																	   VerticalAlignment="Top"
 																	   FontFamily="Calibri"
@@ -1238,10 +1326,10 @@
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextAlignment="Right"
 																	   TextWrapping="Wrap" />
-															<TextBlock Grid.RowSpan="2"
+                                                            <TextBlock Grid.RowSpan="2"
 																	   Width="69"
 																	   Height="11"
-																	   Margin="208,25,0,0"
+																	   Margin="200,25,0,0"
 																	   HorizontalAlignment="Left"
 																	   VerticalAlignment="Top"
 																	   FontFamily="Calibri"
@@ -1252,9 +1340,9 @@
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextAlignment="Right"
 																	   TextWrapping="Wrap" />
-															<TextBlock Width="87"
+                                                            <TextBlock Width="87"
 																	   Height="11"
-																	   Margin="195,14,0,0"
+																	   Margin="180,14,0,0"
 																	   HorizontalAlignment="Left"
 																	   VerticalAlignment="Top"
 																	   FontFamily="Calibri"
@@ -1266,7 +1354,7 @@
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextAlignment="Right"
 																	   TextWrapping="Wrap" />
-															<Rectangle Grid.Row="1"
+                                                            <Rectangle Grid.Row="1"
 																	   Grid.RowSpan="2"
 																	   Width="286"
 																	   Height="1"
@@ -1275,11 +1363,10 @@
 																	   VerticalAlignment="Top"
 																	   Fill="#FFF4F4F5"
 																	   Stroke="Black" />
-															<TextBlock Grid.Row="1"
-																	   Grid.RowSpan="2"
-																	   Width="276"
+                                                            <TextBlock Grid.Row="2"
+																	   Width="150"
 																	   Height="14"
-																	   Margin="3,125,0,0"
+																	   Margin="3,2.909,0,-3.818"
 																	   HorizontalAlignment="Left"
 																	   VerticalAlignment="Top"
 																	   FontFamily="Arial"
@@ -1288,11 +1375,11 @@
 																	   Foreground="Black"
 																	   Text="KEEP OUT THE REACH OF CHILDREN"
 																	   TextWrapping="Wrap" />
-															<Grid Grid.Row="1" Margin="3,29,5,30">
+                                                            <Grid Grid.Row="1" Margin="3,29,5,30">
 
-																<TextBlock x:Name="DosageTxt"
+                                                                <TextBlock x:Name="DosageTxt"
 																		   Width="278"
-																		   Margin="0,22,-6,-15.316"
+																		   Margin="0,28,-6.727,-14.818"
 																		   HorizontalAlignment="Left"
 																		   FontFamily="Calibri"
 																		   FontSize="14"
@@ -1301,24 +1388,26 @@
 																		   Text="{Binding Dosage,
 																						  Mode=OneWay}"
 																		   TextWrapping="Wrap" />
-																<TextBlock Width="236"
+                                                                <TextBlock Width="236"
 																		   Height="17"
-																		   Margin="36,0,0,0"
+																		   Margin="36,6,-0.727,0"
 																		   HorizontalAlignment="Left"
 																		   VerticalAlignment="Top"
 																		   FontFamily="Calibri"
 																		   FontSize="14"
+                                                                           FontWeight="Bold"
 																		   Foreground="Black"
 																		   Text="{Binding TransactionEntryItem.ItemName,
 																						  Mode=OneWay}"
 																		   TextWrapping="Wrap" />
-																<TextBlock Width="32"
-																		   Height="22"
-																		   Margin="3,0,0,0"
+                                                                <TextBlock Width="32"
+																		   Height="17"
+																		   Margin="3,6,0,0"
 																		   HorizontalAlignment="Left"
 																		   VerticalAlignment="Top"
 																		   FontFamily="Calibri"
 																		   FontSize="16"
+                                                                           FontWeight="Bold"
 																		   Foreground="Black"
 																		   RenderTransformOrigin="0.701,0.758"
 																		   Text="{Binding Quantity,
@@ -1326,24 +1415,24 @@
 																						  StringFormat=n0}"
 																		   TextWrapping="Wrap" />
 
-															</Grid>
+                                                            </Grid>
 
-															<TextBlock Grid.Row="1"
+                                                            <TextBlock Grid.Row="1"
 																	   Width="164"
-																	   Height="21"
-																	   Margin="3,4.105,0,0"
+																	   Height="15"
+																	   Margin="3,4.091,0,0"
 																	   HorizontalAlignment="Left"
 																	   VerticalAlignment="Top"
 																	   FontFamily="Segoe UI"
 																	   Foreground="Black"
 																	   LineHeight="12"
 																	   RenderTransformOrigin="0.527,0.538"
-																	   Text="Walk in Customer" />
+																	   Text="{Binding Instance.TransactionData.Patient.DisplayName, Mode=OneWay, StringFormat=Patient: 0, ValidatesOnDataErrors=True, FallbackValue='Walk in Customer', Source={StaticResource SalesVMDataSource}}" />
 
-															<TextBlock Grid.Row="1"
+                                                            <TextBlock Grid.Row="1"
 																	   Width="100"
 																	   Height="18"
-																	   Margin="200,4.105,0,0"
+																	   Margin="190,4.105,0,0"
 																	   HorizontalAlignment="Left"
 																	   VerticalAlignment="Top"
 																	   FontFamily="Calibri"
@@ -1355,7 +1444,7 @@
 																					  StringFormat=Date: \{0:MMM-dd-yyyy\},
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextWrapping="NoWrap" />
-															<TextBlock Grid.Row="1"
+                                                            <TextBlock Grid.Row="1"
 																	   Width="80"
 																	   Height="18"
 																	   Margin="180,16.105,0,0"
@@ -1370,7 +1459,7 @@
 																					  StringFormat=Trans#:{0}}"
 																	   TextAlignment="Right"
 																	   TextWrapping="Wrap" />
-															<TextBlock Grid.Row="1"
+                                                            <TextBlock Grid.Row="1"
 																	   Width="Auto"
 																	   Height="18"
 																	   Margin="260,15,0,0"
@@ -1385,7 +1474,7 @@
 																					  Source={StaticResource SalesVMDataSource}}"
 																	   TextAlignment="Right"
 																	   TextWrapping="Wrap" />
-															<TextBlock Width="197"
+                                                            <TextBlock Width="197"
 																	   Height="16"
 																	   Margin="78,106,0,0"
 																	   HorizontalAlignment="Left"
@@ -1396,36 +1485,61 @@
 																	   Foreground="Black"
 																	   Text="{Binding RepeatInfo}"
 																	   TextWrapping="Wrap" TextAlignment="Right" Grid.Row="1" />
+                                                            <TextBlock Grid.Row="1"
+                    Width="172"
+                    Height="12"
+                    Margin="3,19.091,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    FontFamily="Segoe UI"
+                    FontSize="8"
+                    Foreground="Black"
+                    LineHeight="12"
+                    RenderTransformOrigin="0.527,0.538"
+                    Text="{Binding Instance.TransactionData.Patient.Address, FallbackValue=Walk in Customer, Mode=OneWay, Source={StaticResource SalesVMDataSource}, StringFormat=Patient: 0, ValidatesOnDataErrors=True}" />
+                                                            
+                                                            
+                                                            
 
 
-														</Grid>
-													</Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Image 
+                                                           Width="117"
+                                                           Height="10"
+                                                           Margin="0,0,5,2"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Bottom"
+                                                           Stretch="UniformToFill"
+                                                           Source="{Binding TransactionId, Mode=OneWay, StringFormat=Trans#:{0}, Converter={StaticResource BarCodeConverter}}"
+                                                    />
 
-												</Grid>
-
-
-											</DataTemplate>
-										</ListView.ItemTemplate>
+                                                </Grid>
 
 
 
-										<ListView.ItemsPanel>
-											<ItemsPanelTemplate>
-												<StackPanel Margin="0,0,0,0" Orientation="Vertical" />
-											</ItemsPanelTemplate>
-										</ListView.ItemsPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
 
-									</ListView>
-								</Canvas>
-							</DataTemplate>
 
-							<DataTemplate DataType="{x:Type data:PrescriptionEntry}">
 
-								<Grid x:Name="rptQuickPreEntry"
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Margin="0,0,0,0" Orientation="Vertical" />
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
+
+                                    </ListView>
+                                </Canvas>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
+
+                                <Grid x:Name="rptQuickPreEntry"
 									  Background="{x:Null}"
 									  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 									  ScrollViewer.VerticalScrollBarVisibility="Hidden">
-									<Border Width="281"
+                                    <Border Width="281"
 											Height="172"
 											Margin="-3,0,0,0"
 											HorizontalAlignment="Center"
@@ -1433,15 +1547,22 @@
 											Background="White"
 											BorderBrush="{x:Null}"
 											BorderThickness="1">
-										<Grid ClipToBounds="True"
+                                        <Grid ClipToBounds="True"
 											  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 											  ScrollViewer.VerticalScrollBarVisibility="Hidden">
-											<Grid.RowDefinitions>
-												<RowDefinition Height="39*" />
-												<RowDefinition Height="136*" />
-												<RowDefinition Height="15*" />
-											</Grid.RowDefinitions>
-											<TextBlock Margin="38,2,62,9.895"
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="39*" />
+                                                <RowDefinition Height="136*" />
+                                                <RowDefinition Height="15*" />
+                                            </Grid.RowDefinitions>
+                                            <Image Width="150"
+										           Height="150"
+																   
+										           HorizontalAlignment="Center"
+										           VerticalAlignment="Center"
+										           Source="{DynamicResource HVLogo}"
+										           Stretch="Fill" Grid.RowSpan="2" OpacityMask="#72FFFFFF" />
+                                            <TextBlock Margin="38,2,62,9.895"
 													   FontFamily="Candara"
 													   FontSize="16"
 													   FontWeight="Bold"
@@ -1450,7 +1571,7 @@
 																	  Mode=OneWay,
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.RowSpan="2"
+                                            <TextBlock Grid.RowSpan="2"
 													   Margin="40,21,71,118.579"
 													   FontFamily="Century Gothic"
 													   FontSize="9"
@@ -1460,7 +1581,7 @@
 																	  Mode=OneWay,
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextWrapping="Wrap" />
-											<TextBlock Width="69"
+                                            <TextBlock Width="69"
 													   Height="11"
 													   Margin="208,3,0,0"
 													   HorizontalAlignment="Left"
@@ -1474,7 +1595,7 @@
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextAlignment="Right"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.RowSpan="2"
+                                            <TextBlock Grid.RowSpan="2"
 													   Width="69"
 													   Height="11"
 													   Margin="208,25,0,0"
@@ -1488,7 +1609,7 @@
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextAlignment="Right"
 													   TextWrapping="Wrap" />
-											<TextBlock Width="87"
+                                            <TextBlock Width="87"
 													   Height="11"
 													   Margin="195,14,0,0"
 													   HorizontalAlignment="Left"
@@ -1503,7 +1624,7 @@
 													   TextAlignment="Right"
 													   TextWrapping="Wrap" />
 
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Grid.RowSpan="2"
 													   Width="165"
 													   Height="13                                                         "
@@ -1516,7 +1637,7 @@
 													   Foreground="Black"
 													   Text="KEEP OUT THE REACH OF CHILDREN"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Grid.RowSpan="2"
 													   Width="126"
 													   Height="17"
@@ -1532,9 +1653,9 @@
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextAlignment="Right"
 													   TextWrapping="Wrap" />
-											<Grid Grid.Row="1" Margin="3,29,5,30">
+                                            <Grid Grid.Row="1" Margin="3,29,5,30">
 
-												<TextBlock x:Name="DosageTxt"
+                                                <TextBlock x:Name="DosageTxt"
 														   Width="274"
 														   Margin="0,22,0,-14.8"
 														   HorizontalAlignment="Left"
@@ -1545,31 +1666,33 @@
 														   Text="{Binding Dosage,
 																		  Mode=OneWay}"
 														   TextWrapping="Wrap" />
-												<TextBlock Width="238"
+                                                <TextBlock Width="238"
 														   Height="17"
 														   Margin="36,0,0,0"
 														   HorizontalAlignment="Left"
 														   VerticalAlignment="Top"
 														   FontFamily="Calibri"
+                                                           FontWeight="Bold"
 														   FontSize="14"
 														   Foreground="Black"
 														   Text="{Binding TransactionEntryItem.ItemName,
 																		  Mode=OneWay}"
 														   TextWrapping="Wrap" />
-												<TextBlock Width="32"
+                                                <TextBlock Width="32"
 														   Height="22"
 														   Margin="0,0,0,0"
 														   HorizontalAlignment="Left"
 														   VerticalAlignment="Top"
 														   FontFamily="Calibri"
 														   FontSize="16"
+                                                           FontWeight="Bold"
 														   Foreground="Black"
 														   RenderTransformOrigin="0.701,0.758"
 														   Text="{Binding Quantity,
 																		  Mode=OneWay,
 																		  StringFormat=n0}"
 														   TextWrapping="Wrap" />
-												<TextBlock Width="197"
+                                                <TextBlock Width="197"
 														   Height="16"
 														   Margin="77,76,-3,-29"
 														   HorizontalAlignment="Left"
@@ -1580,10 +1703,10 @@
 														   Foreground="Black"
 														   Text="{Binding RepeatInfo}"
 														   TextWrapping="Wrap" TextAlignment="Right" />
-											</Grid>
+                                            </Grid>
 
 
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Width="139"
 													   Height="12"
 													   Margin="3,1.105,0,0"
@@ -1597,7 +1720,7 @@
 																	  Mode=OneWay,
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Width="192"
 													   Height="16"
 													   Margin="3,15.8,0,0"
@@ -1611,7 +1734,7 @@
 																	  Mode=OneWay,
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Width="97"
 													   Height="18"
 													   Margin="180,4.105,0,0"
@@ -1628,7 +1751,7 @@
 																	  Source={StaticResource SalesVMDataSource}}"
 													   TextAlignment="Right"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Width="60"
 													   Height="18"
 													   Margin="199,15.8,0,0"
@@ -1643,7 +1766,7 @@
 																	  StringFormat=RX#:{0}}"
 													   TextAlignment="Right"
 													   TextWrapping="Wrap" />
-											<TextBlock Grid.Row="1"
+                                            <TextBlock Grid.Row="1"
 													   Width="19"
 													   Height="18"
 													   Margin="258,14.8,0,0"
@@ -1660,56 +1783,67 @@
 													   TextWrapping="Wrap" />
 
 
-										</Grid>
-									</Border>
+                                        </Grid>
+                                    </Border>
 
-								</Grid>
+                                    <Image 
+                                        Width="117"
+                                        Height="10"
+                                        Margin="0,0,5,2"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Stretch="UniformToFill"
+                                        Source="{Binding TransactionId, Mode=OneWay, StringFormat=Trans#:{0}, Converter={StaticResource BarCodeConverter}}"
+                                    />
+
+                                </Grid>
 
 
-							</DataTemplate>
+                            </DataTemplate>
 
 
-							<DataTemplate DataType="{x:Type data:Prescription}">
-								<Canvas>
-									<ListView x:Name="PrescriptionEntriesRptLst"
-											  MaxHeight="400"
+                            <DataTemplate DataType="{x:Type data:Prescription}">
+                                <Canvas>
+                                    <ListView x:Name="PrescriptionEntriesRptLst"
+											  MaxHeight="240"
 											  ItemsSource="{Binding TransactionEntries, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 											  LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated"
+                                              
 											  ScrollViewer.CanContentScroll="False"
 											  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 											  ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
-								</Canvas>
-							</DataTemplate>
+                                </Canvas>
+                            </DataTemplate>
 
-						</Grid.Resources>
-						<ContentControl Height="Auto"
+                        </Grid.Resources>
+                        <ContentControl Height="240"
 										Margin="50,0,50,0"
 										Background="#FFD0D0D0"
 										Content="{Binding}"
-										ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 										ScrollViewer.VerticalScrollBarVisibility="Hidden" />
-					</Grid>
-				</Canvas>
+                    </Grid>
+                </Canvas>
 
-				<Grid x:Name="TotalsGrd"
+                <Grid x:Name="TotalsGrd"
 					  Grid.Column="1"
 					  Width="163"
 					  Height="107"
-					  Margin="10,12,0,0"
+					  Margin="10.418,52,0,0"
 					  HorizontalAlignment="Left"
 					  VerticalAlignment="Top"
 					  Background="#FF464646"
 					  RenderTransformOrigin="0.5,0.5">
-					<Grid.RenderTransform>
-						<TransformGroup>
-							<ScaleTransform />
-							<SkewTransform />
-							<RotateTransform Angle="-0.069" />
-							<TranslateTransform />
-						</TransformGroup>
-					</Grid.RenderTransform>
-					<TextBlock Width="74"
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform Angle="-0.069" />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <TextBlock Width="74"
 							   Height="42"
 							   Margin="7,42,0,0"
 							   HorizontalAlignment="Left"
@@ -1718,9 +1852,9 @@
 							   Foreground="White"
 							   LineHeight="37.333"
 							   LineStackingStrategy="BlockLineHeight"
-							   Text="Discount %"
+							   Text="Discount"
 							   TextWrapping="Wrap" />
-					<TextBlock Width="49.9"
+                    <TextBlock Width="49.9"
 							   Height="41.581"
 							   Margin="7.266,1,0,0"
 							   HorizontalAlignment="Left"
@@ -1731,7 +1865,7 @@
 							   LineStackingStrategy="BlockLineHeight"
 							   Text="Total"
 							   TextWrapping="Wrap" />
-					<TextBlock Width="72"
+                    <TextBlock Width="72"
 							   Height="29"
 							   Margin="81,55,0,0"
 							   HorizontalAlignment="Left"
@@ -1741,11 +1875,12 @@
 							   Foreground="White"
 							   RenderTransformOrigin="-0.791,0.354"
 							   Text="{Binding Instance.TransactionData.TotalDiscount,
+                                               StringFormat=c,
 											  Source={StaticResource SalesVMDataSource},
 											  TargetNullValue={x:Static sys:String.Empty}}"
 							   TextAlignment="Right"
 							   TextWrapping="Wrap" />
-					<TextBlock x:Name="TotalSalesTxt"
+                    <TextBlock x:Name="TotalSalesTxt"
 							   Width="112.829"
 							   Height="41.581"
 							   Margin="40.171,8,0,0"
@@ -1762,14 +1897,14 @@
 											  TargetNullValue={x:Static sys:String.Empty}}"
 							   TextAlignment="Right"
 							   TextWrapping="Wrap">
-						<TextBlock.Effect>
-							<DropShadowEffect BlurRadius="3"
+                        <TextBlock.Effect>
+                            <DropShadowEffect BlurRadius="3"
 											  Direction="70"
 											  ShadowDepth="0"
 											  Color="#FFFFF9B3" />
-						</TextBlock.Effect>
-					</TextBlock>
-					<TextBlock Width="49.9"
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock Width="49.9"
 							   Height="41.581"
 							   Margin="7.266,67.107,0,-1.411"
 							   HorizontalAlignment="Left"
@@ -1780,7 +1915,7 @@
 							   LineStackingStrategy="BlockLineHeight"
 							   Text="VAT"
 							   TextWrapping="Wrap" />
-					<TextBlock Width="100.834"
+                    <TextBlock Width="100.834"
 							   Height="29.107"
 							   Margin="52.166,79.581,0,-1.411"
 							   HorizontalAlignment="Left"
@@ -1795,63 +1930,132 @@
 											  TargetNullValue={x:Static sys:String.Empty}}"
 							   TextAlignment="Right"
 							   TextWrapping="Wrap" />
-				</Grid>
-				<Grid x:Name="PrintGrd"
+                </Grid>
+                <Grid x:Name="PrintGrd"
 					  Grid.Column="2"
 					  Width="180"
-					  Height="136"
+					  Height="235"
 					  Margin="0,0,0,0"
 					  HorizontalAlignment="Left"
 					  VerticalAlignment="Top">
-					<Button x:Name="PrintBtn"
+                    <Button x:Name="PrintBtn"
 							Width="111"
 							Height="25"
-							Margin="37,53,0,0"
+							Margin="37,50,0,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Click="PrintBtn_Click_1"
 							Content="Print"
 							MouseRightButtonDown="PrintBtn_RightClick"
 							RenderTransformOrigin="0.47,0.671">
-						<Button.Visibility>
-							<MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
-								<Binding Mode="OneWay"
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
+                                <Binding Mode="OneWay"
 										 Path="Instance.TransactionCashier"
 										 Source="{StaticResource SalesVMDataSource}" />
-								<Binding Mode="OneWay"
+                                <Binding Mode="OneWay"
 										 Path="Instance.TransactionPharmacist"
 										 Source="{StaticResource SalesVMDataSource}" />
-								<MultiBinding.ConverterParameter>
-									<System:String>Button</System:String>
-								</MultiBinding.ConverterParameter>
-							</MultiBinding>
-						</Button.Visibility>
-					</Button>
+                                <MultiBinding.ConverterParameter>
+                                    <System:String>Button</System:String>
+                                </MultiBinding.ConverterParameter>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    </Button>
 
-					<Button x:Name="QuickBooksBtn"
+                    <Button x:Name="QuickBooksBtn"
 							Width="111"
-							Height="34"
-							Margin="37,92,0,0"
+							Height="25"
+							Margin="37,80,0,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Click="PostToQB_Click"
 							Content="Post to QuickBooks"
 							RenderTransformOrigin="0.47,0.671">
-						<Button.Visibility>
-							<MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
-								<Binding Mode="OneWay"
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
+                                <Binding Mode="OneWay"
 										 Path="Instance.TransactionCashier"
 										 Source="{StaticResource SalesVMDataSource}" />
-								<Binding Mode="OneWay"
+                                <Binding Mode="OneWay"
 										 Path="Instance.TransactionPharmacist"
 										 Source="{StaticResource SalesVMDataSource}" />
-								<MultiBinding.ConverterParameter>
-									<System:String>Button</System:String>
-								</MultiBinding.ConverterParameter>
-							</MultiBinding>
-						</Button.Visibility>
-					</Button>
-					<ComboBox x:Name="PharmacistCbo"
+                                <MultiBinding.ConverterParameter>
+                                    <System:String>Button</System:String>
+                                </MultiBinding.ConverterParameter>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    </Button>
+                    <Button x:Name="PickUpBtn"
+                            Width="111"
+                            Height="25"
+                            Margin="37,110,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Click="PickUp_Click"
+                            Content="Pick Up"
+                            RenderTransformOrigin="0.47,0.671">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
+                                <Binding Mode="OneWay"
+                                         Path="Instance.TransactionCashier"
+                                         Source="{StaticResource SalesVMDataSource}" />
+                                <Binding Mode="OneWay"
+                                         Path="Instance.TransactionPharmacist"
+                                         Source="{StaticResource SalesVMDataSource}" />
+                                <MultiBinding.ConverterParameter>
+                                    <System:String>Button</System:String>
+                                </MultiBinding.ConverterParameter>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    </Button>
+                    <Button x:Name="DeliveryBtn"
+                            Width="111"
+                            Height="25"
+                            Margin="37,140,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Click="Delivery_Click"
+                            Content="Delivery"
+                            RenderTransformOrigin="0.47,0.671">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
+                                <Binding Mode="OneWay"
+                                         Path="Instance.TransactionCashier"
+                                         Source="{StaticResource SalesVMDataSource}" />
+                                <Binding Mode="OneWay"
+                                         Path="Instance.TransactionPharmacist"
+                                         Source="{StaticResource SalesVMDataSource}" />
+                                <MultiBinding.ConverterParameter>
+                                    <System:String>Button</System:String>
+                                </MultiBinding.ConverterParameter>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    </Button>
+                    <Button x:Name="CallinBtn"
+                            Width="111"
+                            Height="25"
+                            Margin="37,170,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Click="CallinBtn_OnClick_Click"
+                            Content="Call In"
+                            RenderTransformOrigin="0.47,0.671">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
+                                <Binding Mode="OneWay"
+                                         Path="Instance.TransactionCashier"
+                                         Source="{StaticResource SalesVMDataSource}" />
+                                <Binding Mode="OneWay"
+                                         Path="Instance.TransactionPharmacist"
+                                         Source="{StaticResource SalesVMDataSource}" />
+                                <MultiBinding.ConverterParameter>
+                                    <System:String>Button</System:String>
+                                </MultiBinding.ConverterParameter>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    </Button>
+                    <ComboBox x:Name="PharmacistCbo"
 							  Width="160"
 							  Margin="10,10,0,0"
 							  HorizontalAlignment="Left"
@@ -1861,7 +2065,7 @@
 													Mode=OneWay,
 													Source={StaticResource SalesVMDataSource}}"
 							  SelectedItem="{Binding Instance.TransactionPharmacist,
-													 Mode=OneWayToSource,
+													 Mode=TwoWay,
 													 Source={StaticResource SalesVMDataSource}}"
 							  SelectedValue="{Binding Instance.TransactionData.PharmacistId,
 													  Mode=OneWayToSource,
@@ -1869,7 +2073,7 @@
 													  UpdateSourceTrigger=PropertyChanged}"
 							  SelectedValuePath="CashierId"
 							  SelectionChanged="PharmacistCbo_SelectionChanged">
-						<ComboBox.Visibility>
+                        <!--<ComboBox.Visibility>
 							<MultiBinding Converter="{StaticResource IsPharmacistVisibleConverter}">
 								<Binding Mode="OneWay"
 										 Path="Instance.TransactionCashier"
@@ -1881,13 +2085,13 @@
 									<System:String>Combo</System:String>
 								</MultiBinding.ConverterParameter>
 							</MultiBinding>
-						</ComboBox.Visibility>
-					</ComboBox>
-				</Grid>
+						</ComboBox.Visibility>-->
+                    </ComboBox>
+                </Grid>
 
-			</Grid>
+            </Grid>
 
-			<TextBlock x:Name="BackBtn"
+            <TextBlock x:Name="BackBtn"
 					   Width="40"
 					   Height="40"
 					   Margin="-45,0,0,0"
@@ -1898,56 +2102,602 @@
 					   FontSize="40"
 					   MouseLeftButtonDown="BackBtn_MouseLeftButtonDown"
 					   Text="&#xE239;">
-				<TextBlock.Style>
-					<Style TargetType="TextBlock">
-						<Setter Property="Foreground" Value="#FFC5F7B7" />
-						<Style.Triggers>
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#FFC5F7B7" />
+                        <Style.Triggers>
 
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Foreground" Value="ForestGreen" />
-							</Trigger>
-						</Style.Triggers>
-					</Style>
-				</TextBlock.Style>
-			</TextBlock>
-			<TextBlock x:Name="NextBtn"
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="ForestGreen" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <TextBlock x:Name="NextBtn"
 					   Width="40"
 					   Height="40"
-					   Margin="595,0,0,0"
+					   Margin="282.076,0,0,0"
 					   HorizontalAlignment="Left"
 					   VerticalAlignment="Top"
 					   FontFamily="Segoe UI Symbol"
 					   FontSize="40"
 					   MouseLeftButtonDown="NextBtn_MouseLeftButtonDown"
-					   Text="&#xE23A;">
-				<TextBlock.Style>
-					<Style TargetType="{x:Type TextBlock}">
-						<Setter Property="Foreground" Value="#FFC5F7B7" />
-						<Style.Triggers>
+					   Text="&#xE23A;" Grid.Column="1">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Foreground" Value="#FFC5F7B7" />
+                        <Style.Triggers>
 
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Foreground" Value="ForestGreen" />
-							</Trigger>
-						</Style.Triggers>
-					</Style>
-				</TextBlock.Style>
-			</TextBlock>
-			<TextBox  Margin="700,0,0,0"
-					  HorizontalAlignment="Left"
-					  VerticalAlignment="Top"
-					  Width="350"
-					  Height="200"
-					  Text="{Binding Instance.TransactionData.CurrentTransactionEntry.Comment,
-													 Mode=TwoWay,
-													TargetNullValue='Comments',
-													UpdateSourceTrigger=PropertyChanged,
-													 Source={StaticResource SalesVMDataSource}}"
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="ForestGreen" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <StackPanel Grid.Column="1" Margin="300,-100,0,-500" Width="Auto" Height="Auto" Visibility="Visible"  Orientation="Vertical">
+
+
+                <!--<Border x:Name="Photo" Margin="0,0,0,20" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Height="200" Padding="5" Background="White" BorderBrush="White" PreviewMouseLeftButtonDown="AddPicture">
+
+                    <Image  Stretch="UniformToFill" PreviewMouseLeftButtonDown="AddPicture" Source="{Binding Instance.TransactionData.Patient.Photo.Image, Mode=OneWay, Source={StaticResource SalesVMDataSource}, Converter={StaticResource  photoConverter}}"
+                       Margin="0,0,0,0" />
+
+
+                </Border>-->
+                <Grid HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Top" Width="425" Height="550" Margin="0,0,0,20">
+                       
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Width="350" >
+                    <Border Background="White" Margin="0"   HorizontalAlignment="Center"
+                            Padding="5" BorderThickness="2"  BorderBrush="Chartreuse" PreviewMouseLeftButtonDown="AddPrescriptionPhoto">
+                    
+                    <Image x:Name="prescriptionPhoto"
+                        Margin="0"
+                        Stretch="UniformToFill"
+                        PreviewMouseLeftButtonDown="AddPrescriptionPhoto"
+                        Source="{Binding Instance.TransactionData.PrescriptionImage.Image, Mode=OneWay, Source={StaticResource SalesVMDataSource}, Converter={StaticResource  photoConverter}}"/>
+
+                    </Border>
+                    </ScrollViewer>
+                    <TextBlock x:Name="BackPhoto"
+                                   Width="40"
+                                   Height="40"
+                                   Margin="-10,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Background="#00000000"
+                                   FontFamily="Segoe UI Symbol"
+                                   FontSize="40"
+                                   MouseLeftButtonDown="BackPhoto_MouseLeftButtonDown"
+                                   Text="&#xE239;">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Yellow" />
+                                <Style.Triggers>
+
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="Gold" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock x:Name="NextPhoto"
+                                   Width="40"
+                                   Height="40"
+                                   Margin="0,0,0,-10"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   FontFamily="Segoe UI Symbol"
+                                   FontSize="40"
+                                   MouseLeftButtonDown="NextPhoto_MouseLeftButtonDown"
+                                   Text="&#xE23A;" >
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="Yellow" />
+                                <Style.Triggers>
+
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="Gold" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                
+                <TextBox  Margin="35,0,0,0"
+                    x:Name="CommentsTxt"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Width="350"
+                    Height="100"
+                    FontSize="14"
+                    Text="{Binding Instance.TransactionData.CurrentTransactionEntry.Comment, Mode=TwoWay, Source={StaticResource SalesVMDataSource}, TargetNullValue=Comments, UpdateSourceTrigger=PropertyChanged}"
 				/>
+                <Grid x:Name="OrderLabel" 
+                  Margin="30,10,0,0"
+                  DataContext="{Binding TransactionData, Source={StaticResource SalesVMDataSource}}"
+                  Grid.Column="1"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  
+													  Background="{x:Null}"
+													  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+													  ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                    <Border Width="281"
+											Height="Auto"
+											Margin="-3,0,0,0"
+											HorizontalAlignment="Center"
+											VerticalAlignment="Center"
+											Background="White"
+											BorderBrush="{x:Null}"
+											BorderThickness="1">
+                        <Grid ClipToBounds="True"
+											  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+											  ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="39*" />
+                                <RowDefinition Height="136*" />
+                                <RowDefinition Height="15*" />
+                            </Grid.RowDefinitions>
+                            <Image Width="150"
+										           Height="150"
+																   
+										           HorizontalAlignment="Center"
+										           VerticalAlignment="Center"
+										           Source="{DynamicResource HVLogo}"
+										           Stretch="Fill" Grid.RowSpan="2" OpacityMask="#72FFFFFF" />
+                            <TextBlock Margin="38,2,62,9.895"
+													   FontFamily="Candara"
+													   FontSize="16"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.Store.Company.CompanyName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.RowSpan="2"
+													   Margin="40,21,71,118.579"
+													   FontFamily="Century Gothic"
+													   FontSize="9"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.Store.Company.Motto, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextWrapping="Wrap" />
+                            <TextBlock Width="69"
+													   Height="11"
+													   Margin="208,3,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="7.5"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.Store.Company.Address, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextAlignment="Right"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.RowSpan="2"
+													   Width="69"
+													   Height="11"
+													   Margin="208,25,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="10"
+													   Foreground="Black"
+													   Text="{Binding Instance.Store.Company.PhoneNumber, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextAlignment="Right"
+													   TextWrapping="Wrap" />
+                            <TextBlock Width="87"
+													   Height="11"
+													   Margin="195,14,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="7.5"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.Store.Company.Address1, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextAlignment="Right"
+													   TextWrapping="Wrap" />
 
-			<ListView x:Name="SearchListCtl"
+                            <TextBlock Grid.Row="1"
+													   Grid.RowSpan="2"
+													   Width="165"
+													   Height="13"
+													   Margin="3,122.8,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Bottom"
+													   FontFamily="Arial"
+													   FontSize="6"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="KEEP OUT THE REACH OF CHILDREN"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+													   Grid.RowSpan="2"
+													   Width="126"
+													   Height="17"
+													   Margin="150,119.8,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   FontFamily="Arial"
+													   FontSize="10"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.TransactionData.Patient.AllergiesEx, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextAlignment="Right"
+													   TextWrapping="Wrap" />
+                            <Grid Grid.Row="1" Margin="3,29.091,5.273,18.091">
+
+                                <!--<TextBlock x:Name="DosageTxt"
+														   Width="274"
+														   Margin="0,22,-3,31"
+														   HorizontalAlignment="Left"
+														   FontFamily="Calibri"
+														   FontSize="14"
+														   FontWeight="Bold"
+														   Foreground="Black"
+                                       Text="{Binding Instance.TransactionData.Patient.Address,
+																	  Source={StaticResource SalesVMDataSource},
+																		  Mode=OneWay}"
+														   TextWrapping="Wrap" />-->
+                               
+
+
+                                <TextBlock Width="238"
+														   Height="17"
+														   Margin="5,0,0,0"
+														   HorizontalAlignment="Left"
+														   VerticalAlignment="Top"
+														   FontFamily="Calibri"
+                                                           FontWeight="Bold"
+														   FontSize="14"
+														   Foreground="Black"
+														   Text="{Binding Instance.TransactionData.Patient.ContactInfo, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+														   TextWrapping="Wrap" />
+                                <!--<TextBlock Width="32"
+														   Height="22"
+														   Margin="0,0,0,0"
+														   HorizontalAlignment="Left"
+														   VerticalAlignment="Top"
+														   FontFamily="Calibri"
+														   FontSize="16"
+                                                           FontWeight="Bold"
+														   Foreground="Black"
+														   RenderTransformOrigin="0.701,0.758"
+														   Text="{Binding Instance.TransactionData.TransactionEntries.Count,
+																	  Source={StaticResource SalesVMDataSource},
+																		  Mode=OneWay,
+																		  StringFormat=n0}"
+														   TextWrapping="Wrap" />-->
+
+                                <TextBlock Width="126"
+														   Height="16"
+														   Margin="148,76,0,-20"
+														   HorizontalAlignment="Right"
+														   VerticalAlignment="Bottom"
+														   Background="{x:Null}"
+														   FontFamily="Calibri"
+														   FontSize="14"
+														   Foreground="Black"
+														   Text="{Binding Instance.TransactionData.TotalSales, Source={StaticResource SalesVMDataSource}, StringFormat=c}"
+														   TextWrapping="Wrap" TextAlignment="Right" />
+                                <TextBlock Width="Auto"
+                                       Height="16"
+                                       Margin="0,-15,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       Background="{x:Null}"
+                                       FontFamily="Calibri"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="Black"
+                                       Text="{Binding Instance.TransactionData.DeliveryType, Source={StaticResource SalesVMDataSource}, StringFormat=c}"
+                                       TextWrapping="Wrap" TextAlignment="Left" />
+                                <TextBlock x:Name="DosageTxt_Copy"
+                        Width="274"
+                        Margin="0,44,-3,-4"
+                        HorizontalAlignment="Left"
+                        
+                        FontFamily="Calibri"
+                        FontSize="14"
+                                           
+                        FontWeight="Bold"
+                        Foreground="Black"
+                        Text="{Binding Instance.TransactionData.LongLat, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+                        TextWrapping="Wrap" Height="35" VerticalAlignment="Top" />
+                            </Grid>
+
+
+                            <TextBlock Grid.Row="1"
+													   Width="139"
+													   Height="12"
+													   Margin="3,1.105,5,0"
+													   HorizontalAlignment="Right"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="12"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.TransactionData.ReferenceNumber, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+													   Width="Auto"
+													   Height="16"
+													   Margin="230,30,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="12"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.TransactionData.Patient.PhoneNumber, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+                                       Width="Auto"
+                                       Height="16"
+                                       Margin="8,15.8,0,0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       FontFamily="Calibri"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="Black"
+                                       Text="{Binding Instance.TransactionData.Doctor.Name, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+													   Width="150"
+													   Height="18"
+													   Margin="120,4.091,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   Background="{x:Null}"
+													   FontFamily="Calibri"
+													   FontSize="13"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.TransactionData.Time, Mode=OneWay, Source={StaticResource SalesVMDataSource}, StringFormat=\{0:MMM-dd-yyyy hh:mm tt\}}"
+													   TextAlignment="Right"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+													   Width="Auto"
+													   Height="Auto"
+													   Margin="199,15.8,25,0"
+													   HorizontalAlignment="Right"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="10"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.TransactionData.TransactionNumber, Mode=OneWay, Source={StaticResource SalesVMDataSource}, StringFormat=RX#:\{0\}}"
+													   TextAlignment="Right"
+													   TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+													   Width="19"
+													   Height="18"
+													   Margin="258,14.8,0,0"
+													   HorizontalAlignment="Left"
+													   VerticalAlignment="Top"
+													   FontFamily="Calibri"
+													   FontSize="12"
+													   FontWeight="Bold"
+													   Foreground="Black"
+													   Text="{Binding Instance.TransactionPharmacist.Initials, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+													   TextAlignment="Left"
+													   TextWrapping="Wrap" />
+                            <ListView x:Name="OrderEntriesRptLst"
+                  Height="auto"
+                                      Grid.Row="1"
+                          MinHeight="20" Background="Transparent"
+                  Width="280"
+                  LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated"
+                   BorderBrush="White" AlternationCount="2"                        
+                  ScrollViewer.CanContentScroll="False"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   HorizontalAlignment="Center"
+                              VerticalAlignment="Top"
+                   
+                  Margin="10,45,10,40">
+                                <ListView.Resources>
+                                    <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
+                                        <Grid  Margin="0,0,0,0" Width="340" >
+
+                                            <TextBlock Width="Auto"
+														   Height="Auto"
+														   Margin="50,2,0,0"
+														   HorizontalAlignment="Left"
+														   VerticalAlignment="Top"
+														   FontFamily="Calibri"
+                                                           FontWeight="Bold"
+														   FontSize="12"
+														   Foreground="Black"
+														   Text="{Binding TransactionEntryItem.ItemName, Mode=OneWay}"
+														   TextWrapping="Wrap" />
+                                            <TextBlock Width="37"
+														   Height="Auto"
+														   Margin="10,2,0,0"
+														   HorizontalAlignment="Left"
+														   VerticalAlignment="Top"
+														   FontFamily="Calibri"
+														   FontSize="14"
+                                                           FontWeight="Bold"
+														   Foreground="Black"
+														   
+														   Text="{Binding Quantity, Mode=OneWay, StringFormat=n0}"
+														   TextWrapping="Wrap" />
+
+                                        </Grid>
+
+                                    </DataTemplate>
+
+                                </ListView.Resources>
+
+                                <ListView.ItemsSource>
+                                    <Binding Mode="OneWay" Path="Instance.TransactionData.TransactionEntries" Source="{StaticResource SalesVMDataSource}" UpdateSourceTrigger="PropertyChanged"/>
+                                </ListView.ItemsSource>
+
+                            </ListView>
+                            <Border  Grid.Row="1" Margin="0,0,50,0"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Bottom" >
+                                <Image 
+                                                                    Margin="0"
+                                                                    Width="117"
+                                                                    Height="10"
+                                                                    Stretch="UniformToFill"
+                                                                    Source="{Binding Instance.TransactionData.TransactionId, Mode=OneWay, Converter={StaticResource BarCodeConverter}, Source={StaticResource SalesVMDataSource}}"
+                                                                />
+                            </Border>
+                            
+
+
+                        </Grid>
+                    </Border>
+                   
+
+                </Grid>
+                <Grid x:Name="MapStuff" Margin="0,0,0,0" >
+                    <windowsPresentation:GMapControl  Margin="0,0,0,0"
+                                                  x:Name ="gmap"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Top"
+                                                  Width="350"
+                                                  Height="350"
+                                                  FontSize="14"
+
+                                                  Zoom="13" MaxZoom="24" MinZoom="1"
+                                                  Position="{Binding Instance.TransactionData.Position, Mode=OneWay, Source={StaticResource SalesVMDataSource}}"
+                                                  OnPositionChanged="Gmap_OnOnPositionChanged"
+                                                  MouseLeftButtonDown="Gmap_OnMouseLeftButtonDown"
+                      
+                                              
+
+                                                  Grid.Column="1" CanDragMap="True" MouseWheelZoomEnabled="True"
+                />
+                    <TextBlock Text="Longitude" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,1125.491,0" Foreground="White"/>
+                    <TextBox Text="{Binding Instance.TransactionData.TransactionLocation.Longitude, Mode=TwoWay, Source={StaticResource SalesVMDataSource}}" Width="150" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,957.491,0" Background="White" Foreground="#FF222222"/>
+                    <TextBox Text="{Binding Instance.TransactionData.TransactionLocation.Latitude, Mode=TwoWay, Source={StaticResource SalesVMDataSource}}" Width="150" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,34,957.491,0" Background="White" Foreground="#FF222222"/>
+                    <TextBlock Text="Latitude" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,35,1124.491,0" Foreground="White"/>
+                </Grid>
+                <Grid x:Name="PrescriptionPad" Margin="-800,800,50,50" 
+                      
+                      Width="401" Height="Auto" Background="White">
+                    <Image Width="50"
+																   Height="50"
+																   Margin="40,10,0,0"
+																   HorizontalAlignment="Left"
+																   VerticalAlignment="Top"
+																   Source="{DynamicResource HVLogo}"
+																   Stretch="Fill"  />
+                    <TextBlock Text= "{Binding Instance.Store.Company.CompanyName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Margin="100,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="300" FontWeight="Bold" FontSize="22" FontFamily="Leelawadee UI" Foreground="#FF0B408D"/>
+                    <TextBlock Text="{Binding Instance.TransactionData.Patient.DisplayName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Center" Height="18" Margin="29,97,120,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="252" FontSize="14" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="{Binding Instance.TransactionData.Time, Mode=OneWay, Source={StaticResource SalesVMDataSource}, StringFormat=d}" HorizontalAlignment="Center" Height="18" Margin="309,97,31,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="61" FontSize="14" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="{Binding Instance.TransactionData.Patient.Address, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Center" Height="18" Margin="29,144,106,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="266" FontSize="14" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="{Binding Instance.TransactionData.Patient.Age, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Center" Height="18" Margin="307,185,62,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="32" FontSize="14" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="Pharmacist:" HorizontalAlignment="Left" Height="18" Margin="29,0,0,10" TextWrapping="Wrap"  VerticalAlignment="Bottom" Width="Auto" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text= "{Binding Instance.TransactionData.Pharmacist.DisplayName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="100,0,0,10" TextWrapping="Wrap"  VerticalAlignment="Bottom" Width="Auto" FontFamily="Leelawadee UI" Foreground="Black"/>
+
+                    <TextBlock Text="Doctor:" HorizontalAlignment="Left" Height="18" Margin="29,10,0,30" TextWrapping="Wrap"  VerticalAlignment="Bottom" Width="Auto" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text= "{Binding Instance.TransactionData.Doctor.DisplayName, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="100,10,0,30" TextWrapping="Wrap"  VerticalAlignment="Bottom" Width="Auto" FontFamily="Leelawadee UI" Foreground="Black"/>
+
+                    <!--<TextBlock Text="Repeat" HorizontalAlignment="Center" Height="18" Margin="281,468,81,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="39" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="Do NotRepeat" HorizontalAlignment="Center" Height="18" Margin="281,490,31,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="89" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="Times" HorizontalAlignment="Center" Height="18" Margin="352,468,10,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="39" FontFamily="Leelawadee UI" Foreground="Black"/>-->
+                    <TextBlock Text= "{Binding Instance.Store.Company.CompanyInfo, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" TextAlignment="Center" HorizontalAlignment="Left" Height="18" Margin="100,40,47,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="260" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text= "{Binding Instance.TransactionData.DeliveryType, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" TextAlignment="Center" HorizontalAlignment="Left" Height="18" Margin="100,60,47,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="260" FontFamily="Leelawadee UI" FontWeight="ExtraBold" Foreground="Black"/>
+                    <TextBlock Text="{Binding Instance.TransactionData.Patient.SexEx, Mode=OneWay, Source={StaticResource SalesVMDataSource}}" HorizontalAlignment="Left" Height="18" Margin="29,185,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="92" FontSize="14" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <ListView x:Name="PrescriptionEntriesRptLst"
+                  Height="auto"
+                  LayoutUpdated="PrescriptionEntriesRptLst_LayoutUpdated"
+                   BorderBrush="White" AlternationCount="2"                        
+                  ScrollViewer.CanContentScroll="False"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   HorizontalAlignment="Center"
+                              VerticalAlignment="Top"
+                   
+                  Margin="28,229,21,60">
+                        <ListView.Resources>
+                            <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
+                                <Grid  Margin="0,0,0,0" Width="340" >
+
+
+                                    <TextBlock x:Name="DosageTxt"
+														   Width="Auto"
+														   Height="Auto"
+														   MaxWidth="300"
+														   Margin="-20,30,0,20"
+														   HorizontalAlignment="Center"
+													       VerticalAlignment="Top"
+														   FontFamily="Calibri"
+														   FontSize="14"
+														   Foreground="Black"
+														   Text="{Binding Dosage, Mode=OneWay}"
+														   TextWrapping="Wrap" />
+                                    <TextBlock Width="Auto"
+														   Height="17"
+														   Margin="50,10,0,0"
+														   HorizontalAlignment="Left"
+														   VerticalAlignment="Top"
+														   FontFamily="Calibri"
+                                                           FontWeight="Bold"
+														   FontSize="14"
+														   Foreground="Black"
+														   Text="{Binding TransactionEntryItem.ItemName, Mode=OneWay}"
+														   TextWrapping="Wrap" />
+                                    <TextBlock Width="37"
+														   Height="28"
+														   Margin="10,10,0,0"
+														   HorizontalAlignment="Left"
+														   VerticalAlignment="Top"
+														   FontFamily="Calibri"
+														   FontSize="18"
+                                                           FontWeight="Bold"
+														   Foreground="Black"
+														   
+														   Text="{Binding Quantity, Mode=OneWay, StringFormat=n0}"
+														   TextWrapping="Wrap" />
+                                    <TextBlock Width="Auto"
+														   Height="16"
+                                               
+														   Margin="0,0,0,0"
+														   HorizontalAlignment="Right"
+														   VerticalAlignment="Bottom"
+														   Background="{x:Null}"
+														   FontFamily="Calibri"
+														   FontSize="14"
+														   Foreground="Black"
+														   Text="{Binding RepeatInfo}"
+														   TextWrapping="NoWrap" TextAlignment="Left"  />
+                                </Grid>
+
+                            </DataTemplate>
+
+                        </ListView.Resources>
+
+                        <ListView.ItemsSource>
+                            <Binding Mode="OneWay" Path="Instance.TransactionData.TransactionEntries" Source="{StaticResource SalesVMDataSource}" UpdateSourceTrigger="PropertyChanged"/>
+                        </ListView.ItemsSource>
+
+                    </ListView>
+                    <TextBlock Text="Patient Name" HorizontalAlignment="Center" Height="18" Margin="29,116,266,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="106" FontFamily="Leelawadee UI" Foreground="Black" FontSize="10"/>
+                    <TextBlock Text="Date" HorizontalAlignment="Center" Height="18" Margin="308,119,32,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="61" FontSize="10" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="Patient Address" HorizontalAlignment="Center" Height="18" Margin="28,162,266,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="107" FontFamily="Leelawadee UI" Foreground="Black" FontSize="10"/>
+                    <TextBlock Text="Sex" HorizontalAlignment="Center" Height="18" Margin="28,203,348,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="25" FontSize="10" FontFamily="Leelawadee UI" Foreground="Black"/>
+                    <TextBlock Text="Age" HorizontalAlignment="Center" Height="18" Margin="309,203,60,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="32" FontSize="10" FontFamily="Leelawadee UI" Foreground="Black"/>
+                </Grid>
+
+
+            </StackPanel>
+
+
+            <ListView x:Name="SearchListCtl"
 					  Grid.ColumnSpan="2"
 					  Width="530"
-					  Margin="10,47,0,-12"
+					  Margin="10,47,0,-12.745"
 					  HorizontalAlignment="Left"
 					  Background="LightGray"
 					  Focusable="False"
@@ -1956,60 +2706,60 @@
 											Source={StaticResource SalesVMDataSource}}"
 					  MouseLeftButtonUp="SearchListCtl_MouseLeftButtonUp_1"
 					  Visibility="Collapsed">
-				<ListView.Resources>
-					<DataTemplate DataType="{x:Type data:Doctor}">
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Width="240"
+                <ListView.Resources>
+                    <DataTemplate DataType="{x:Type data:Doctor}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Width="240"
 									   FontSize="14"
 									   Foreground="Black"
 									   Text="{Binding Path=DisplayName,
 													  Mode=OneWay}" />
-							<TextBlock x:Name="EditDoctorItemTB"
+                            <TextBlock x:Name="EditDoctorItemTB"
 									   Width="40"
 									   Foreground="Black"
 									   MouseLeftButtonDown="EditItemTB_MouseLeftButtonDown"
 									   Text="Edit..." />
-							<TextBlock x:Name="doctorPrescriptionBtn"
+                            <TextBlock x:Name="doctorPrescriptionBtn"
 									   Width="80"
 									   Foreground="Black"
 									   MouseLeftButtonDown="PatientPrescriptionBtn_MouseLeftButtonDown"
 									   Text="Transactions..." />
-						</StackPanel>
-					</DataTemplate>
-					<DataTemplate DataType="{x:Type data:Patient}">
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type data:Patient}">
 
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Width="240"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Width="240"
 									   FontSize="14"
 									   Foreground="Black"
 									   Text="{Binding Path=ContactInfo,
 													  Mode=OneWay}" />
-							<TextBlock x:Name="EditItemTB"
+                            <TextBlock x:Name="EditItemTB"
 									   Width="40"
 									   Foreground="Black"
 									   MouseLeftButtonDown="EditItemTB_MouseLeftButtonDown"
 									   Text="Edit..." />
-							<TextBlock x:Name="PatientPrescriptionBtn"
+                            <TextBlock x:Name="PatientPrescriptionBtn"
 									   Width="80"
 									   Foreground="Black"
 									   MouseLeftButtonDown="PatientPrescriptionBtn_MouseLeftButtonDown"
 									   Text="Transactions..." />
 
-						</StackPanel>
-					</DataTemplate>
+                        </StackPanel>
+                    </DataTemplate>
 
-					<DataTemplate DataType="{x:Type data:SearchItem}">
-						<TextBlock FontSize="14"
+                    <DataTemplate DataType="{x:Type data:SearchItem}">
+                        <TextBlock FontSize="14"
 								   Foreground="Black"
 								   Text="{Binding Path=DisplayName,
 												  Mode=OneWay}" />
-					</DataTemplate>
+                    </DataTemplate>
 
 
 
-					<DataTemplate DataType="{x:Type data:Medicine}">
-						<Grid Height="50">
-							<TextBlock Height="25"
+                    <DataTemplate DataType="{x:Type data:Medicine}">
+                        <Grid Height="50">
+                            <TextBlock Height="25"
 									   Margin="45,0,185,25"
 									   FontSize="14"
 									   FontWeight="Bold"
@@ -2017,26 +2767,26 @@
 									   Text="{Binding DisplayName,
 													  Mode=OneWay}"
 									   TextWrapping="Wrap" />
-							<TextBlock x:Name="EditItemTB"
+                            <TextBlock x:Name="EditItemTB"
 									   Width="40"
 									   Margin="460,5,0,25"
 									   FontWeight="Bold"
 									   Foreground="#FF982102"
 									   MouseLeftButtonDown="EditItemTB_MouseLeftButtonDown"
 									   Text="Edit..." />
-							<TextBlock Margin="0,15,460,15"
+                            <TextBlock Margin="0,15,460,15"
 									   FontSize="12"
 									   Foreground="#FF192560"
 									   Text="{Binding ItemNumber,
 													  Mode=OneWay}" />
-							<TextBlock Height="25"
+                            <TextBlock Height="25"
 									   Margin="320,0,135,25"
 									   Foreground="#FF192560"
 									   Text="{Binding VatPrice,
 													  Mode=OneWay,
 													  StringFormat=c}"
 									   TextAlignment="Center" />
-							<TextBlock Height="25"
+                            <TextBlock Height="25"
 									   Margin="369,0,90,25"
 									   FontSize="14"
 									   FontWeight="Bold"
@@ -2045,37 +2795,37 @@
 													  Mode=OneWay,
 													  StringFormat=n0}"
 									   TextAlignment="Center" />
-							<TextBlock Height="25"
+                            <TextBlock Height="25"
 									   Margin="413,0,45,25"
 									   Foreground="#FF192560"
 									   Text="{Binding Size,
 													  Mode=OneWay}" />
-							<TextBlock Height="25"
+                            <TextBlock Height="25"
 									   Margin="45,25,160,0"
 									   FontSize="12"
 									   Foreground="#FF192560"
 									   Text="{Binding Description,
 													  Mode=OneWay}" />
-							<TextBlock Height="25"
+                            <TextBlock Height="25"
 									   Margin="345,25,45,0"
 									   Foreground="#FF192560"
 									   Text="{Binding UnitOfMeasure,
 													  Mode=OneWay}"
 									   TextAlignment="Right" />
-						</Grid>
-					</DataTemplate>
-					<DataTemplate DataType="{x:Type data:Item}">
-						<TextBlock Foreground="Black" Text="{Binding Path=DisplayName, Mode=OneWay}" />
-					</DataTemplate>
+                        </Grid>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type data:Item}">
+                        <TextBlock Foreground="Black" Text="{Binding Path=DisplayName, Mode=OneWay}" />
+                    </DataTemplate>
 
-				</ListView.Resources>
+                </ListView.Resources>
 
-			</ListView>
+            </ListView>
 
 
 
-		</Grid>
+        </Grid>
 
-	</Border>
+    </Border>
 
 </UserControl>

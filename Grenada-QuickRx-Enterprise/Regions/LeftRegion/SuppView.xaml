@@ -4,10 +4,13 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:data="clr-namespace:RMSDataAccessLayer;assembly=RMSDataAccessLayer"
-			 mc:Ignorable="d" 
+             xmlns:salesRegion="clr-namespace:SalesRegion;assembly=SalesRegion"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:LeftRegion"
+             mc:Ignorable="d" 
 			  Margin="10,10,10,10">
     <UserControl.Resources>
-        
+
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="0,2,40,2" />
@@ -28,86 +31,820 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <salesRegion:EnumMatchToBooleanConverter x:Key="EnumConverter" />
+        <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
+            <Grid Height="25" Background="#7F7182D0">
+                <TextBlock Text="{Binding TransactionEntryItem.ItemName}" Margin="35,0,100,0" Width="150" FontSize="10" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding Quantity, StringFormat=n0}" Margin="10,0,250,0" FontWeight="Bold" />
+                <TextBlock Text="{Binding Price, StringFormat=c}" Margin="185,0,55,0" />
+                <TextBlock Text="{Binding Amount, StringFormat=c}" Margin="230,0,10,0" />
+            </Grid>
+        </DataTemplate>
 
-    </UserControl.Resources>
-    <Grid  Width="Auto" Height="500" Background="#4C202020">
-
-        <TextBox Name="SearchBox" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,42,10,0" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="20" FontFamily="Cordia New" Style="{DynamicResource FilterTextBoxStyle}" PreviewKeyDown="TextBox_PreviewKeyDown"/>
-        <TextBlock HorizontalAlignment="Left" Height="31" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="75" FontSize="20" LineStackingStrategy="BlockLineHeight" LineHeight="32" TextAlignment="Left" Foreground="White" Margin="15,1,0,0"/>
-        <Button HorizontalAlignment="Left" Click="SearchTransactions"  Height="42" Margin="110,0,0,0" VerticalAlignment="Top" Width="47">
-            <Button.Background>
-                <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
-            </Button.Background>
-            <Image Source="{DynamicResource GreenRx}" Width="42"/>
-
-        </Button>
-        <ListBox Name="SearchList" SelectedItem="{Binding TransactionData}" ScrollViewer.CanContentScroll="False"  ItemsSource="{Binding SearchResults, IsAsync=True}" Height="382" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ListBox.Resources>
-                <DataTemplate DataType="{x:Type data:PrescriptionEntry}">
-                    <Grid Height="25" Background="#7F7182D0">
-                        <TextBlock Text="{Binding TransactionEntryItem.ItemName}" Margin="35,0,100,0" Width="150" FontSize="10" TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding Quantity, StringFormat=n0}" Margin="10,0,250,0" FontWeight="Bold" />
-                        <TextBlock Text="{Binding Price, StringFormat=c}" Margin="185,0,55,0" />
-                        <TextBlock Text="{Binding Amount, StringFormat=c}" Margin="230,0,10,0" />
-                    </Grid>
-                </DataTemplate>
-
-                <DataTemplate DataType="{x:Type data:Prescription}">
-                    <Expander Expanded="Expander_Expanded">
-                        <Expander.Header>
-                            <Grid MinWidth="280">
-                                <Grid.Background>
-                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="#7FFFFFFF" Offset="0"/>
-                                        <GradientStop Color="#7F349315" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Grid.Background>
-                                <TextBlock Text="{Binding Patient.DisplayName}" Margin="115,1,24.8,28.2"/>
-                                <TextBlock Text="{Binding Time,StringFormat='d-MMM-yyyy HH:mm:ss'}" Margin="6,26,175,3.6" FontSize="10"/>
-                                <TextBlock Text="{Binding Doctor.DisplayName}" Margin="115,26,29.8,3.2"/>
-                                <TextBlock Text="{Binding TransactionNumber}" Margin="6,3,175,26.6" FontWeight="Bold"/>
-                                <Button x:Name="AutoRepeatBtn"  HorizontalAlignment="Left" Height="25" Margin="260,1,-0.2,0"  VerticalAlignment="Top" Width="25" Background="#00000000" Content="&#xE0F2;" FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF65E468" ToolTip="Repeat" RenderTransformOrigin="0.5,0.45" Click="AutoRepeatBtn_Click"/>
-                                <!--<Button HorizontalAlignment="Left" Click="NewPrescription"  Height="25" Margin="260,27,-0.2,0" VerticalAlignment="Top" Width="25">
+        <DataTemplate DataType="{x:Type data:Prescription}">
+            <Expander Expanded="Expander_Expanded">
+                <Expander.Header>
+                    <Grid MinWidth="280">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#7FFFFFFF" Offset="0"/>
+                                <GradientStop Color="#7F349315" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <TextBlock Text="{Binding Patient.DisplayName}" Margin="6,5,133,24"/>
+                        <TextBlock Text="{Binding Time,StringFormat='d-MMM-yyyy HH:mm:ss'}" Margin="6,26,133,4" FontSize="10"/>
+                        <TextBlock Text="{Binding Doctor.DisplayName}" Margin="156,26,30,3"/>
+                        <TextBlock Text="{Binding TransactionNumber}" Margin="156,5,25,24" FontWeight="Bold"/>
+                        <Button x:Name="AutoRepeatBtn"  HorizontalAlignment="Left" Height="25" Margin="260,10,0,0"  VerticalAlignment="Top" Width="25" Background="#00000000" Content="&#xE0F2;" FontFamily="Segoe UI Symbol" FontSize="16" Foreground="#FF65E468" ToolTip="Repeat" RenderTransformOrigin="0.5,0.45" Click="AutoRepeatBtn_Click"/>
+                        <!--<Button HorizontalAlignment="Left" Click="NewPrescription"  Height="25" Margin="260,27,-0.2,0" VerticalAlignment="Top" Width="25">
                                     <Button.Background>
                                         <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
                                     </Button.Background>
                                     <Image Source="{DynamicResource NewTicket}"/>
 
                                 </Button>-->
-                            </Grid>
-                        </Expander.Header>
-                        <StackPanel>
-                            <ListBox ItemsSource="{Binding TransactionEntries, IsAsync=True}"/>
-                            <ListBox ItemsSource="{Binding Transactions, IsAsync=True}" Margin="50,0,0,0"/>
-                        </StackPanel>
+                    </Grid>
+                </Expander.Header>
+                <StackPanel>
+                    <ListBox ItemsSource="{Binding TransactionEntries, IsAsync=True}" MaxHeight="300"/>
+                    <ListBox ItemsSource="{Binding Transactions, IsAsync=True}" Margin="50,0,0,0" MaxHeight="300"/>
+                </StackPanel>
+
+            </Expander>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type data:Patient}">
+            <Expander Expanded="PatientExpander_OnExpanded" >
+                <Expander.Header>
+                    <Grid MinWidth="280">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#7FFFFFFF" Offset="0"/>
+                                <GradientStop Color="Yellow" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <TextBlock Text="{Binding DisplayName}" Margin="6,5,88,24"/>
+                        <TextBlock Text="{Binding Address}" Margin="6,26,10,4" FontSize="10"/>
+                        <TextBlock Text="{Binding PhoneNumber}" Margin="197,5,6,24"/>
+
+                    </Grid>
+                </Expander.Header>
+                <StackPanel>
+                    <ListBox ItemsSource="{Binding Prescription, IsAsync=True}" MaxHeight="300"/>
+
+                </StackPanel>
+
+            </Expander>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type data:Medicine}">
+            <Expander Expanded="DrugExpander_OnExpanded" >
+                <Expander.Header>
+                    <Grid Height="50" Width="400">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#7FFFFFFF" Offset="0"/>
+                                <GradientStop Color="OrangeRed" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <TextBlock Height="25"
+                                       Margin="45,12,167,13"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="#FF192560"
+                                       Text="{Binding ItemName,
+                                                      Mode=OneWay}"
+                                       TextWrapping="Wrap" />
+
+                        <TextBlock Margin="0,15,460,15"
+                                       FontSize="12"
+                                       Foreground="#FF192560"
+                                       Text="{Binding ItemNumber,
+                                                      Mode=OneWay}" />
+                        <TextBlock Height="25"
+                                       Margin="320,0,135,25"
+                                       Foreground="#FF192560"
+                                       Text="{Binding VatPrice,
+                                                      Mode=OneWay,
+                                                      StringFormat=c}"
+                                       TextAlignment="Center" />
+                        <TextBlock Height="25"
+                                       Margin="369,0,90,25"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="#FF192560"
+                                       Text="{Binding Quantity,
+                                                      Mode=OneWay,
+                                                      StringFormat=n0}"
+                                       TextAlignment="Center" />
+                        <TextBlock Height="25"
+                                       Margin="413,0,45,25"
+                                       Foreground="#FF192560"
+                                       Text="{Binding Size,
+                                                      Mode=OneWay}" />
+                        <TextBlock Height="25"
+                                       Margin="345,25,45,0"
+                                       Foreground="#FF192560"
+                                       Text="{Binding UnitOfMeasure,
+                                                      Mode=OneWay}"
+                                       TextAlignment="Right" />
+                    </Grid>
+                </Expander.Header>
+                <StackPanel>
+                    <ListBox ItemsSource="{Binding Patients, IsAsync=True}" MaxHeight="300"/>
+                    <ListBox ItemsSource="{Binding Doctors, IsAsync=True}" MaxHeight="300"/>
+                </StackPanel>
+
+            </Expander>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type data:Doctor}">
+            <Expander Expanded="DoctorExpander_OnExpanded">
+                <Expander.Header >
+                    <Grid MinWidth="280">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#7FFFFFFF" Offset="0"/>
+                                <GradientStop Color="#7F261593" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <TextBlock Text="{Binding DisplayName}" Margin="10,1,25,28" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding PhoneNumber}" Margin="6,26,106,4" FontSize="10"/>
+                        <TextBlock Text="{Binding Code}" Margin="204,22,25,3" FontSize="12"/>
+
+                    </Grid>
+                </Expander.Header>
+                <StackPanel>
+                    <ListBox ItemsSource="{Binding Patients, IsAsync=True}" MaxHeight="300"/>
+
+
+                </StackPanel>
+
+            </Expander>
+        </DataTemplate>
+    </UserControl.Resources>
+    <TabControl DataContext="{Binding Source={x:Static local:SuppVM.Instance}}" Background="Transparent">
+
+        <TabItem >
+            <TabItem.Header>
+                <Grid>
+                    <Image Source="{DynamicResource GreenRx}" Width="42" Margin="0"/>
+                </Grid>
+            </TabItem.Header>
+            <Grid  Width="Auto" Background="#4C202020">
+
+                <TextBox Name="SearchBox" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,42,10,0" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="20" FontFamily="Cordia New" Style="{DynamicResource FilterTextBoxStyle}" PreviewKeyDown="PrescriptionSearchBox_PreviewKeyDown"/>
+                <TextBlock HorizontalAlignment="Left" Height="31" TextWrapping="Wrap" Text="Prescriptions" VerticalAlignment="Top" Width="120" FontSize="20" LineStackingStrategy="BlockLineHeight" LineHeight="32" TextAlignment="Left" Foreground="White" Margin="15,1,0,0"/>
+                <ListBox Name="SearchList" SelectedItem="{Binding TransactionData}"  ItemsSource="{Binding SearchResults, IsAsync=True}" Height="382" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+                    <ListBox.Resources>
+
+                    </ListBox.Resources>
+                </ListBox>
+
+                <TextBlock Text="{Binding SearchResults.Count, StringFormat=0 Results}" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Foreground="#FFF0FBA9"/>
+                <TextBlock x:Name="Status" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="133" Foreground="#FFF0FBA9" TextAlignment="Right"/>
+                <CheckBox Content="Show Inactive Items" HorizontalAlignment="Right" Height="20" Margin="0,82,10.667,0" VerticalAlignment="Top" Width="128" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            </Grid>
+        </TabItem>
+        <TabItem >
+            <TabItem.Header>
+                <Grid>
+                    <Image Source="{DynamicResource Patient}" Width="42"/>
+                </Grid>
+            </TabItem.Header>
+            <Grid  Width="Auto" Background="#4C202020" RenderTransformOrigin="0.498,0.496">
+
+                <TextBox Name="PatientSearchBox" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,42,10,0" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="20" FontFamily="Cordia New" Style="{DynamicResource FilterTextBoxStyle}" PreviewKeyDown="PatientSearchBox_PreviewKeyDown"/>
+                <TextBlock Text="Patients" HorizontalAlignment="Left" Height="31" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" FontSize="20" LineStackingStrategy="BlockLineHeight" LineHeight="32" TextAlignment="Left" Foreground="White" Margin="15,1,0,0"/>
+                <TextBlock Text="{Binding SearchResults.Count, StringFormat=0 Results}" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Foreground="#FFF0FBA9"/>
+                <TextBlock x:Name="PatientStatus" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="133" Foreground="#FFF0FBA9" TextAlignment="Right"/>
+                <StackPanel>
+
+                    <ListBox Name="PatientSearchList" SelectedItem="{Binding CurrentPatient}" ItemsSource="{Binding PatientSearchResults, IsAsync=True}" Margin="0,107,1,10" Width="Auto" MinHeight="300" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+
+
+
+                    <ContentControl  Content="{Binding CurrentPatient, Mode=OneWay}" 
+                                     VerticalAlignment="Bottom" Height="Auto" MinWidth="6" Margin="0">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate DataType="{x:Type data:Patient}">
+                                <Grid Height="200"  VerticalAlignment="Top" Background="#FFFFB480">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="41*" />
+                                        <ColumnDefinition Width="42*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="9*" />
+                                        <RowDefinition Height="9*" />
+                                        <RowDefinition Height="13*" />
+                                        <RowDefinition Height="20*" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Width="135"
+                           Height="25"
+                           Margin="10,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontFamily="Segoe UI Light"
+                           FontSize="18"
+                           Text="Add Patient"
+                           TextWrapping="Wrap" />
+                                    <TextBlock Grid.ColumnSpan="2"
+                           Width="65"
+                           Height="16"
+                           Margin="133,8,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Guardian"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Column="1"
+                         Width="180"
+                         Height="23"
+                         Margin="10.41,5,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Guardian,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="1"
+                           Width="65"
+                           Height="16"
+                           Margin="10,6,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="First Name"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="1"
+                         Width="120"
+                         Height="23"
+                         Margin="75,3,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding FirstName,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="1"
+                         Grid.RowSpan="2"
+                         Width="120"
+                         Height="23"
+                         Margin="75,34.706,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Address,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="1"
+                           Grid.Column="1"
+                           Width="65"
+                           Height="16"
+                           Margin="5.41,6,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Last Name"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Width="120"
+                         Height="23"
+                         Margin="70.41,3,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding LastName,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2"
+                           Width="65"
+                           Height="16"
+                           Margin="10,2.412,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Address"
+                           TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2"
+                           Width="65"
+                           Height="16"
+                           Margin="10,32.412,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Allergies"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="2"
+                         Grid.RowSpan="2"
+                         Grid.ColumnSpan="2"
+                         Width="193"
+                         Height="23"
+                         Margin="75,28.6,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Allergies,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        TargetNullValue='',
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2"
+                           Grid.Column="1"
+                           Width="65"
+                           Height="16"
+                           Margin="5.41,3.412,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Phone No."
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         Width="120"
+                         Height="23"
+                         Margin="70.41,0.412,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding PhoneNumber,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2"
+                           Grid.Column="1"
+                           Width="27"
+                           Height="16"
+                           Margin="98.4,28.6,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Disc. %"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="2"
+                         Grid.RowSpan="2"
+                         Grid.Column="1"
+                         Width="60"
+                         Height="23"
+                         Margin="130.4,28.6,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Discount,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="3"
+                           Width="70"
+                           Height="16"
+                           Margin="5,8,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Date of Birth"
+                           TextWrapping="Wrap" />
+                                    <DatePicker Grid.Row="3"
+                            Width="120"
+                            Height="23"
+                            Margin="75,5,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Text="{Binding DOB,
+                                           Mode=TwoWay,
+                                           ValidatesOnNotifyDataErrors=True,
+                                           UpdateSourceTrigger=PropertyChanged,
+                                           TargetNullValue=''}" />
+                                    <Button x:Name="SavePatientBtn"
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Width="62"
+                        Height="23"
+                        Margin="130,26,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="SavePatientBtn_Click"
+                        Content="Save" />
+                                    <RadioButton Grid.Row="3"
+                             Grid.Column="1"
+                             Width="72"
+                             Height="25"
+                             Margin="10.41,10,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Content="Female"
+                             GroupName="Sex"
+                             IsChecked="{Binding Sex,
+                                                 Mode=TwoWay,
+                                                 ValidatesOnNotifyDataErrors=True,
+                                                 Converter={StaticResource EnumConverter},
+                                                 ConverterParameter=True,
+                                                 UpdateSourceTrigger=PropertyChanged}" />
+                                    <RadioButton Grid.Row="3"
+                             Grid.Column="1"
+                             Width="55"
+                             Height="25"
+                             Margin="70.41,10,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Content="Male"
+                             GroupName="Sex"
+                             IsChecked="{Binding Sex,
+                                                 Mode=TwoWay,
+                                                 ValidatesOnNotifyDataErrors=True,
+                                                 Converter={StaticResource EnumConverter},
+                                                 ConverterParameter=False,
+                                                 UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button x:Name="SavePatientBtn_Copy"
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Width="62"
+                                        Height="23"
+                                        Margin="5,32,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Click="AddPatientBtn_Click"
+                                        Content="Add" />
+
+                                </Grid>
+
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
+                </StackPanel>
+
+
+            </Grid>
+        </TabItem>
+        <TabItem >
+            <TabItem.Header>
+                <Grid>
+                    <Image Source="{DynamicResource Asprin}" Width="42"/>
+                </Grid>
+            </TabItem.Header>
+            <Grid  Width="Auto" Background="#4C202020" RenderTransformOrigin="0.498,0.496">
+
+                <TextBox Name="DrugSearchBox" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,42,10,0" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="20" FontFamily="Cordia New" Style="{DynamicResource FilterTextBoxStyle}" PreviewKeyDown="DrugSearchBox_PreviewKeyDown"/>
+                <TextBlock Text="Drugs" HorizontalAlignment="Left" Height="31" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" FontSize="20" LineStackingStrategy="BlockLineHeight" LineHeight="32" TextAlignment="Left" Foreground="White" Margin="15,1,0,0"/>
+                <StackPanel>
+                    <ListBox Name="DrugSearchList" SelectedItem="{Binding CurrentDrug}"  ItemsSource="{Binding DrugSearchResults, IsAsync=True}" Height="Auto" MinHeight="300" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <ContentControl  Content="{Binding CurrentDrug, Mode=OneWay}" Margin="10">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate DataType="{x:Type data:Medicine}">
+
+                                <Grid Background="#FF69B213">
+                                    <TextBox Width="52"
+                         Height="23"
+                         Margin="321,10,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Background="#FF1F1F1F"
+                         FontSize="18.667"
+                         Foreground="#FFD7D7D7"
                         
-                    </Expander>
-                </DataTemplate>
-            </ListBox.Resources>
-        </ListBox>
-        <Button HorizontalAlignment="Left" Click="SearchPatient"  Height="35" Margin="208,3,0,0" VerticalAlignment="Top" Width="37">
-            <Button.Background>
-                <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
-            </Button.Background>
-            <Image Source="{DynamicResource Patient}"/>
+                         RenderTransformOrigin="0.488,0.466"
+                         Text="{Binding Quantity,
+                                        StringFormat=n0,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <!--<DatePicker Text="{Binding ExpiryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="RepeatTxt"  HorizontalAlignment="Left" Height="23" Margin="240,85,0,0"  VerticalAlignment="Top" Width="132" Background="#FF1F1F1F" Foreground="#FF303030" RenderTransformOrigin="0.488,0.466"/>-->
+                                    <!--<ComboBox  DisplayMemberPath="{Binding Dosage,ValidatesOnDataErrors=True, ValidatesOnNotifyDataErrors=true}"
+						   ItemsSource="{Binding Item,Converter={StaticResource DosageLstConverter}}"  Background="#FF1F1F1F" Foreground="#FFD7D7D7" HorizontalAlignment="Left" Height="70" Margin="11,40,0,0"  VerticalAlignment="Top" Width="215" FontSize="13.333" />-->
+                                    <TextBox Width="161"
+                         Height="41"
+                         Margin="65,40,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         xml:lang="en-us"
+                         Background="#FF1F1F1F"
+                         FontSize="13.333"
+                         Foreground="#FFD7D7D7"
+                         SpellCheck.IsEnabled="True"
+                         Text="{Binding SuggestedDosage,
+                                        ValidatesOnDataErrors=True,
+                                        ValidatesOnNotifyDataErrors=true,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBox x:Name="PriceTxt"
+                         Width="52"
+                         Height="22"
+                         Margin="321,38,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Background="#FF1F1F1F"
+                         FontFamily="DS-Digital"
+                         FontSize="16"
+                         FontWeight="Bold"
+                         Foreground="#FFD7D7D7"
+                         RenderTransformOrigin="0.488,0.466"
+                         Text="{Binding Price,
+                                        UpdateSourceTrigger=PropertyChanged,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        TargetNullValue={x:Static sys:String.Empty},
+                                        StringFormat=c}"
+                         TextOptions.TextFormattingMode="Display" />
+                                    <TextBlock Width="34"
+                           Height="20"
+                           Margin="282,43,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontSize="13.333"
+                           Foreground="White"
+                           LineHeight="13.333"
+                           LineStackingStrategy="BlockLineHeight"
+                           Text="Price"
+                           TextWrapping="Wrap" />
+                                    <TextBox Width="215"
+                         Height="25"
+                         Margin="46,10,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Background="#FF1F1F1F"
+                         FontSize="13.333"
+                         Foreground="#FFD7D7D7"
+                         Text="{Binding Description,
+                                        Mode=TwoWay,
+                                        FallbackValue='Click Add Drug',
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Width="49"
+                           Height="20"
+                           Margin="11,41,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontSize="13.333"
+                           Foreground="White"
+                           LineHeight="13.333"
+                           LineStackingStrategy="BlockLineHeight"
+                           TextWrapping="Wrap"><Run Text="Dosage" />
+                    <LineBreak /><Run /></TextBlock>
+                                    <CheckBox x:Name="PriceTxt_Copy"
+                         Width="52"
+                         Height="22"
+                         Margin="321,63,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Background="White"
+                         FontFamily="DS-Digital"
+                         FontSize="16"
+                         FontWeight="Bold"
+                         Foreground="#FFD7D7D7"
+                         RenderTransformOrigin="0.488,0.466"
+                         IsChecked="{Binding IsVat,
+                                        UpdateSourceTrigger=PropertyChanged,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True}"
+                         TextOptions.TextFormattingMode="Display" />
+                                    <TextBlock Width="34"
+                           Height="20"
+                           Margin="282,68,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontSize="13.333"
+                           Foreground="White"
+                           LineHeight="13.333"
+                           LineStackingStrategy="BlockLineHeight"
+                           Text="VAT"
+                           TextWrapping="Wrap" />
+                                    <Button x:Name="SaveMedicineBtn"
+                        Width="51"
+                        Height="25"
+                        Margin="321,113,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="SaveMedicineBtn_Click"
+                        Content="Save" />
+                                    <TextBlock Width="34"
+                           Height="20"
+                           Margin="282,13,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontSize="13.333"
+                           Foreground="White"
+                           LineHeight="13.333"
+                           LineStackingStrategy="BlockLineHeight"
+                           Text="Qty"
+                           TextWrapping="Wrap" />
+                                    <CheckBox Width="90"
+                          Height="17"
+                          Margin="136,119,0,0"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Content="Inactive"
+                          IsChecked="{Binding Inactive,
+                                              UpdateSourceTrigger=PropertyChanged}" />
+                                    <CheckBox Width="90"
+                                        Height="17"
+                                        Margin="136,97,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Content="QBActive"
+                                        IsChecked="{Binding QBActive, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button x:Name="SaveMedicineBtn_Copy"
+                                        Width="70"
+                                        Height="25"
+                                        Margin="9,111,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Click="AddDrugBtn_Click"
+                                        Content="AddDrug" />
 
-        </Button>
-        <Button HorizontalAlignment="Left" Click="SearchMedication"  Height="35" Margin="166,3,0,0" VerticalAlignment="Top" Width="37">
-            <Button.Background>
-                <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
-            </Button.Background>
-            <Image Source="{DynamicResource Asprin}"/>
+                                </Grid>
 
-        </Button>
-        <Button HorizontalAlignment="Left" Click="SearchDoctor"  Height="35" Margin="250,3,0,0" VerticalAlignment="Top" Width="37">
-            <Button.Background>
-                <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
-            </Button.Background>
-            <Image Source="{DynamicResource Doctor}"/>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </StackPanel>
+                <TextBlock Text="{Binding DrugSearchResults.Count, StringFormat=0 Results}" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Foreground="#FFF0FBA9"/>
+                <TextBlock x:Name="DrugStatus" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="133" Foreground="#FFF0FBA9" TextAlignment="Right"/>
 
-        </Button>
-        <TextBlock Text="{Binding SearchResults.Count, StringFormat=0 Results}" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Foreground="#FFF0FBA9"/>
-        <TextBlock x:Name="Status" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="133" Foreground="#FFF0FBA9" TextAlignment="Right"/>
-        <CheckBox Content="Show Inactive Items" HorizontalAlignment="Right" Height="20" Margin="0,82,10.667,0" VerticalAlignment="Top" Width="128" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
-    </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem >
+            <TabItem.Header>
+                <Grid>
+                    <Image Source="{DynamicResource Doctor}" Width="42"/>
+                </Grid>
+            </TabItem.Header>
+            <Grid  Width="Auto" Background="#4C202020" RenderTransformOrigin="0.498,0.496">
+
+                <TextBox Name="DoctorSearchBox" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,42,10,0" Background="#FF1F1F1F" Foreground="#FFD7D7D7" FontSize="20" FontFamily="Cordia New" Style="{DynamicResource FilterTextBoxStyle}" PreviewKeyDown="DoctorSearchBox_PreviewKeyDown"/>
+                <TextBlock Text="Doctors" HorizontalAlignment="Left" Height="31" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" FontSize="20" LineStackingStrategy="BlockLineHeight" LineHeight="32" TextAlignment="Left" Foreground="White" Margin="15,1,0,0"/>
+                <StackPanel>
+                    <ListBox Name="DoctorSearchList"  ItemsSource="{Binding DoctorSearchResults, IsAsync=True}" Height="Auto" MinHeight="300" Margin="0,107,0.667,0" VerticalAlignment="Top" Width="Auto" MinWidth="280" Background="#33FFFFFF" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <ContentControl Content="{Binding CurrentDoctor, Mode=OneWay}" Margin="10" Height="129">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate DataType="{x:Type data:Doctor}">
+                                <Grid Background="#FFF2FF6E" Margin="0,0,0,-17">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="41*" />
+                                        <ColumnDefinition Width="42*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="22*" />
+                                        <RowDefinition Height="29*" />
+                                        <RowDefinition Height="32*" />
+                                        <RowDefinition Height="29*" />
+                                        <RowDefinition Height="34"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Width="135"
+                           Height="25"
+                           Margin="10,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           FontFamily="Segoe UI Light"
+                           FontSize="18"
+                           Text="Add Doctor"
+                           TextWrapping="Wrap" Grid.RowSpan="2" />
+                                    <TextBlock Grid.Row="1"
+                           Width="65"
+                           Height="16"
+                           Margin="10,6,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="First Name"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="1"
+                         Width="120"
+                         Height="23"
+                         Margin="75,3,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding FirstName,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="1"
+                           Grid.Column="1"
+                           Width="65"
+                           Height="16"
+                           Margin="5,6,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Last Name"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Width="120"
+                         Height="23"
+                         Margin="70,3,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding LastName,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2"
+                           Width="65"
+                           Height="16"
+                           Margin="10,9,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Address"
+                           TextWrapping="Wrap" Grid.RowSpan="1" />
+                                    <TextBox Grid.Row="2"
+                         Width="120"
+                         Height="23"
+                         Margin="75,6,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Address,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2"
+                           Grid.Column="1"
+                           Width="65"
+                           Height="16"
+                           Margin="5,9,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Phone No."
+                           TextWrapping="Wrap" Grid.RowSpan="1" />
+                                    <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         Width="120"
+                         Height="23"
+                         Margin="70,6,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding PhoneNumber,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="3"
+                           Width="70"
+                           Height="16"
+                           Margin="5,8,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Code"
+                           TextWrapping="Wrap" />
+                                    <TextBox Grid.Row="3"
+                         Width="70"
+                         Height="23"
+                         Margin="75,5,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Code,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button x:Name="SaveDoctorBtn"
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Width="67"
+                        Height="23"
+                        Margin="123,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="SaveDoctorBtn_Click"
+                        Content="Save" />
+
+                                    <TextBlock Grid.Row="3"
+                           Width="27"
+                           Height="16"
+                           Margin="7,4,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Text="Disc. %"
+                           TextWrapping="Wrap" Grid.Column="1" />
+                                    <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         Width="49"
+                         Height="23"
+                         Margin="67,5,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Text="{Binding Discount,
+                                        Mode=TwoWay,
+                                        ValidatesOnNotifyDataErrors=True,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                                    <Button x:Name="SaveDoctorBtn_Copy"
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Width="67"
+                                        Height="23"
+                                        Margin="5,4,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Click="AddDoctorBtn_Click"
+                                        Content="Add Doctor" />
+
+
+                                </Grid>
+
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </StackPanel>
+                <TextBlock Text="{Binding SearchResults.Count, StringFormat=0 Results}" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Foreground="#FFF0FBA9"/>
+                <TextBlock x:Name="DoctorStatus" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="133" Foreground="#FFF0FBA9" TextAlignment="Right"/>
+
+            </Grid>
+        </TabItem>
+    </TabControl>
 </UserControl>

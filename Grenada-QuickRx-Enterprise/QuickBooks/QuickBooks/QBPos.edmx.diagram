@@ -8,8 +8,8 @@
         <EntityTypeShape EntityType="QBPOSModel.InventoryAdjustmentItem" Width="2.25" PointX="1.125" PointY="0.5" />
         <EntityTypeShape EntityType="QBPOSModel.InventoryAdjustment" Width="2.5" PointX="4.625" PointY="1.5" />
         <EntityTypeShape EntityType="QBPOSModel.InventoryItem" Width="2.25" PointX="8.375" PointY="0.875" />
-        <EntityTypeShape EntityType="QBPOSModel.SalesReceiptDetail" Width="2.25" PointX="12.375" PointY="1.5" />
-        <EntityTypeShape EntityType="QBPOSModel.SalesReceipt" Width="2.25" PointX="16.75" PointY="2.25" />
+        <EntityTypeShape EntityType="QBPOSModel.SalesReceiptDetail" Width="2.25" PointX="13" PointY="0.5" />
+        <EntityTypeShape EntityType="QBPOSModel.SalesReceipt" Width="2.25" PointX="16.875" PointY="0.5" />
         <AssociationConnector Association="QBPOSModel.FK_InventoryAdjustmentInventoryAdjustmentItem" />
         <AssociationConnector Association="QBPOSModel.FK_SalesReceiptSalesReceiptDetails" />
       </Diagram>

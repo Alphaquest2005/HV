@@ -243,9 +243,9 @@
                 <TextBlock Text="{Binding OpeningTime, StringFormat=\{0:M/d/yyyy h:mm:ss tt\}, Mode=OneWay}" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="150" Grid.Column="1" Grid.Row="3" Margin="0,3.364,0,0" Grid.RowSpan="2"/>
                 <TextBlock Text="Opening Cash:" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap"  VerticalAlignment="Top" Width="80" Grid.Row="4" Margin="0,3.818,0,0"/>
                 <TextBlock Text="{Binding OpeningCash, Mode=OneWay, StringFormat=c}" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="150" Grid.Column="1" Grid.Row="4" Margin="0,3.818,0,0" Grid.RowSpan="2"/>
-                <TextBlock Text="Opening Cashier:" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap"  VerticalAlignment="Top" Width="107" Grid.Row="2"/>
+                <TextBlock Text="Opening CurrentLogin:" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap"  VerticalAlignment="Top" Width="107" Grid.Row="2"/>
                 <TextBlock Text="{Binding OpenCashier.DisplayName, Mode=OneWay}" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="150" Grid.Column="1" Grid.Row="2" Margin="3,2.909,0,0" Grid.RowSpan="2"/>
-                <TextBlock Text="Closing Cashier:" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap"  VerticalAlignment="Top" Width="107" Grid.Row="6"/>
+                <TextBlock Text="Closing CurrentLogin:" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap"  VerticalAlignment="Top" Width="107" Grid.Row="6"/>
                 <TextBlock Text="{Binding CloseCashier.DisplayName, Mode=OneWay}" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="150" Grid.Column="1" Grid.Row="6" Margin="3,0.727,0,0"/>
                 <TextBlock HorizontalAlignment="Left" Height="18" TextWrapping="Wrap"  VerticalAlignment="Top" Width="75" Grid.Row="9" Margin="0,2.75,0,0" Text="Total Tender:"/>
                 <TextBlock Text="{Binding TotalTenderEx, Mode=OneWay, StringFormat=\{0:c\}}" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" Grid.Column="1" Grid.Row="9" Margin="0,0.75,0,0"/>

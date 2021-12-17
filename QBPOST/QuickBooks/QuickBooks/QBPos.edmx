@@ -92,7 +92,7 @@
     <Property Name="TxnID" Type="nvarchar(max)" Nullable="true" />
     <Property Name="SalesReceiptType" Type="nvarchar(max)" Nullable="false" />
     <Property Name="TrackingNumber" Type="nvarchar(max)" Nullable="true" />
-    <Property Name="Discount" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DiscountPercent" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <Association Name="FK_InventoryAdjustmentInventoryAdjustmentItem">
     <End Role="InventoryAdjustment" Type="QBPOSModel.Store.InventoryAdjustments" Multiplicity="1">
@@ -217,7 +217,7 @@
           <Property Type="String" Name="TxnID" Nullable="true" />
           <Property Type="String" Name="SalesReceiptType" Nullable="false" />
           <Property Type="String" Name="TrackingNumber" Nullable="true" />
-          <Property Type="String" Name="Discount" Nullable="false" />
+          <Property Type="String" Name="DiscountPercent" Nullable="false" />
         </EntityType>
         <Association Name="FK_InventoryAdjustmentInventoryAdjustmentItem">
           <End Type="QBPOSModel.InventoryAdjustment" Role="InventoryAdjustment" Multiplicity="1">
@@ -328,7 +328,7 @@
           <ScalarProperty Name="TxnID" ColumnName="TxnID" />
           <ScalarProperty Name="SalesReceiptType" ColumnName="SalesReceiptType" />
           <ScalarProperty Name="TrackingNumber" ColumnName="TrackingNumber" />
-          <ScalarProperty Name="Discount" ColumnName="Discount" />
+          <ScalarProperty Name="DiscountPercent" ColumnName="DiscountPercent" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Common.Core.Logging;
 using log4netWrapper;
+using Microsoft.Win32;
 using SimpleMvvmToolkit;
 
 namespace SalesRegion
@@ -24,14 +25,14 @@ namespace SalesRegion
         {
             InitializeComponent();
             //DataContext = SalesVM.Instance;
-           // SalesVM = SalesVM.Instance;
-           // SalesPad.SalesVM = SalesVM.Instance;
+            // SalesVM = SalesVM.Instance;
+            // SalesPad.SalesVM = SalesVM.Instance;
             if (SalesPad != null) SalesPad.SalesView = this;
 
 
             if (SalesLst != null)
             {
-                var notifyCollectionChanged = (INotifyCollectionChanged)SalesLst.Items;
+                var notifyCollectionChanged = (INotifyCollectionChanged) SalesLst.Items;
                 if (notifyCollectionChanged != null)
                     notifyCollectionChanged.CollectionChanged += SalesView_CollectionChanged;
 
@@ -39,17 +40,17 @@ namespace SalesRegion
                 SalesLst.SelectionChanged += SalesLst_SelectionChanged;
                 //  SalesPad.LayoutUpdated += SalesPad_LayoutUpdated;
                 //SalesLst.SizeChanged += SalesLst_SizeChanged;
-            
+
                 SalesLst.LayoutUpdated += SalesLst_LayoutUpdated;
             }
             // salesVM.ParentCanvas = ppcan;
-           
-            
+
+
             HideReceipt();
             ShowTransaction();
 
             SetUpSalesPad();
-           
+
 
         }
 
@@ -64,12 +65,14 @@ namespace SalesRegion
                     SalesPad.Margin = SalesPadMargin;
                     Canvas.SetTop(SalesPad, 0);
                 }
+
                 this.SalesLst.SelectedIndex = 0;
             }
+
             SetSalesPadtoSelectedItem();
         }
 
-       
+
 
 
 
@@ -78,125 +81,135 @@ namespace SalesRegion
             try
             {
 
-            if (e != null && e.Action == NotifyCollectionChangedAction.Add)
-            {
-                if (e.NewItems != null && e.NewItems.Count > 0)
+                if (e != null && e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    if (SalesLst != null)
+                    if (e.NewItems != null && e.NewItems.Count > 0)
                     {
-                        SalesLst.ScrollIntoView(e.NewItems[0]);
-                        SalesLst.SelectedItem = e.NewItems[0];
+                        if (SalesLst != null)
+                        {
+                            SalesLst.ScrollIntoView(e.NewItems[0]);
+                            SalesLst.SelectedItem = e.NewItems[0];
+                        }
                     }
+
+                    SalesVM.Instance.TransactionData.CurrentTransactionEntry =
+                        (PrescriptionEntry) SalesLst.SelectedItem;
                 }
-                SalesVM.Instance.TransactionData.CurrentTransactionEntry = (PrescriptionEntry)SalesLst.SelectedItem;
-            }
-            else if(e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                SetUpSalesPad();
-               // SalesLst_SelectionChanged(null, null);
-            }
+                else if (e.Action == NotifyCollectionChangedAction.Reset)
+                {
+                    SetUpSalesPad();
+                    // SalesLst_SelectionChanged(null, null);
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
 
-       public enum PadPosition
+        public enum PadPosition
         {
             Above,
             Middle,
             Below,
         }
+
         public PadPosition padPos = PadPosition.Middle;
+
         void SalesLst_LayoutUpdated(object sender, EventArgs e)
         {
             SalesPad_LayoutUpdated(null, null);
         }
+
         Thickness SalesPadMargin = new Thickness(0, 0, 0, 0);
+
         void SalesPad_LayoutUpdated(object sender, EventArgs e)
         {
-           
-                if ( SalesLst.SelectedIndex != -1)
-                {
-                    Canvas.SetTop(SalesLst, 0);
-                    Canvas.SetTop(SalesPad, 0);
-                    SetSalesPadtoSelectedItem();
-                    pkey = Key.None;
-                    return;
-                }
+
+            if (SalesLst.SelectedIndex != -1)
+            {
+                Canvas.SetTop(SalesLst, 0);
+                Canvas.SetTop(SalesPad, 0);
+                SetSalesPadtoSelectedItem();
+                pkey = Key.None;
+                return;
+            }
         }
 
         public void MoveSalesPadDown()
         {
             try
             {
-            SalesLst.UpdateLayout();
-            SalesPad.Margin = SalesPadMargin;
-
-
-            if (padPos == PadPosition.Above && SalesLst.SelectedIndex != -1)
-            {
-                Canvas.SetTop(SalesLst, 0);
-                SetSalesPadtoSelectedItem();
-                padPos = PadPosition.Middle;
-            }
-
-            if (padPos == PadPosition.Middle)
-            {
-                if (SalesLst.SelectedIndex == -1)
-                {
-                    Canvas.SetTop(SalesLst, 0);
-                    // SalesPad.Margin = SalesPadMargin;
-                    Canvas.SetTop(SalesPad, SalesLst.ActualHeight + 8);
-                    SetSalesPadtoSelectedItem();
-                    if (SalesLst.SelectedIndex == -1) padPos = PadPosition.Below;
-                }
-                else
-                {
-                    Canvas.SetTop(SalesLst, 0);
-                    SetSalesPadtoSelectedItem();
-                }
-              
-            }
-
-            if (SalesLst.SelectedIndex != -1 && padPos == PadPosition.Below)
-            {
-                Canvas.SetTop(SalesLst, 0);
-                Canvas.SetTop(SalesPad, 0);
+                SalesLst.UpdateLayout();
                 SalesPad.Margin = SalesPadMargin;
-                SetSalesPadtoSelectedItem();
-                if (SalesLst.SelectedIndex == 0) padPos = PadPosition.Middle;
-               // padPos = PadPosition.Below;
-            }
+
+
+                if (padPos == PadPosition.Above && SalesLst.SelectedIndex != -1)
+                {
+                    Canvas.SetTop(SalesLst, 0);
+                    SetSalesPadtoSelectedItem();
+                    padPos = PadPosition.Middle;
+                }
+
+                if (padPos == PadPosition.Middle)
+                {
+                    if (SalesLst.SelectedIndex == -1)
+                    {
+                        Canvas.SetTop(SalesLst, 0);
+                        // SalesPad.Margin = SalesPadMargin;
+                        Canvas.SetTop(SalesPad, SalesLst.ActualHeight + 8);
+                        SetSalesPadtoSelectedItem();
+                        if (SalesLst.SelectedIndex == -1) padPos = PadPosition.Below;
+                    }
+                    else
+                    {
+                        Canvas.SetTop(SalesLst, 0);
+                        SetSalesPadtoSelectedItem();
+                    }
+
+                }
+
+                if (SalesLst.SelectedIndex != -1 && padPos == PadPosition.Below)
+                {
+                    Canvas.SetTop(SalesLst, 0);
+                    Canvas.SetTop(SalesPad, 0);
+                    SalesPad.Margin = SalesPadMargin;
+                    SetSalesPadtoSelectedItem();
+                    if (SalesLst.SelectedIndex == 0) padPos = PadPosition.Middle;
+                    // padPos = PadPosition.Below;
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
 
 
-        
+
         FrameworkElement f;
+
         void SalesLst_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-            
-            if (SalesVM.Instance.TransactionData == null) return;
-            if (SalesLst.SelectedItem == null) return;
 
-            SalesVM.Instance.TransactionData.CurrentTransactionEntry = (PrescriptionEntry)SalesLst.SelectedItem;
-            if (padPos != PadPosition.Middle) return;
-            SalesPad_LayoutUpdated(null, null);
-            
+                if (SalesVM.Instance.TransactionData == null) return;
+                if (SalesLst.SelectedItem == null) return;
+
+                SalesVM.Instance.TransactionData.CurrentTransactionEntry = (PrescriptionEntry) SalesLst.SelectedItem;
+                if (padPos != PadPosition.Middle) return;
+                SalesPad_LayoutUpdated(null, null);
+
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
@@ -206,74 +219,78 @@ namespace SalesRegion
             try
             {
 
-            SalesLst.UpdateLayout();
-            f = (FrameworkElement)SalesLst.ItemContainerGenerator.ContainerFromItem(SalesLst.SelectedItem);
-            if (f != null )//&& f.Parent != null
-            {
-                var transformToAncestor = ((FrameworkElement)f).TransformToAncestor(ppcan);
-                if (transformToAncestor != null)
+                SalesLst.UpdateLayout();
+                f = (FrameworkElement) SalesLst.ItemContainerGenerator.ContainerFromItem(SalesLst.SelectedItem);
+                if (f != null) //&& f.Parent != null
                 {
-                    Rect r = transformToAncestor.TransformBounds(new Rect(0, 0, 0, 0));
-                    SalesPad.Margin = new Thickness(r.Left, r.Top, r.Right, r.Bottom);
+                    var transformToAncestor = ((FrameworkElement) f).TransformToAncestor(ppcan);
+                    if (transformToAncestor != null)
+                    {
+                        Rect r = transformToAncestor.TransformBounds(new Rect(0, 0, 0, 0));
+                        SalesPad.Margin = new Thickness(r.Left, r.Top, r.Right, r.Bottom);
+                    }
                 }
-            }
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
 
-       public SalesPadTransState SalesPadState = SalesPadTransState.Transaction;
-       public Key pkey;
+        public SalesPadTransState SalesPadState = SalesPadTransState.Transaction;
+        public Key pkey;
+
         public void ppcan_PreviewKeyDown_1(object sender, KeyEventArgs e)
         {
             try
             {
-            var uie = e.OriginalSource as Control;
+                var uie = e.OriginalSource as Control;
 
-            if (uie == null) uie = SalesPad.SearchBox as Control;
+                if (uie == null) uie = SalesPad.SearchBox as Control;
 
-            if ( uie.Name == "PART_FilterBox" && ((uie as TextBox).Text != "") && (e.Key == Key.Up || e.Key == Key.Down))
-            {
-               
-                return;
-            }
+                if (uie.Name == "PART_FilterBox" && ((uie as TextBox).Text != "") &&
+                    (e.Key == Key.Up || e.Key == Key.Down))
+                {
 
-            if (uie.Name == "PrintBtn" && e.Key == Key.Enter)
-            {
-                if (pkey == Key.Enter) GotoNextSalesStep(e.Key);
-                e.Handled = true;
+                    return;
+                }
+
+                if (uie.Name == "PrintBtn" && e.Key == Key.Enter)
+                {
+                    if (pkey == Key.Enter) GotoNextSalesStep(e.Key);
+                    e.Handled = true;
+                    pkey = e.Key;
+                    return;
+                }
+
+
+                //if (e.KeyboardDevice != null && (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.P))
+                //{
+                //    if (SalesPadState != SalesPadTransState.Receipt)
+                //    {
+                //        HideCurrentSalesPadState();
+                //        // unhide the colums to print
+                //        ShowReceipt();
+                //        SalesVM.Instance.Print(ref SalesPad.ReceiptGrd);
+                //        e.Handled = true;
+                //        //hide it back
+                //    }
+                //    else
+                //    {
+                //        SalesVM.Instance.Print(ref SalesPad.ReceiptGrd);
+                //        e.Handled = true;
+                //    }
+
+                //}
+
                 pkey = e.Key;
-                return;
-            }
-
-           
-            //if (e.KeyboardDevice != null && (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.P))
-            //{
-            //    if (SalesPadState != SalesPadTransState.Receipt)
-            //    {
-            //        HideCurrentSalesPadState();
-            //        // unhide the colums to print
-            //        ShowReceipt();
-            //        SalesVM.Instance.Print(ref SalesPad.ReceiptGrd);
-            //        e.Handled = true;
-            //        //hide it back
-            //    }
-            //    else
-            //    {
-            //        SalesVM.Instance.Print(ref SalesPad.ReceiptGrd);
-            //        e.Handled = true;
-            //    }
-               
-            //}
-
-            pkey = e.Key;
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
@@ -281,7 +298,7 @@ namespace SalesRegion
         private void HideCurrentSalesPadState()
         {
             if (SalesPadState == SalesPadTransState.Transaction) HideTransaction();
-            
+
             if (SalesPadState == SalesPadTransState.Receipt) HideReceipt();
         }
 
@@ -295,22 +312,25 @@ namespace SalesRegion
         {
             try
             {
-            SalesLst.SelectedIndex = 0;
-            if (SalesPadState == SalesPadTransState.Receipt)//SalesPad.TotalsCol.Width == new GridLength(0) && SalesPad.PaymentCol.Width == new GridLength(0)
-            {
-                HideReceipt();
-                ShowTransaction();
-                return;
-            }
-            if (SalesPadState == SalesPadTransState.Transaction)
-            {
-                SalesVM.Instance.GoToPreviousTransaction();
-                
-            }
+                SalesLst.SelectedIndex = 0;
+                if (SalesPadState == SalesPadTransState.Receipt
+                ) //SalesPad.TotalsCol.Width == new GridLength(0) && SalesPad.PaymentCol.Width == new GridLength(0)
+                {
+                    HideReceipt();
+                    ShowTransaction();
+                    return;
+                }
+
+                if (SalesPadState == SalesPadTransState.Transaction)
+                {
+                    SalesVM.Instance.GoToPreviousTransaction();
+
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
@@ -321,23 +341,30 @@ namespace SalesRegion
             {
                 SalesPad.ReceiptCol.Width = new GridLength(0);
                 SalesPad.ReceiptGrd.Visibility = System.Windows.Visibility.Hidden;
+                SalesPad.MapStuff.Visibility = System.Windows.Visibility.Collapsed;
+                SalesPad.OrderLabel.Visibility = System.Windows.Visibility.Collapsed;
                 SalesPad.PrintCol.Width = new GridLength(0);
                 SalesPad.PrintGrd.Visibility = System.Windows.Visibility.Hidden;
             }
         }
+
         public void ShowReceipt()
         {
             if (SalesPad != null)
             {
                 SalesPad.ReceiptCol.Width = new GridLength(400);
                 SalesPad.ReceiptGrd.Visibility = System.Windows.Visibility.Visible;
+                SalesPad.MapStuff.Visibility = System.Windows.Visibility.Visible;
+                // SalesPad.Photo.Visibility = System.Windows.Visibility.Collapsed;
+                SalesPad.OrderLabel.Visibility = System.Windows.Visibility.Visible;
                 SalesPad.PrintCol.Width = new GridLength(200);
                 SalesPad.PrintGrd.Visibility = System.Windows.Visibility.Visible;
                 SalesTaskPad.Instance.MoveToNextControl(SalesPad.PrintGrd);
             }
+
             SalesPadState = SalesPadTransState.Receipt;
-            
-            
+
+
         }
 
         public void ShowTransaction()
@@ -346,10 +373,13 @@ namespace SalesRegion
             {
                 SalesPad.EntryCol.Width = new GridLength(408);
                 SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Visible;
+                //  SalesPad.Photo.Visibility = System.Windows.Visibility.Visible;
+                SalesPad.CommentsTxt.Visibility = System.Windows.Visibility.Visible;
                 SalesPad.TotalsCol.Width = new GridLength(200);
                 SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Visible;
                 SalesTaskPad.Instance.MoveToNextControl(SalesPad.TransactionGrd);
             }
+
             SalesPadState = SalesPadTransState.Transaction;
 
         }
@@ -364,62 +394,89 @@ namespace SalesRegion
         {
             try
             {
-            if (SalesPadState == SalesPadTransState.Receipt && (e == Key.Right || e == Key.Enter))
-            {
-                HideReceipt();
-                SalesVM.Instance.CloseTransaction();
-                ShowTransaction();
-                return;
-            }
-
-
-            if (SalesPadState == SalesPadTransState.Transaction)
-            {
-                if (SalesVM.Instance.TransactionData != null && SalesVM.Instance.TransactionData.GetType() == typeof(Prescription))
+                if (SalesPadState == SalesPadTransState.Receipt && (e == Key.Right || e == Key.Enter))
                 {
-                    var p = SalesVM.Instance.TransactionData as Prescription;
-                    if (p.Doctor == null)
-                    {
-                        MessageBox.Show("Please Select a doctor");
-                        return;
-                    }
-                    if (p.Patient == null)
-                    {
-                        MessageBox.Show("Please Select a Patient");
-                        return;
-                    }
+                    HideReceipt();
+
+                    SalesVM.Instance.CloseTransaction();
+
+                    ShowTransaction();
+                    return;
                 }
 
-                HideTransaction();
-                if (SalesVM.Instance.TransactionData != null && SalesVM.Instance.TransactionData.Status == null)
+
+                if (SalesPadState == SalesPadTransState.Transaction)
                 {
-                    if (!SalesVM.Instance.SaveTransaction())
+                    if (SalesVM.Instance.TransactionData != null && 
+                        SalesVM.Instance.TransactionData.GetType() == typeof(Prescription))
                     {
-                         MessageBox.Show("Saving Transaction Failed Try again!");
-                        //return;
-                    };
+                        var p = SalesVM.Instance.TransactionData as Prescription;
+                        if (p.Doctor == null)
+                        {
+                            var res = MessageBox.Show("Please Select a doctor");
+                            return;
+                        }
+
+                        if (p.Patient == null)
+                        {
+                            MessageBox.Show("Please Select a Patient");
+                            return;
+                        }
+                    }
+
+                    if (SalesVM.Instance.TransactionData is QuickPrescription q )
+                    {
+                        if (q.Patient == null)
+                        {
+                            MessageBox.Show("Please Select a Patient");
+                            return;
+                        }
+                    }
+
+                    HideTransaction();
+                    if (SalesVM.Instance.TransactionData != null) //&& SalesVM.Instance.TransactionData.Status == null
+                    {
+                        if ( !SalesVM.Instance.SaveTransaction())
+                        {
+                            MessageBox.Show("Saving Transaction Failed Try again!");
+                            //return;
+                        }
+
+                        ;
                         //ShowReceipt();
                     }
-                ShowReceipt();
-               }
+
+                    ShowReceipt();
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
 
         public void HideTransaction()
         {
-            if (SalesPad != null)
+            try
             {
-                SalesPad.EntryCol.Width = new GridLength(0);
-                SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Hidden;
-                SalesPad.TotalsCol.Width = new GridLength(0);
-                SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Hidden;
-                SalesTaskPad.Instance.MoveToNextControl(SalesPad.ReceiptGrd);
+                if (SalesPad != null)
+                {
+                    SalesPad.EntryCol.Width = new GridLength(0);
+                    SalesPad.TransactionGrd.Visibility = System.Windows.Visibility.Hidden;
+                    SalesPad.CommentsTxt.Visibility = System.Windows.Visibility.Collapsed;
+                    SalesPad.TotalsCol.Width = new GridLength(0);
+                    SalesPad.TotalsGrd.Visibility = System.Windows.Visibility.Hidden;
+                    SalesTaskPad.Instance.MoveToNextControl(SalesPad.ReceiptGrd);
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
 
 
@@ -427,33 +484,34 @@ namespace SalesRegion
         {
             try
             {
-            if (SalesVM.Instance.TransactionData == null) return;
-            
-            if(!SalesVM.Instance.SaveTransaction()) return;
+                if (SalesVM.Instance.TransactionData == null) return;
+
+                if (!SalesVM.Instance.SaveTransaction()) return;
 
                 if (SalesLst.SelectedIndex == SalesLst.Items.Count - 1)
-            {
-                
+                {
 
-               padPos = PadPosition.Below;
-               SalesVM.Instance.TransactionData.CurrentTransactionEntry = null;
-               SalesLst.SelectedItem = null;
-               Canvas.SetTop(SalesLst, 0);
-               SalesLst.UpdateLayout();
-               Canvas.SetTop(SalesPad, 0);
-               SalesPad.Margin = SalesPadMargin;
-               Canvas.SetTop(SalesPad, SalesLst.ActualHeight + 8);
-               SetSalesPadtoSelectedItem();
-            }
-            else
-            {
-                SalesLst.SelectedIndex += 1; // selected index don't change when more than list
 
-            }
+                    padPos = PadPosition.Below;
+                    SalesVM.Instance.TransactionData.CurrentTransactionEntry = null;
+                    SalesLst.SelectedItem = null;
+                    Canvas.SetTop(SalesLst, 0);
+                    SalesLst.UpdateLayout();
+                    Canvas.SetTop(SalesPad, 0);
+                    SalesPad.Margin = SalesPadMargin;
+                    Canvas.SetTop(SalesPad, SalesLst.ActualHeight + 8);
+                    SetSalesPadtoSelectedItem();
+                }
+                else
+                {
+                    SalesLst.SelectedIndex += 1; // selected index don't change when more than list
+
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+                Logger.Log(LoggingLevel.Error,
+                    GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
                 throw ex;
             }
         }
@@ -474,14 +532,23 @@ namespace SalesRegion
 
         private void EditDoctorTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if ((SalesVM.Instance.TransactionData as Prescription).Doctor != null)
+            if ((SalesVM.Instance.TransactionData as Prescription)?.Doctor != null)
                 SalesPad.ItemEditor.Content = (SalesVM.Instance.TransactionData as Prescription).Doctor;
         }
 
         private void EditPatientTB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if ((SalesVM.Instance.TransactionData as Prescription).Patient != null)
+
+
+            if ((SalesVM.Instance.TransactionData as Prescription)?.Patient != null)
+            {
                 SalesPad.ItemEditor.Content = (SalesVM.Instance.TransactionData as Prescription).Patient;
+            }
+
+            if ((SalesVM.Instance.TransactionData as QuickPrescription)?.Patient != null)
+            {
+                SalesPad.ItemEditor.Content = (SalesVM.Instance.TransactionData as QuickPrescription).Patient;
+            }
         }
 
         private void DeleteTranBtn_Click(object sender, RoutedEventArgs e)
@@ -503,8 +570,105 @@ namespace SalesRegion
 
         private void GoToMaster(object sender, RoutedEventArgs e)
         {
-           var trans = SalesVM.Instance.TransactionData as Prescription;
-           if(trans.ParentTransactionId.GetValueOrDefault() > 0) SalesVM.Instance.GoToTransaction(trans.ParentTransactionId.GetValueOrDefault());
+            var trans = SalesVM.Instance.TransactionData as Prescription;
+            if (trans.ParentTransactionId.GetValueOrDefault() > 0)
+                SalesVM.Instance.GoToTransaction(trans.ParentTransactionId.GetValueOrDefault());
+        }
+
+        private void AddPicture(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var patient = ((dynamic) SalesVM.Instance.TransactionData).Patient;
+                if (patient == null)
+                {
+                    MessageBox.Show("Please add Patient before selecting Picture.");
+                    return;
+                }
+
+                FileDialog fldlg = new OpenFileDialog();
+                fldlg.InitialDirectory = Environment.SpecialFolder.MyPictures.ToString();
+                fldlg.Filter = "Image File (*.jpg;*.bmp;*.gif)|*.jpg;*.bmp;*.gif";
+                fldlg.ShowDialog();
+                {
+
+                    var imageName = fldlg.FileName;
+                    if (string.IsNullOrEmpty(imageName)) return;
+                    //ImageSourceConverter isc = new ImageSourceConverter();
+                    //Photo.SetValue(Image.SourceProperty, isc.ConvertFromString(imageName));
+                    e.Handled = true;
+                    SalesVM.Instance.SavePhoto(patient, imageName);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        private void RewardClick(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            try
+            {
+                var res = (PatientAvailableReward) RewardLst.SelectedItem;
+                if (res == null) return;
+                var msgResult =
+                    MessageBox.Show("Have you informed the Customer of the Reward and Customer has Accepted?",
+                        "Please Confirm Acceptance!", MessageBoxButton.YesNo);
+                if (msgResult != MessageBoxResult.Yes)
+                {
+                    RewardLst.SelectedItem = null;
+                    return;
+                }
+                using (var ctx = new RMSModel())
+                {
+                    if (res.Status == null)
+                    {
+                        ctx.PatientRewards.Add(new PatientReward()
+                        {
+                            PatientId = res.PatientId,
+                            RewardId = res.RewardId,
+                            StoreName = res.StoreName,
+                            ItemNumber = res.ItemNumber,
+                            DateIssued = DateTime.Now
+                        });
+
+                        var patient = ctx.Persons.OfType<Patient>().First(x => x.Id == res.PatientId);
+                        if (patient.StartingSales == null) patient.StartingSales = 0;
+                        patient.StartingSales += (res.RewardPoints / res.PointRatePerDollar);
+                        ctx.SaveChanges();
+                        var rres = ctx.PatientAvailableRewards.FirstOrDefault(x => x.Id == res.Id);
+                        RewardLst.SelectedItem = rres;
+                    }
+
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+
+
+        }
+
+        private void PhoneNumberUpdate(object sender, RoutedEventArgs e)
+        {
+            if (SalesVM.Instance.Patient == null) return;
+            using (var ctx = new RMSModel())
+            {
+               
+                    var patient = ctx.Persons.OfType<Patient>().First(x => x.Id == SalesVM.Instance.Patient.Id);
+                    patient.PhoneNumber = ((TextBox)sender).Text;
+                    ctx.SaveChanges();
+               
+
+
+            }
         }
     }
 }

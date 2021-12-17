@@ -160,7 +160,7 @@ namespace QuickBooks
                     i.Price = Convert.ToDouble(itm.Price1);
                     i.Size = itm.Size;
                     i.TaxCode = itm.TaxCode;
-                    i.UnitOfMeasure = itm.UnitOfMeasure;
+                   // i.UnitOfMeasure = itm.UnitOfMeasure;
 
                 }
                 try

@@ -12,19 +12,19 @@ namespace QuickBooks
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
+
     public partial class QBPOSEntities : DbContext
     {
         public QBPOSEntities()
             : base("name=QBPOSEntities")
         {
         }
-    
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public DbSet<InventoryAdjustmentItem> InventoryAdjustmentItems { get; set; }
         public DbSet<InventoryAdjustment> InventoryAdjustments { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }

@@ -46,6 +46,24 @@ public partial class RMSModel : DbContext
 
     public virtual DbSet<QBInventoryItem> QBInventoryItems { get; set; }
 
+    public virtual DbSet<QBCustomer> QBCustomers { get; set; }
+
+    public virtual DbSet<IDCardInfo> IDCardInfoes { get; set; }
+
+    public virtual DbSet<QBSale> QBSales { get; set; }
+
+    public virtual DbSet<QBSalesDetail> QBSalesDetails { get; set; }
+
+    public virtual DbSet<PatientAvailableReward> PatientAvailableRewards { get; set; }
+
+    public virtual DbSet<PatientRewardSale> PatientRewardSales { get; set; }
+
+    public virtual DbSet<Store> Stores { get; set; }
+
+    public virtual DbSet<MembershipType> MembershipTypes { get; set; }
+
+    public virtual DbSet<PatientMembership> PatientMemberships { get; set; }
+
 }
 
 }

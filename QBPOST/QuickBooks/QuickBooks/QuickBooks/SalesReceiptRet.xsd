@@ -10,8 +10,8 @@
         <xs:element name="Cashier" type="xs:string" />
         <xs:element name="Comments" type="xs:string" />
         <xs:element name="CustomerListID" type="xs:string" />
-        <xs:element name="Discount" type="xs:decimal" />
         <xs:element name="DiscountPercent" type="xs:decimal" />
+        <xs:element name="DiscountPercentPercent" type="xs:decimal" />
         <xs:element name="HistoryDocStatus" type="xs:string" />
         <xs:element name="ItemsCount" type="xs:string" />
         <xs:element name="PriceLevelNumber">
@@ -97,10 +97,10 @@
               <xs:element name="Cost" type="xs:decimal" />
               <xs:element name="Desc1" type="xs:string" />
               <xs:element name="Desc2" type="xs:string" />
-              <xs:element name="Discount" type="xs:decimal" />
               <xs:element name="DiscountPercent" type="xs:decimal" />
-              <xs:element name="DiscountType" type="xs:string" />
-              <xs:element name="DiscountSource" type="xs:string" />
+              <xs:element name="DiscountPercentPercent" type="xs:decimal" />
+              <xs:element name="DiscountPercentType" type="xs:string" />
+              <xs:element name="DiscountPercentSource" type="xs:string" />
               <xs:element name="ExtendedPrice" type="xs:decimal" />
               <xs:element name="ExtendedTax" type="xs:decimal" />
               <xs:element name="ItemNumber" type="xs:string" />

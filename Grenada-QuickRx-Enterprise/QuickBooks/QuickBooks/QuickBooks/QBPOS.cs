@@ -70,9 +70,9 @@ namespace QuickBooks
             try
             {
                 
-                sessionManager.OpenConnection("1", "QS2QBPost");
+                sessionManager.OpenConnection("1", "QuickSales");
                 connectionOpen = true;
-                sessionManager.BeginSession("Computer Name=server;Company Data=hills and valley gd;Version=11");//
+                sessionManager.BeginSession("");//Computer Name=JOSEPH-PC;Company Data=test;Version=11
                 //sessionManager.BeginSession("");
                 
                 sessionBegun = true;
@@ -257,6 +257,31 @@ namespace QuickBooks
                 return lst;
             }
             return new List<ItemInventoryRet>();
+        }
+
+        public SalesReceiptRet AddCustomer(SalesReceipt salesreceipt)
+        {
+            //Create the message set request object to hold our request
+
+            if (sessionManager != null)
+            {
+                IMsgSetRequest SalesReceiptRequestMsgSet = sessionManager.CreateMsgSetRequest(3, 0);
+                SalesReceiptRequestMsgSet.Attributes.OnError = ENRqOnError.roeContinue;
+                SalesReceiptViewModel SalesReceiptVM = new SalesReceiptViewModel();
+                SalesReceiptVM.BuildSalesReceiptAddRq(SalesReceiptRequestMsgSet,
+                    SalesReceiptVM.BuildSalesReceipt(salesreceipt));
+
+                try
+                {
+                    return GetQBSalesReceipt(salesreceipt, SalesReceiptRequestMsgSet, SalesReceiptVM);
+                }
+                catch (COMException ce)
+                {
+                    // MessageBox.Show("QuickBooks Problem: " + ce.Message);
+                    return new SalesReceiptRet() { Comments = "QuickBooks Problem: " + ce.Message };
+                }
+            }
+            return new SalesReceiptRet();
         }
     }
 }

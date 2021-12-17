@@ -129,7 +129,8 @@ namespace RMSDataAccessLayer
     	}
     	private bool _Taxable;
         [DataMember]
-        	public string Comment
+                    [StringLength(255)]
+    	public string Comment
     	{ 
     		get { return _Comment; }
     		set

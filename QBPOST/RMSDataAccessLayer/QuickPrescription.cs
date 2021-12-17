@@ -22,5 +22,33 @@ namespace RMSDataAccessLayer
     
     public partial class QuickPrescription : TransactionBase
     {
+        [DataMember]
+        	public Nullable<int> PatientId
+    	{ 
+    		get { return _PatientId; }
+    		set
+    		{
+    			if (Equals(value, _PatientId)) return;
+    			_PatientId = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<int> _PatientId;
+        [DataMember]
+    	public Patient Patient
+    	{
+    		get { return _Patient; }
+    		set
+    		{
+    			if (Equals(value, _Patient)) return;
+    			_Patient = value;
+    			PatientChangeTracker = _Patient == null ? null
+    				: new ChangeTrackingCollection<Patient> { _Patient };
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Patient _Patient;
+    	private ChangeTrackingCollection<Patient> PatientChangeTracker { get; set; }
     }
 }

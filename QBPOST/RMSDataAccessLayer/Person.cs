@@ -75,6 +75,7 @@ namespace RMSDataAccessLayer
     	private int _Id;
         [DataMember]
                     [Required(ErrorMessage="FirstName is required")]
+                [StringLength(50)]
     	public string FirstName
     	{ 
     		get { return _FirstName; }
@@ -89,6 +90,7 @@ namespace RMSDataAccessLayer
     	private string _FirstName;
         [DataMember]
                     [Required(ErrorMessage="LastName is required")]
+                [StringLength(50)]
     	public string LastName
     	{ 
     		get { return _LastName; }
@@ -102,7 +104,8 @@ namespace RMSDataAccessLayer
     	}
     	private string _LastName;
         [DataMember]
-        	public string CompanyName
+                    [StringLength(50)]
+    	public string CompanyName
     	{ 
     		get { return _CompanyName; }
     		set
@@ -115,7 +118,8 @@ namespace RMSDataAccessLayer
     	}
     	private string _CompanyName;
         [DataMember]
-        	public string Salutation
+                    [StringLength(3)]
+    	public string Salutation
     	{ 
     		get { return _Salutation; }
     		set
@@ -128,7 +132,8 @@ namespace RMSDataAccessLayer
     	}
     	private string _Salutation;
         [DataMember]
-        	public string Address
+                    [StringLength(255)]
+    	public string Address
     	{ 
     		get { return _Address; }
     		set
@@ -141,7 +146,8 @@ namespace RMSDataAccessLayer
     	}
     	private string _Address;
         [DataMember]
-        	public string PhoneNumber
+                    [StringLength(50)]
+    	public string PhoneNumber
     	{ 
     		get { return _PhoneNumber; }
     		set

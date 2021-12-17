@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GMap.NET;
 
 namespace SalesRegion
 {
@@ -29,8 +30,20 @@ namespace SalesRegion
 
         }
 
-    
 
-     
+        private void Gmap_OnOnPositionChanged(PointLatLng point)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Gmap_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PrescriptionEntriesRptLst_LayoutUpdated(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,25 @@
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+
+//namespace QS2QBPost
+//{
+
+//    class Class1
+//    {
+//        private volatile Type _dependency;
+
+//        public Class1()
+//        {
+//            _dependency = typeof (System.Data.Entity.SqlServer.SqlProviderServices);
+//        }
+//    }
+//}
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -20,7 +40,7 @@ namespace QS2QBPost
 {
     public class QBClass : INotifyPropertyChanged
     {
-       
+
         private static volatile QBClass singleton;
         private static object syncRoot = new Object();
         private static Timer postingTimer;
@@ -33,9 +53,10 @@ namespace QS2QBPost
             postingTimer = new System.Timers.Timer(Properties.Settings.Default.DownloadIntervalInSeconds * 1000);
             postingTimer.Elapsed += Singleton.OnTimeToPost;
             postingTimer.Enabled = true;
+            Store = new RMSModel().Stores.First();
         }
 
-    
+
         public static QBClass Singleton
         {
             get
@@ -54,14 +75,14 @@ namespace QS2QBPost
         }
 
         public static bool IsPosting => postingTimer.Enabled;
-      
+
         public string Status
         {
             get { return _status; }
             set
             {
                 _status = value;
-               OnPropertyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -85,6 +106,8 @@ namespace QS2QBPost
             }
         }
 
+        public static Store Store { get; }
+
         private void OnTimeToPost(object sender, ElapsedEventArgs e)
         {
             try
@@ -98,7 +121,7 @@ namespace QS2QBPost
             {
                 throw;
             }
-            
+
         }
 
         public static void PostToQB()
@@ -132,7 +155,7 @@ namespace QS2QBPost
                 }
 
                 Singleton.Status = "Stopped Posting waiting on timer";
-               
+
 
             }
             catch (Exception ex)
@@ -144,16 +167,16 @@ namespace QS2QBPost
             {
                 postingTimer.Enabled = true;
             }
-           
-          
+
+
         }
 
-        private static void UpdateTransactionDataStatus(PostTransaction itm,string message)
+        private static void UpdateTransactionDataStatus(PostTransaction itm, string message)
         {
             using (var ctx = new RMSModel())
             {
                 var trns = ctx.TransactionBase.FirstOrDefault(x => x.TransactionId == itm.TransactionData.TransactionId);
-                trns.Status = message.Length > 50 ?message.Substring(0,50) : message;
+                trns.Status = message.Length > 50 ? message.Substring(0, 50) : message;
                 ctx.TransactionBase.AddOrUpdate(trns);
                 ctx.SaveChanges();
             }
@@ -166,7 +189,7 @@ namespace QS2QBPost
             {
                 using (var ctx = new RMSModel())
                 {
-
+                    ctx.Database.CommandTimeout = 0;
                     //ctx.TransactionBase.Where(x =>
                     //      x.Status == "ToBePosted" &&
                     //      x.TransactionEntries.Any(z => z.TransactionEntryItem.Item == null))
@@ -213,7 +236,7 @@ namespace QS2QBPost
                     int i = 0;
 
 
-                    lst = ctx.TransactionBase.Where(x => x.Status == "ToBePosted" && x.TransactionEntries.Any() && x.TransactionEntries.All(z => z.TransactionEntryItem.Item.QBActive == true))
+                    lst = ctx.TransactionBase.Where(x => x.Status == "ToBePosted" && x.TransactionEntries.Any() && x.TransactionEntries.All(z => z.TransactionEntryItem.Item.QBActive == true && !string.IsNullOrEmpty(z.TransactionEntryItem.Item.QBItemListID)))
                         .Select(x => new PostTransaction()
                         {
                             TransactionData = x,
@@ -224,7 +247,7 @@ namespace QS2QBPost
                                 Quantity = (int)z.Quantity
                             }).ToList()
                         }).ToList();
-             
+
 
 
 
@@ -233,6 +256,7 @@ namespace QS2QBPost
             }
             catch (Exception ex)
             {
+
                 Logger.Log(LoggingLevel.Error, ex.Message + ex.StackTrace);
                 Singleton.Status = "Error: " + ex.Message;
                 return new List<PostTransaction>();
@@ -252,7 +276,9 @@ namespace QS2QBPost
                 s.Workstation = "02";
                 s.StoreNumber = "1";
                 s.SalesReceiptNumber = "123";
-                s.Discount = "0";
+                s.DiscountPercent = "0";
+
+                Patient dbPatient = null;
 
                 if (pt.TransactionData == null || string.IsNullOrEmpty(pt.TransactionData.TransactionNumber))
                 {
@@ -264,6 +290,7 @@ namespace QS2QBPost
                 }
 
                 //TransPreZeroConverter tz = new TransPreZeroConverter();
+                var patientRewards = new List<PatientAvailableReward>();
 
                 if (pt.TransactionData is Prescription)
                 {
@@ -273,21 +300,47 @@ namespace QS2QBPost
                     if (p.Doctor != null)
                     {
                         doctor = p.Doctor.DisplayName;
-                        s.Discount = p.Doctor.Discount == null ? "" : p.Doctor.Discount.ToString();
+                        s.DiscountPercent = p.Doctor.Discount == null ? "" : p.Doctor.Discount.ToString();
                     }
                     if (p.Patient != null)
                     {
                         patient = p.Patient.ContactInfo;
-                        s.Discount = p.Patient.Discount == null ? "" : p.Patient.Discount.ToString();
+                        s.DiscountPercent = p.Patient.Discount == null ? "" : p.Patient.Discount.ToString();
+                        patientRewards.AddRange(p.Patient.AvailableRewards.ToList());
                     }
                     s.Comments = String.Format("{0} \n RX#:{1} \n Doctor:{2}", patient,
                         p.TransactionNumber, doctor);
+
+
+                    var qbCustomer = QBPOS.GetOrAddCustomerQuery(p.Patient, Settings.Default.QBCompanyFile);
+                    if (!string.IsNullOrEmpty(p.Patient?.PhoneNumber) && p.Patient?.IDCardInfo.FirstOrDefault() != null)
+                    {
+                      dbPatient =  UpdateCustomer(qbCustomer);
+                        if(p.Patient?.QBCustomer?.CustomerListID != null)
+                        s.CustomerListId = p.Patient.QBCustomer.CustomerListID;
+                    }
                 }
                 else
                 {
-                    s.Comments = "RX#:" + pt.TransactionData.TransactionNumber;
+                    QuickPrescription p = pt.TransactionData as QuickPrescription;
+                    s.Comments = $"{p.Patient.ContactInfo} \n RX#: {pt.TransactionData.TransactionNumber}";
+
+                    if (p.Patient != null)
+                    {
+                        if (!string.IsNullOrEmpty(p.Patient.PhoneNumber) && p.Patient?.IDCardInfo.FirstOrDefault() != null)
+                        {
+                            var qbCustomer = QBPOS.GetOrAddCustomerQuery(p.Patient, Settings.Default.QBCompanyFile);
+                            dbPatient = UpdateCustomer(qbCustomer);
+                            if (p.Patient?.QBCustomer?.CustomerListID != null)
+                                s.CustomerListId = qbCustomer.ListID;
+
+                        }
+
+                        patientRewards.AddRange(p.Patient.AvailableRewards.ToList());
+                    }
                 }
 
+             
 
                 if (pt.TransactionData != null)
                 {
@@ -295,7 +348,7 @@ namespace QS2QBPost
                 }
                 s.Associate = "Dispensary";
                 s.SalesReceiptType = "0";
-
+               
 
 
                 foreach (var item in pt.PostEntries)
@@ -308,28 +361,58 @@ namespace QS2QBPost
                         //pt.TransactionData.Status = "Can't Post Because Item Not In QuickBooks";
                         //UpdateTransactionDataFromSalesRet(pt, new QBResult() { Comments = "Item Not In QuickBooks" });
                         //return;
+                        continue;
                     }
                     else
                     {
-                         UpdateInventoryItem(qbitm);
+                        UpdateInventoryItem(qbitm);
                     }
 
                     s.SalesReceiptDetails.Add(new SalesReceiptDetail
-                        {
-                            ItemListID = item.QBListId,
-                            ItemNumber = item.ItemNumber,
-                            QtySold = item.Quantity
-                        }); //340 
-                    
+                    {
+                        ItemListID = item.QBListId,
+                     //   ItemNumber = item.ItemNumber,
+                        QtySold = item.Quantity,
+                        Discount = dbPatient?.PatientMemberships.FirstOrDefault()?.MembershipType?.Discount ?? dbPatient?.Discount ?? 0.0
+                    }); //340 
+
                 }
-
-
                 
-                  var result = QBPOS.AddSalesReceipt(s, Settings.Default.QBCompanyFile);
-                if (result != null)
+
+               foreach (var reward in patientRewards.Where(x => x.Status != null && x.Status.Contains("Issued") && x.StoreName == Store.StoreCode).ToList())
                 {
-                    UpdateTransactionDataFromSalesRet(pt, result);
+                    var itm = new RMSModel().Item.FirstOrDefault(x => x.ItemNumber == reward.ItemNumber.ToString());
+                    if (itm != null)
+                    {
+                        var qbitm = QBPOS.ValidateInventoryItemQuery(itm.QBItemListID, Settings.Default.QBCompanyFile).FirstOrDefault();
+                        if (qbitm != null)
+                        {
+                            s.SalesReceiptDetails.Add(new SalesReceiptDetail
+                            {
+                                ItemListID = qbitm.ListID,
+                                //   ItemNumber = item.ItemNumber,
+                                QtySold = 1,
+                                Discount = reward.Value
+                                
+                            }); //340 
+                        }
+                    }
+                    else
+                    {
+                        s.Discount = reward.Value.ToString();
+                    }
+
+                    s.Comments += $"\r\nReward:{reward.Name}";
                 }
+
+
+
+
+                var result = QBPOS.AddSalesReceipt(s, Settings.Default.QBCompanyFile);
+               
+                    UpdateTransactionDataFromSalesRet(pt, result);
+                  
+               
             }
             catch (Exception ex)
             {
@@ -343,7 +426,7 @@ namespace QS2QBPost
                     postingTimer.Enabled = false;
                     throw ex;
                 }
-                 
+
             }
         }
 
@@ -351,14 +434,14 @@ namespace QS2QBPost
         {
             if (message.EndsWith("not found") && message.Contains("Item"))
             {
-                var startIndex = message.LastIndexOf("Item", StringComparison.Ordinal)+4;
+                var startIndex = message.LastIndexOf("Item", StringComparison.Ordinal) + 4;
                 var endIndex = message.LastIndexOf("not found", StringComparison.Ordinal);
                 var listId = message.Substring(startIndex, endIndex - startIndex).Trim();
                 using (var ctx = new RMSModel())
                 {
                     var trns = ctx.QBInventoryItems.FirstOrDefault(x => x.ListID == listId);
-                    if (trns != null) return $"{trns.ItemName}-ItemNumber:{trns.ItemNumber} Not in QB Inventory. Please use Subsitute!"; 
-                 }
+                    if (trns != null) return $"{trns.ItemName}-ItemNumber:{trns.ItemNumber} Not in QB Inventory. Please use Subsitute!";
+                }
             }
             return message;
         }
@@ -395,9 +478,9 @@ namespace QS2QBPost
                     {
                         var r = ctx.Item.FirstOrDefault(x => x.QBItemListID == itm.ListID);
                         if (r == null) continue;
-                        r.Price = (double) itm.Price1;
-                        r.Quantity = (double) itm.QuantityOnHand;
-                       // r.QBActive = false;
+                        r.Price = (double)itm.Price1;
+                        r.Quantity = (double)itm.QuantityOnHand;
+                        // r.QBActive = false;
 
                     }
                     ctx.SaveChanges();
@@ -410,24 +493,118 @@ namespace QS2QBPost
             }
         }
 
+        private static Patient UpdateCustomer(CustomerRet customer)
+        {
+            using (var ctx = new RMSModel())
+            {
+                try
+                {
+                    ctx.Database.CommandTimeout = 0;
+                    var r = ctx.Persons.OfType<Patient>()
+                        .Include("QBCustomer")
+                        .Include("PatientMemberships.MembershipType")
+                        .FirstOrDefault(x =>
+                        x.QBCustomer.CustomerListID == customer.ListID
+                        || (x.FirstName == customer.FirstName
+                            && x.LastName == customer.LastName
+                            && (x.PhoneNumber == null? "000-0000" : x.PhoneNumber.Replace("1473", "").Replace("473", "")) ==
+                            (customer.Phone == null ?"000-0000" :customer.Phone.Replace("1473", "").Replace("473", ""))));
+                    if (r == null)
+                    {
+                        r = new Patient
+                        {
+                            FirstName = customer.FirstName,
+                            LastName = customer.LastName,
+                            PhoneNumber = customer.Phone,
+                            QBCustomer = new QBCustomer { CustomerListID = customer.ListID }
+                        };
+                        ctx.Persons.Add(r);
+                    }
+
+                    if (r.QBCustomer == null)
+                    {
+                        r.QBCustomer = new QBCustomer
+                        {
+                            CustomerListID = customer.ListID,
+                            Patient = r
+                        };
+                    }
+
+                    r.QBCustomer.CustomerDiscPercent = Convert.ToDouble(customer.CustomerDiscPercent);
+                    //r.QBCustomer.CustomerDiscType = customer.CustomerDiscType.ToString();
+                    //r.QBCustomer.PriceLevelNumber = customer.PriceLevelNumber;
+                    //r.QBCustomer.Patient.FirstName = customer.FirstName;
+                    //r.QBCustomer.Patient.LastName = customer.LastName;
+                    //r.QBCustomer.IsRewardsMember = customer.IsRewardsMember;
+                    //r.QBCustomer.LastSale = customer.LastSale;
+                    r.QBCustomer.Patient.PhoneNumber = customer.Phone;
+                    //r.QBCustomer.RewardAmount = (double)customer.Reward.RewardAmount;
+                    //r.QBCustomer.RewardPercent = (double)customer.Reward.RewardPercent;
+                    //r.QBCustomer.EarnedDate = customer.Reward.EarnedDate;
+                    //r.QBCustomer.ExpirationDate = customer.Reward.ExpirationDate;
+                    r.QBCustomer.Source = "QuickBooks";
+                    ctx.SaveChanges();
+                    return r;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
         private static void UpdateTransactionDataFromSalesRet(PostTransaction pt, QBResult result)
         {
             try
             {
                 using (var ctx = new RMSModel())
                 {
-                    if (string.IsNullOrEmpty(result.SalesReceiptNumber))
+                    if (result == null || string.IsNullOrEmpty(result?.SalesReceiptNumber))
                     {
 
-                        pt.TransactionData.Status = string.IsNullOrEmpty(result.Comments)
+                        pt.TransactionData.Status = string.IsNullOrEmpty(result?.Comments)
                             ? "QB Posting Error"
                             : result.Comments.Substring(0, result.Comments.Length > 49 ? 49 : result.Comments.Length);
+
                     }
                     else
                     {
                         pt.TransactionData.ReferenceNumber = "QB#" + result.SalesReceiptNumber;
                         pt.TransactionData.Status = "Posted";
+                        dynamic trn = pt.TransactionData;
+                        if (trn.Patient != null && trn.Patient.QBCustomer != null)
+                        {
+                            var qbSale = new QBSale()
+                            {
+                                QBCustomerId = trn.Patient.QBCustomer.Id,
+                                SalesRecieptNumber = result.SalesReceiptNumber,
+                                
+                            };
+                            trn.Patient.QBCustomer.QBSales.Add(qbSale);
+                            ctx.QBSales.AddOrUpdate(qbSale);
+
+                            var availableRewards = (ObservableCollection<PatientAvailableReward>)trn.Patient.AvailableRewards;
+                            var reward =
+                                availableRewards.FirstOrDefault(x => result.Comments.Contains(x.Name));
+                            if (reward != null)
+                            {
+                                var patientSale = new PatientRewardSale()
+                                {
+                                    Id = reward.PatientRewardId.GetValueOrDefault(),
+                                    TrackingNumber = result.TrackingNumber,
+                                    SalesDate = DateTime.Now
+                                };
+
+                                ctx.PatientRewardSales.AddOrUpdate(patientSale);
+                            }
+
+
+
+                        }
+
+
                     }
+
                     ctx.TransactionBase.AddOrUpdate(pt.TransactionData);
                     ctx.SaveChanges();
                 }
@@ -440,12 +617,42 @@ namespace QS2QBPost
             }
         }
 
+        //private static void UpdateQBCustomerFromSalesRet(PostTransaction pt, QBResult result)
+        //{
+        //    try
+        //    {
+        //        using (var ctx = new RMSModel())
+        //        {
+        //            if (string.IsNullOrEmpty(result.SalesReceiptNumber))
+        //            {
+
+        //                pt.TransactionData.Status = string.IsNullOrEmpty(result.Comments)
+        //                    ? "QB Posting Error"
+        //                    : result.Comments.Substring(0, result.Comments.Length > 49 ? 49 : result.Comments.Length);
+        //            }
+        //            else
+        //            {
+        //                pt.TransactionData.ReferenceNumber = "QB#" + result.SalesReceiptNumber;
+        //                pt.TransactionData.Status = "Posted";
+        //            }
+        //            ctx.TransactionBase.AddOrUpdate(pt.TransactionData);
+        //            ctx.SaveChanges();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.Log(LoggingLevel.Error, ex.Message + ex.StackTrace);
+        //        Singleton.Status = "error found for #" + pt.TransactionData.TransactionNumber;
+        //        throw ex;
+        //    }
+        //}
+
         private class PostTransaction
         {
             public TransactionBase TransactionData { get; set; }
             public List<PostEntry> PostEntries { get; set; }
 
-           
+
         }
 
         private class PostEntry
@@ -466,7 +673,17 @@ namespace QS2QBPost
                     using (var ctx = new RMSModel())
                     {
                         pc.Doctor = ctx.Persons.OfType<Doctor>().FirstOrDefault(x => x.Id == pc.DoctorId);
-                        pc.Patient = ctx.Persons.OfType<Patient>().FirstOrDefault(x => x.Id == pc.PatientId);
+                        pc.Patient = ctx.Persons.OfType<Patient>().Include(x => x.QBCustomer).Include(x => x.IDCardInfo).Include(x => x.AvailableRewards).FirstOrDefault(x => x.Id == pc.PatientId);
+                    }
+                }
+                if (ptrn is QuickPrescription)
+                {
+
+                    var pc = (ptrn as QuickPrescription);
+                    using (var ctx = new RMSModel())
+                    {
+                        pc.Patient = ctx.Persons.OfType<Patient>().Include(x => x.QBCustomer)
+                                                                            .Include(x => x.IDCardInfo).Include(x => x.AvailableRewards).FirstOrDefault(x => x.Id == pc.PatientId);
                     }
                 }
             }
@@ -477,7 +694,7 @@ namespace QS2QBPost
             }
         }
 
-     
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;
