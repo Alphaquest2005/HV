@@ -1,21 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4020FF1D-328D-4505-AB09-3F897086A26E}</ProjectGuid>
+    <ProjectGuid>{FF73CABB-7E23-4738-9338-4652FA21EEE3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LeftRegion</RootNamespace>
-    <AssemblyName>LeftRegion</AssemblyName>
+    <RootNamespace>BarCodes</RootNamespace>
+    <AssemblyName>BarCodes</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <DontImportPostSharp>True</DontImportPostSharp>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,14 +53,19 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.Prism">
-      <HintPath>..\..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Practices.Prism.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ReadOnlyCollectionsInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReadOnlyCollectionInterfaces.1.0.0\lib\NET40-client\ReadOnlyCollectionsInterfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Collections.Immutable.Net40, Version=1.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.Net40.1.0.30.17\lib\net40\System.Collections.Immutable.Net40.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -74,57 +75,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SuppView.xaml.cs">
-      <DependentUpon>SuppView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SuppVM.cs" />
+    <Compile Include="BarCodeValueConverter.cs" />
+    <Compile Include="Code128Content.cs" />
+    <Compile Include="Code128Rendering.cs" />
+    <Compile Include="UPCA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="SuppView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\RMSDataAccessLayer\RMSDataAccessLayer.csproj">
-      <Project>{39fece82-37d6-4c42-96f4-faf40b6df97c}</Project>
-      <Name>RMSDataAccessLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SalesRegion\backup\SalesRegion\SalesRegion.csproj">
-      <Project>{9B2403FE-7ECE-495D-97D9-20560121A2EE}</Project>
-      <Name>SalesRegion</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Design\Aspirin-256.png" />
-    <Content Include="Design\Doctor-256 %281%29.png" />
-    <Content Include="Design\Doctor-256.png" />
-    <Content Include="Design\Green_Rx_Icon.png" />
-    <Content Include="Design\Person-Undefined-Male-Dark-256.png" />
-    <Content Include="Design\Sick_256.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="SimpleMvvmToolkit">
-      <Version>5.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections.Immutable.Net40">
-      <Version>1.0.30.17</Version>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite">
-      <Version>1.0.115.5</Version>
-    </PackageReference>
-    <PackageReference Include="TrackableEntities.Client">
-      <Version>2.5.7</Version>
-    </PackageReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
