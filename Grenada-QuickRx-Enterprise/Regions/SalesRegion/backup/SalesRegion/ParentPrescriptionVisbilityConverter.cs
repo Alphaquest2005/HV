@@ -33,4 +33,31 @@ namespace SalesRegion
             throw new NotImplementedException();
         }
     }
+
+    public class ExtensionVisbilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is bool i ? (i == true ? Visibility.Collapsed : Visibility.Visible) : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class ExtensionNotVisibleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is bool i ? (i != true ? Visibility.Collapsed : Visibility.Visible) : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

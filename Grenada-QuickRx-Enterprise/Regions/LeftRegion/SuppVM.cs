@@ -120,13 +120,15 @@ namespace LeftRegion
                         if (Int32.TryParse(searchTxt, out int num))
                         {
                             Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
-                                .Where(x => x.TransactionId.ToString().Contains(searchTxt));
+                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                                            || (x.Patient.CardId.Contains(searchTxt)));
 
                         }
                         else
                         {
                             Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
-                                .Where(x => (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt));
+                                .Where(x => (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt)
+                                            );
                         }
 
                         var lst = Transactions.OfType<Prescription>()

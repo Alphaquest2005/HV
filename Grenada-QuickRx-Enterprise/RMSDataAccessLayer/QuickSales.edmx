@@ -188,6 +188,7 @@
           <Property Name="Discount" Type="float" />
           <Property Name="TotalSales" Type="float" />
           <Property Name="StartingSales" Type="float" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Photos">
           <Key>
@@ -339,6 +340,7 @@
           <Property Name="TransactionEntryId" Type="int" Nullable="false" />
           <Property Name="Repeat" Type="int" />
           <Property Name="RepeatQuantity" Type="int" />
+          <Property Name="isExtension" Type="bit" />
         </EntityType>
         <EntityType Name="TransactionEntryItem">
           <Key>
@@ -509,6 +511,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionData' does no
           <Property Name="PharmacistFirstName" Type="nvarchar" MaxLength="50" />
           <Property Name="PharmacistLastName" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="isExtension" Type="bit" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1105,7 +1108,8 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
     [TransactionData].[PatientId] AS [PatientId], 
     [TransactionData].[PharmacistFirstName] AS [PharmacistFirstName], 
     [TransactionData].[PharmacistLastName] AS [PharmacistLastName], 
-    [TransactionData].[Description] AS [Description]
+    [TransactionData].[Description] AS [Description], 
+    [TransactionData].[isExtension] AS [isExtension]
     FROM [dbo].[TransactionData] AS [TransactionData]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="TransactionsView" EntityType="Self.TransactionsView" store:Type="Views" store:Schema="dbo">
@@ -1676,6 +1680,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <Property Type="DateTime" Name="ExpiryDate" Nullable="true" Precision="0" />
           <Property Type="Int32" Name="Repeat" Nullable="true" DefaultValue="0" />
           <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="isExtension" Type="Boolean" />
         </EntityType>
         <EntityType Name="Medicine" BaseType="RMSEntities.Item">
           <Property Type="String" Name="SuggestedDosage" MaxLength="Max" Unicode="true" FixedLength="false" Nullable="true" />
@@ -1699,6 +1704,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <NavigationProperty Name="PatientRewards" Relationship="RMSEntities.FK_PatientRewards_Persons_Patient" FromRole="Patient" ToRole="PatientReward" />
           <NavigationProperty Name="AvailableRewards" Relationship="RMSEntities.PatientPatientAvailableReward" FromRole="Patient" ToRole="PatientAvailableReward" />
           <NavigationProperty Name="Membership" Relationship="RMSEntities.PatientPatientMembership" FromRole="Patient" ToRole="PatientMembership" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="DoctorPrescription">
           <End Type="RMSEntities.Doctor" Role="Doctor" Multiplicity="1" />
@@ -2078,6 +2084,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="isExtension" Type="Boolean" />
         </EntityType>
         <Association Name="FK_TransactionBase_QuickPrescription_Persons_Patient">
           <End Type="RMSEntities.Patient" Role="Patient" Multiplicity="0..1" />
@@ -2412,7 +2419,8 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.PrescriptionEntry)">
         <MappingFragment StoreEntitySet="TransactionEntryBase_PrescriptionEntry">
-          <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+          <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
                 <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
           <ScalarProperty Name="Dosage" ColumnName="Dosage" />
           <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
@@ -2469,6 +2477,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Patient)">
         <MappingFragment StoreEntitySet="Persons_Patient">
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
                 <ScalarProperty Name="StartingSales" ColumnName="StartingSales" />
                 <ScalarProperty Name="TotalSales" ColumnName="TotalSales" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -2634,6 +2643,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <EntitySetMapping Name="TransactionDatas">
             <EntityTypeMapping TypeName="RMSEntities.TransactionData">
               <MappingFragment StoreEntitySet="TransactionData">
+                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
                 <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />

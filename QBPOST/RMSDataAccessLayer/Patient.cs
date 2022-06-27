@@ -113,6 +113,20 @@ namespace RMSDataAccessLayer
     	}
     	private Nullable<double> _StartingSales;
         [DataMember]
+                    [StringLength(50)]
+    	public string CardId
+    	{ 
+    		get { return _CardId; }
+    		set
+    		{
+    			if (Equals(value, _CardId)) return;
+    			_CardId = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private string _CardId;
+        [DataMember]
     	public ObservableCollection<Prescription> Prescription
     	{
     		get { return _Prescription; }

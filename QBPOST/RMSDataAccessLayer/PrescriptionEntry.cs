@@ -95,5 +95,18 @@ namespace RMSDataAccessLayer
     		}
     	}
     	private Nullable<int> _RepeatQuantity;
+        [DataMember]
+        	public Nullable<bool> isExtension
+    	{ 
+    		get { return _isExtension; }
+    		set
+    		{
+    			if (Equals(value, _isExtension)) return;
+    			_isExtension = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private Nullable<bool> _isExtension;
     }
 }

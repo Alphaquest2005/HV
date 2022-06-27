@@ -528,6 +528,8 @@ namespace SalesRegion
                     string.Format("Start Create SearchList -filter Text [{0}] - StartTime:{1}", filterText,
                         DateTime.Now));
 
+                if (string.IsNullOrEmpty(filterText)) return new List<dynamic>();
+
                 var searchItemsBag = new List<dynamic>();
                 var patientsBag = new List<dynamic>();
                 var doctorsBag = new List<dynamic>();
@@ -693,9 +695,11 @@ namespace SalesRegion
                 using (var ctx = new RMSModel())
                 {
                     return ctx.Persons.OfType<Patient>() //.Include(x => x.Photo).Include(x => x.AvailableRewards)
-                        .Where(x => (x.FirstName.Trim() + " " + x.LastName.Trim()).Contains(filterText) ||
-                                    (x.PhoneNumber.Replace("-", "").Contains(filterText.Replace("-", "")))
-                                    || (x.FirstName.Trim().Substring(0,1) + x.LastName.Trim().Substring(0, 1) + x.PhoneNumber.Trim().Replace("-", "").Replace("473","").Substring(0, 7) == filterText ))
+                        .Where(x => 
+                            (x.CardId.Contains(filterText)) ||
+                            (x.FirstName.Trim() + " " + x.LastName.Trim()).Contains(filterText) ||
+                            (x.PhoneNumber.Replace("-", "").Contains(filterText.Replace("-", ""))) ||
+                            (x.FirstName.Trim().Substring(0,1) + x.LastName.Trim().Substring(0, 1) + x.PhoneNumber.Trim().Replace("-", "").Replace("473","").Substring(0, 7) == filterText ))
                         .Take(listCount).ToList();
 
                 }
@@ -1104,7 +1108,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                 }
 
                 var tds = ctx.TransactionDatas.Where(x => x.TransactionId == transactionId).ToList();
-                if (!tds.Any()) return null;
+                if (!tds.Any()) tds = ctx.TransactionDatas.OrderByDescending(x => x.TransactionId).Take(1).ToList();
                 var header = tds.First();
                 var res = type == "Prescription"
                   ? (TransactionBase)new Prescription()
@@ -1180,6 +1184,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                     x.Dosage,
                     x.Repeat,
                     x.RepeatQuantity,
+                    x.isExtension,
                     x.QBItemListID
 
                 })
@@ -1195,6 +1200,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                         SalesTaxPercent = x.Key.SalesTaxPercent,
                         Discount = x.Key.Discount,
                         Dosage = x.Key.Dosage,
+                        isExtension = x.Key.isExtension,
                         TransactionEntryItem = new TransactionEntryItem()
                         {
                             ItemId = x.Key.ItemId,
@@ -1871,13 +1877,13 @@ private void AddDoctorToTransaction(Doctor doctor)
                 TransactionData = newt;
 
                 // relink items based on item codes because was deleted
-                var missingitems = TransactionData.TransactionEntries.Any(x => x.TransactionEntryItem.ItemId == null);
-                if (missingitems)
-                {
+                //var missingitems = TransactionData.TransactionEntries.Any(x => x.TransactionEntryItem.ItemId == null);
+                //if (missingitems)
+                //{
                     using (var ctx = new RMSModel())
                     {
-                        foreach (var trn in TransactionData.TransactionEntries.Where(x =>
-                            x.TransactionEntryItem.ItemId == null))
+                        foreach (var trn in TransactionData.TransactionEntries//.Where(x => x.TransactionEntryItem.ItemId == null)
+                                 )
                         {
                             var itm = ctx.Item.FirstOrDefault(x =>
                                 x.ItemNumber == trn.TransactionEntryItem.ItemNumber &&
@@ -1886,9 +1892,10 @@ private void AddDoctorToTransaction(Doctor doctor)
                             trn.TransactionEntryItem.ItemId = itm.ItemId;
                             trn.TransactionEntryItem.QBItemListID = itm.QBItemListID;
                             trn.TransactionEntryItem.Item = itm;
+                            trn.Price = itm.Price;
                         }
                     }
-                }
+                //}
 
 
                 if (!SaveTransaction()) return;
@@ -2393,7 +2400,7 @@ private void AddDoctorToTransaction(Doctor doctor)
 
     public bool SavePerson(Person patient)
     {
-        var res = false;
+        
         if (string.IsNullOrEmpty(patient.PhoneNumber))
         {
             MessageBox.Show("Please enter PhoneNumber");
@@ -2404,20 +2411,36 @@ private void AddDoctorToTransaction(Doctor doctor)
             
             using (var ctx = new RMSModel())
             {
+                if (patient.Id == 0)
+                {
+                    var existingPatient = ctx.Persons.FirstOrDefault(x =>
+                        x.FirstName.Trim().ToLower() == patient.FirstName.Trim().ToLower()
+                        && x.LastName.Trim().ToLower() == patient.LastName.Trim().ToLower()
+                        && (x.PhoneNumber ?? x.Address).Trim().ToLower() ==
+                        (patient.PhoneNumber ?? patient.Address).Trim().ToLower());
+
+                    if (existingPatient != null)
+                    {
+                        MessageBox.Show(
+                            "Another patient already exists with same Name and Phone/Address! Please select existing Patient from list or Fill out PhoneNumber and Address correctly");
+                        return false;
+                    }
+                }
+
                 ctx.ApplyChanges(patient);
                 ctx.SaveChanges();
                 patient.AcceptChanges();
                 //ctx.Persons.AddOrUpdate(patient);
                 //ctx.SaveChanges();
             }
-            res = true;
-            return res;
+            
+            return true;
         }
         catch (DbEntityValidationException vex)
         {
             var str = vex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Aggregate("", (current, er) => current + (er.PropertyName + ","));
             MessageBox.Show("Please Check the following fields before saving! - " + str);
-            return res;
+            return false;
         }
         catch (Exception ex)
         {
@@ -2467,9 +2490,13 @@ private void AddDoctorToTransaction(Doctor doctor)
 
     }
 
-        private int dosagePrintLength = 120;
-   
-    public bool SaveTransaction(TransactionBase trans)
+        private int QuickSaleDosagePrintLength = 195;
+        private int QuickSalesDosageExtensionPrintLength = 260;
+
+        private int PrescriptionDosagePrintLength = 170;
+        private int PrescriptionDosageExtensionPrintLength = 260;
+
+        public bool SaveTransaction(TransactionBase trans)
     {
         try
         {
@@ -2523,29 +2550,32 @@ private void AddDoctorToTransaction(Doctor doctor)
                     }
 
                     var longdosage = trans.TransactionEntries.OfType<PrescriptionEntry>()
-                        .Where(x => x.Dosage.Length > dosagePrintLength).ToList();
+                        .Where(x => x.Dosage.Length > (trans is Prescription ? PrescriptionDosagePrintLength: QuickSaleDosagePrintLength)).ToList();
                 
                     if (longdosage.Any())
                     {
                         var tlst = trans.TransactionEntries.ToList();
                         foreach (var longdose in longdosage)
                         {
-                            var doselst = SplitSentences(longdose.Dosage); //.Split(dosagePrintLength);
-                            //longdose.Dosage = new string(doselst[0].ToArray());
+                            var doselst = SplitSentences(longdose.Dosage, (trans is Prescription ? PrescriptionDosagePrintLength : QuickSaleDosagePrintLength));
+
+                            longdose.isExtension = false;
+
                             PrescriptionEntry te = null;
                             for (int i = 0; i < doselst.Count ; i++)
                             {
                                 string itm = doselst[i];
                                 if (itm == longdose.Dosage) break; // unbroken so abort
                            
-                                if (i > 0 && te?.Dosage.Length + itm.Length > dosagePrintLength)
+                                if (i > 0 && te?.Dosage.Length + itm.Length > (tlst.Count() == 1 ? (trans is Prescription ? PrescriptionDosagePrintLength : QuickSaleDosagePrintLength) : (trans is Prescription ? PrescriptionDosageExtensionPrintLength : QuickSalesDosageExtensionPrintLength)))
                                 {
                                     if(te.Key != longdose.Key) tlst.Add(te);
                                     CopyTransactionDetail(longdose, out te);
                                     te.Quantity = 0;
                                     te.Dosage = "";
+                                    te.isExtension = true;
 
-
+                                    tlst.Add(te);
                                 }
                                 else
                                 {
@@ -2554,6 +2584,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                                         te = longdose;
                                         //if (te?.Dosage.Length > dosagePrintLength) i = 0;
                                         te.Dosage = "";
+                                        
                                     }
 
                                 }
@@ -2566,15 +2597,30 @@ private void AddDoctorToTransaction(Doctor doctor)
 
 
                             }
-                            if(te != null && !tlst.Contains(te)) tlst.Add(te);
+
+                            if (te != null && !tlst.Contains(te))
+                            {
+                                tlst.Add(te);
+                            }
                         }
 
                         trans.TransactionEntries = new ObservableCollection<TransactionEntryBase>(tlst);
                     }
+                    else
+                    {
+                        
+                            foreach (PrescriptionEntry transTransactionEntry in trans?.TransactionEntries)
+                            {
+                                transTransactionEntry.isExtension = null;
+                            }
+                    }
 
                 }
 
-                return SaveTransactionToDB(trans);
+
+                var saveTransactionToDb = SaveTransactionToDB(trans);
+                if(trans!= null) trans = GetDBTransaction(trans.TransactionId, trans.GetType().Name);
+                return saveTransactionToDb;
 
         }
 
@@ -2586,7 +2632,7 @@ private void AddDoctorToTransaction(Doctor doctor)
         }
     }
 
-        private List<string> SplitSentences(string sSourceText)
+        private List<string> SplitSentences(string sSourceText, int dosagePrintLength)
 
         {
 
@@ -2608,7 +2654,7 @@ private void AddDoctorToTransaction(Doctor doctor)
 
             // split the sentences with a regular expression
 
-            string[] splitSentences = Regex.Split(sTemp, @"(?<=['""A-Za-z0-9][\,\.\!\?])\s+");
+            string[] splitSentences = Regex.Split(sTemp, @"(?<=['""A-Za-z0-9\s][\,\.\!\?]+)");
 
 
 
@@ -2622,9 +2668,26 @@ private void AddDoctorToTransaction(Doctor doctor)
 
                 // and add it to the array list
 
+                
+
                 string sSingleSentence = splitSentences[i].Replace(Environment.NewLine, string.Empty);
 
-                al.Add(sSingleSentence.Trim());
+                if (sSingleSentence.Length > dosagePrintLength)
+                {
+                    var rlength = sSingleSentence;
+                    while (rlength.Length > dosagePrintLength)
+                    {
+                        var s = rlength.Substring(0, dosagePrintLength);
+                        al.Add(s.Trim());
+                        rlength = rlength.Substring(dosagePrintLength+1);
+                    }
+                    al.Add(rlength.Trim());
+                }
+                else
+                {
+                    al.Add(sSingleSentence.Trim());
+                }
+                
 
             }
 
@@ -2730,8 +2793,8 @@ private void AddDoctorToTransaction(Doctor doctor)
                             var trnres = ctx.Database.SqlQuery<int>(trnsql).FirstOrDefault();
                             trn.TransactionEntryId = trnres;
                             sql += $@"  INSERT INTO TransactionEntryBase_PrescriptionEntry
-                                        (Dosage, ExpiryDate, TransactionEntryId, Repeat, RepeatQuantity)
-                                        VALUES        ('{trn.Dosage.Replace("'", "''")}','{trn.ExpiryDate}',{trn.TransactionEntryId},'{trn.Repeat}','{trn.RepeatQuantity}')";
+                                        (Dosage, ExpiryDate, TransactionEntryId, Repeat, RepeatQuantity, isExtension)
+                                        VALUES        ('{trn.Dosage.Replace("'", "''")}','{trn.ExpiryDate}',{trn.TransactionEntryId},'{trn.Repeat}','{trn.RepeatQuantity}','{trn.isExtension}')";
 
                             sql += $@"  INSERT INTO TransactionEntryItem
                                                                      (TransactionEntryId, QBItemListID, ItemNumber, ItemName, ItemId)
@@ -2744,7 +2807,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                                         Where TransactionEntryId = {trn.TransactionEntryId}";
 
                             sql += $@"  UPDATE       TransactionEntryBase_PrescriptionEntry
-                                            SET                Dosage = '{trn.Dosage.Replace("'", "''")}', ExpiryDate = '{trn.ExpiryDate}', Repeat = '{trn.Repeat}', RepeatQuantity = '{trn.RepeatQuantity}'
+                                            SET                Dosage = '{trn.Dosage.Replace("'", "''")}', ExpiryDate = '{trn.ExpiryDate}', Repeat = '{trn.Repeat}', RepeatQuantity = '{trn.RepeatQuantity}', IsExtension = '{trn.isExtension}'
                                         Where TransactionEntryId = {trn.TransactionEntryId}";
                             sql += $@"  UPDATE       TransactionEntryItem
                                         SET                 QBItemListID = '{trn.TransactionEntryItem.QBItemListID}', ItemNumber = '{trn.TransactionEntryItem.ItemNumber}', ItemName = '{trn.TransactionEntryItem.ItemName.Replace("'", "''")}', ItemId = '{trn.TransactionEntryItem.ItemId}'

@@ -112,6 +112,7 @@
           <Property Name="Discount" Type="float" />
           <Property Name="TotalSales" Type="float" />
           <Property Name="StartingSales" Type="float" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="QBCustomer">
           <Key>
@@ -129,6 +130,7 @@
           <Property Name="EarnedDate" Type="date" />
           <Property Name="ExpirationDate" Type="date" />
           <Property Name="Source" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CustomerId" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="QBInventoryItems">
           <Key>
@@ -237,6 +239,7 @@
           <Property Name="TransactionEntryId" Type="int" Nullable="false" />
           <Property Name="Repeat" Type="int" />
           <Property Name="RepeatQuantity" Type="int" />
+          <Property Name="isExtension" Type="bit" />
         </EntityType>
         <EntityType Name="TransactionEntryItem">
           <Key>
@@ -270,7 +273,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.IDCardInfo' does not hav
           <Property Name="LastName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="255" />
           <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
-          <Property Name="CardId" Type="nvarchar" MaxLength="15" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
           <Property Name="TotalSales" Type="float" />
           <Property Name="Points" Type="float" Nullable="false" />
           <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -978,6 +981,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
           <Property Type="DateTime" Name="ExpiryDate" Nullable="true" Precision="0" />
           <Property Type="Int32" Name="Repeat" Nullable="true" DefaultValue="0" />
           <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="isExtension" Type="Boolean" />
         </EntityType>
         <EntityType Name="Medicine" BaseType="RMSEntities.Item">
           <Property Type="String" Name="SuggestedDosage" MaxLength="Max" Unicode="true" FixedLength="false" Nullable="true" />
@@ -1001,6 +1005,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
           <NavigationProperty Name="AvailableRewards" Relationship="RMSEntities.PatientPatientAvailableReward" FromRole="Patient" ToRole="PatientAvailableReward" />
           <NavigationProperty Name="PatientRewardSales" Relationship="RMSEntities.PatientPatientRewardSale" FromRole="Patient" ToRole="PatientRewardSale" />
           <NavigationProperty Name="PatientMemberships" Relationship="RMSEntities.PatientPatientMembership" FromRole="Patient" ToRole="PatientMembership" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="DoctorPrescription">
           <End Type="RMSEntities.Doctor" Role="Doctor" Multiplicity="1" />
@@ -1128,6 +1133,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
           <Property Name="ExpirationDate" Type="DateTime" Precision="0" />
           <Property Name="Source" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="QBSales" Relationship="RMSEntities.FK_QBSales_QBCustomer" FromRole="QBCustomer" ToRole="QBSale" />
+          <Property Name="CustomerId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_QBCustomer_Persons_Patient">
           <End Type="RMSEntities.Patient" Role="Patient" Multiplicity="1">
@@ -1165,7 +1171,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CardId" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="TotalSales" Type="Double" />
           <Property Name="Points" Type="Int32" Nullable="false" />
           <Property Name="EntrySalesAmount" Type="Double" Nullable="false" />
@@ -1462,7 +1468,8 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.PrescriptionEntry)">
         <MappingFragment StoreEntitySet="TransactionEntryBase_PrescriptionEntry">
-          <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+          <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
                 <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
           <ScalarProperty Name="Dosage" ColumnName="Dosage" />
           <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
@@ -1505,6 +1512,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(RMSEntities.Patient)">
         <MappingFragment StoreEntitySet="Persons_Patient">
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
                 <ScalarProperty Name="StartingSales" ColumnName="StartingSales" />
                 <ScalarProperty Name="TotalSales" ColumnName="TotalSales" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -1545,6 +1553,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does 
           <EntitySetMapping Name="QBCustomers">
             <EntityTypeMapping TypeName="RMSEntities.QBCustomer">
               <MappingFragment StoreEntitySet="QBCustomer">
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
                 <ScalarProperty Name="Source" ColumnName="Source" />
                 <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
                 <ScalarProperty Name="EarnedDate" ColumnName="EarnedDate" />

@@ -300,12 +300,12 @@ namespace QS2QBPost
                     if (p.Doctor != null)
                     {
                         doctor = p.Doctor.DisplayName;
-                        s.DiscountPercent = p.Doctor.Discount == null ? "" : p.Doctor.Discount.ToString();
+                        //s.DiscountPercent = p.Doctor.Discount == null ? "" : p.Doctor.Discount.ToString();
                     }
                     if (p.Patient != null)
                     {
                         patient = p.Patient.ContactInfo;
-                        s.DiscountPercent = p.Patient.Discount == null ? "" : p.Patient.Discount.ToString();
+                        //s.DiscountPercent = p.Patient.Discount == null ? "" : p.Patient.Discount.ToString();
                         patientRewards.AddRange(p.Patient.AvailableRewards.ToList());
                     }
                     s.Comments = String.Format("{0} \n RX#:{1} \n Doctor:{2}", patient,
@@ -373,7 +373,7 @@ namespace QS2QBPost
                         ItemListID = item.QBListId,
                      //   ItemNumber = item.ItemNumber,
                         QtySold = item.Quantity,
-                        Discount = dbPatient?.PatientMemberships.FirstOrDefault()?.MembershipType?.Discount ?? dbPatient?.Discount ?? 0.0
+                        //Discount = dbPatient?.PatientMemberships.FirstOrDefault()?.MembershipType?.Discount ?? dbPatient?.Discount ?? 0.0
                     }); //340 
 
                 }
@@ -392,14 +392,14 @@ namespace QS2QBPost
                                 ItemListID = qbitm.ListID,
                                 //   ItemNumber = item.ItemNumber,
                                 QtySold = 1,
-                                Discount = reward.Value
+                                //Discount = reward.Value
                                 
                             }); //340 
                         }
                     }
                     else
                     {
-                        s.Discount = reward.Value.ToString();
+                        //s.Discount = reward.Value.ToString();
                     }
 
                     s.Comments += $"\r\nReward:{reward.Name}";
@@ -516,7 +516,11 @@ namespace QS2QBPost
                             FirstName = customer.FirstName,
                             LastName = customer.LastName,
                             PhoneNumber = customer.Phone,
-                            QBCustomer = new QBCustomer { CustomerListID = customer.ListID }
+                            QBCustomer = new QBCustomer
+                            {
+                                CustomerListID = customer.ListID,
+                                CustomerId = customer.CustomerID
+                            }
                         };
                         ctx.Persons.Add(r);
                     }
@@ -526,11 +530,13 @@ namespace QS2QBPost
                         r.QBCustomer = new QBCustomer
                         {
                             CustomerListID = customer.ListID,
+                            CustomerId = customer.CustomerID,
                             Patient = r
                         };
                     }
 
                     r.QBCustomer.CustomerDiscPercent = Convert.ToDouble(customer.CustomerDiscPercent);
+                    r.QBCustomer.CustomerId = customer.CustomerID;
                     //r.QBCustomer.CustomerDiscType = customer.CustomerDiscType.ToString();
                     //r.QBCustomer.PriceLevelNumber = customer.PriceLevelNumber;
                     //r.QBCustomer.Patient.FirstName = customer.FirstName;
