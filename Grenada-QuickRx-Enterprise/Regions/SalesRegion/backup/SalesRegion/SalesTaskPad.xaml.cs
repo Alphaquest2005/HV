@@ -157,12 +157,12 @@ namespace SalesRegion
                     if (e.Key == Key.Enter) //pkey == Key.Enter &&
                     {
                         // SearchBox.RaiseFilterEvent();
-                        if (SearchListCtl.Items.Count == 1)
-                            SearchListCtl.SelectedIndex = 0;
-                        var textBox = uie as TextBox;
-                        if (textBox != null) textBox.Text = "";
-                        //e.Handled = true;
-                        MoveToNextControl(uie);
+                        //if (SearchListCtl.Items.Count == 1)
+                        //    SearchListCtl.SelectedIndex = 0;
+                        //var textBox = uie as TextBox;
+                        //if (textBox != null) textBox.Text = "";
+                        ////e.Handled = true;
+                        //MoveToNextControl(uie);
                     }
 
                     return;
@@ -171,7 +171,7 @@ namespace SalesRegion
                 if (e.Key == Key.Enter)
                 {
                     // e.Handled = true;
-                    MoveToNextControl(uie);
+                   // MoveToNextControl(uie);
                 }
                 pkey = e.Key;
             }
@@ -231,14 +231,14 @@ namespace SalesRegion
             {
                 if (e.Key == Key.Delete)
                 {
-                    DeleteTransactionEntry();
+                   // DeleteTransactionEntry();
                 }
 
 
 
                 if (e.Key == Key.Enter)
                 {
-                    if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
+                   // if (SalesVM.Instance != null) if (SearchBox != null) SalesVM.Instance.GetSearchResults(SearchBox.Text);
                     //if (SearchListCtl.Items.Count == 3)
                     //{
                     //    SearchListCtl.SelectedIndex = 2;

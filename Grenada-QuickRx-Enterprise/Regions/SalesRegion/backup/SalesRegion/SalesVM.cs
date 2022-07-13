@@ -1838,40 +1838,24 @@ private void AddDoctorToTransaction(Doctor doctor)
         var myTransactionData = data ?? TransactionData;
         try
         {
-            //var pres = myTransactionData as Prescription;
-            //if (pres == null)
-            //{
-            //    MessageBox.Show("Only Transactions can be repeated.");
-            //    return;
-            //}
+                //var pres = myTransactionData as Prescription;
+                //if (pres == null)
+                //{
+                //    MessageBox.Show("Only Transactions can be repeated.");
+                //    return;
+                //}
+                var pres = GoToParentIfChild(myTransactionData);
 
-            var pres = myTransactionData;
-            if (pres.ParentTransactionId != null)
-            {
-                GoToTransaction(pres.ParentTransactionId.GetValueOrDefault());
-            }
+                var newt = CopyingCurrentTransaction();
 
 
-            var newt = CopyCurrentTransaction();
-
-
-            newt.ParentTransactionId = pres.ParentTransactionId ?? pres.TransactionId;
+                newt.ParentTransactionId = pres.ParentTransactionId ?? pres.TransactionId;
             newt.ParentTransaction = pres;
 
 
-
-            foreach (PrescriptionEntry item in newt.TransactionEntries.ToList())
-            {
-                item.Transaction = newt;
-                if (item.Remaining == 0 && pres is Prescription)
-                {
-                    newt.TransactionEntries.Remove(item);
-                    continue;
-                }
-                // item.Quantity = item.Remainder > 0 ? item.Remainder : item.RepeatQuantity.GetValueOrDefault();
+            RemoveFilledTransactions(newt, pres);
 
 
-            }
             if (newt.TransactionEntries.Any())
             {
                 TransactionData = newt;
@@ -1880,26 +1864,11 @@ private void AddDoctorToTransaction(Doctor doctor)
                 //var missingitems = TransactionData.TransactionEntries.Any(x => x.TransactionEntryItem.ItemId == null);
                 //if (missingitems)
                 //{
-                    using (var ctx = new RMSModel())
-                    {
-                        foreach (var trn in TransactionData.TransactionEntries//.Where(x => x.TransactionEntryItem.ItemId == null)
-                                 )
-                        {
-                            var itm = ctx.Item.FirstOrDefault(x =>
-                                x.ItemNumber == trn.TransactionEntryItem.ItemNumber &&
-                                x.ItemName == trn.TransactionEntryItem.ItemName);
-                            if (itm == null) continue;
-                            trn.TransactionEntryItem.ItemId = itm.ItemId;
-                            trn.TransactionEntryItem.QBItemListID = itm.QBItemListID;
-                            trn.TransactionEntryItem.Item = itm;
-                            trn.Price = itm.Price;
-                        }
-                    }
+                    RelinkTransactions();
                 //}
 
-
-                if (!SaveTransaction()) return;
-                SalesVM.Instance.GoToTransaction(newt.TransactionId);
+                
+                if (AutoRepeatSaveTransactions(newt)) return;
             }
             else
             {
@@ -1913,6 +1882,78 @@ private void AddDoctorToTransaction(Doctor doctor)
             throw;
         }
 
+    }
+
+    private bool AutoRepeatSaveTransactions(TransactionBase newt)
+    {
+        Logger.Log(LoggingLevel.Info, $"Start: AutoRepeatSaveTransactions - {DateTime.Now:O}");
+            if (!SaveTransaction()) return true;
+        SalesVM.Instance.GoToTransaction(newt.TransactionId);
+        Logger.Log(LoggingLevel.Info, $"End: AutoRepeatSaveTransactions - {DateTime.Now:O}");
+            return false;
+
+    }
+
+    private void RelinkTransactions()
+    {
+        Logger.Log(LoggingLevel.Info, $"Start: RelinkTransactions - {DateTime.Now:O}");
+        using (var ctx = new RMSModel())
+        {
+            foreach (var trn in TransactionData.TransactionEntries //.Where(x => x.TransactionEntryItem.ItemId == null)
+                    )
+            {
+                var itm = ctx.Item.FirstOrDefault(x =>
+                    x.ItemNumber == trn.TransactionEntryItem.ItemNumber &&
+                    x.ItemName == trn.TransactionEntryItem.ItemName);
+                if (itm == null) continue;
+                trn.TransactionEntryItem.ItemId = itm.ItemId;
+                trn.TransactionEntryItem.QBItemListID = itm.QBItemListID;
+                trn.TransactionEntryItem.Item = itm;
+                trn.Price = itm.Price;
+            }
+        }
+
+        Logger.Log(LoggingLevel.Info, $"End: RelinkTransactions - {DateTime.Now:O}");
+    }
+
+    private static void RemoveFilledTransactions(TransactionBase newt, TransactionBase pres)
+    {
+        Logger.Log(LoggingLevel.Info, $"Start: RemoveFilledTransactions - {DateTime.Now:O}");
+        foreach (PrescriptionEntry item in newt.TransactionEntries.ToList())
+        {
+            item.Transaction = newt;
+            if (item.Remaining == 0 && pres is Prescription)
+            {
+                newt.TransactionEntries.Remove(item);
+                continue;
+            }
+            // item.Quantity = item.Remainder > 0 ? item.Remainder : item.RepeatQuantity.GetValueOrDefault();
+        }
+
+        Logger.Log(LoggingLevel.Info, $"End: RemoveFilledTransactions - {DateTime.Now:O}");
+    }
+
+    private TransactionBase CopyingCurrentTransaction()
+    {
+        Logger.Log(LoggingLevel.Info, $"Start: CopyCurrentTransaction - {DateTime.Now:O}");
+
+        var newt = CopyCurrentTransaction();
+
+        Logger.Log(LoggingLevel.Info, $"End: CopyCurrentTransaction - {DateTime.Now:O}");
+        return newt;
+    }
+
+    private TransactionBase GoToParentIfChild(TransactionBase myTransactionData)
+    {
+        Logger.Log(LoggingLevel.Info, $"Start: GoToParentIfChild - {DateTime.Now:O}");
+        var pres = myTransactionData;
+        if (pres.ParentTransactionId != null)
+        {
+            GoToTransaction(pres.ParentTransactionId.GetValueOrDefault());
+        }
+
+        Logger.Log(LoggingLevel.Info, $"End: GoToParentIfChild - {DateTime.Now:O}");
+        return pres;
     }
 
 
