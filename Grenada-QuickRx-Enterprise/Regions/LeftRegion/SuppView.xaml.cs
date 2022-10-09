@@ -170,9 +170,14 @@ namespace LeftRegion
             {
                 var p = (Prescription)i.DataContext; //GetTransactionData()
                 var rp = p.TransactionId;
-                SalesVM.Instance.GoToTransaction(rp);
+                var ntrn = SalesVM.Instance.GoToTransaction(rp);
                 //tvm.TransactionData = rp;
-                tvm.AutoRepeat(null);
+                if(ntrn != null)
+                    tvm.AutoRepeat(null);
+                else
+                {
+                    SalesVM.Instance.CreateNewTransaction(p);
+                }
             }
 
         }

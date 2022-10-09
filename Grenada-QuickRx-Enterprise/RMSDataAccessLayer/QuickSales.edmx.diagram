@@ -48,7 +48,6 @@
         <AssociationConnector Association="RMSEntities.FK_PersonLocations_LocationType" />
         <AssociationConnector Association="RMSEntities.FK_PersonLocations_Persons" />
         <AssociationConnector Association="RMSEntities.FK_TransactionLocation_TransactionBase" />
-        <EntityTypeShape EntityType="RMSEntities.TransactionData" Width="1.5" PointX="21.625" PointY="1" />
         <AssociationConnector Association="RMSEntities.FK_TransactionBase_QuickPrescription_Persons_Patient" />
         <EntityTypeShape EntityType="RMSEntities.IDCardInfo" Width="1.5" PointX="0.875" PointY="8.25" />
         <EntityTypeShape EntityType="RMSEntities.QBCustomer" Width="1.5" PointX="11.375" PointY="9.5" />
@@ -66,6 +65,11 @@
         <EntityTypeShape EntityType="RMSEntities.AgeRange" Width="1.5" PointX="8.375" PointY="11.75" />
         <EntityTypeShape EntityType="RMSEntities.PrescriptionImage" Width="1.5" PointX="7.25" PointY="15.5" />
         <AssociationConnector Association="RMSEntities.FK_PrescriptionImage_TransactionBase_Prescription" />
+        <EntityTypeShape EntityType="RMSEntities.TransactionData" Width="1.5" PointX="23.75" PointY="4.75" />
+        <EntityTypeShape EntityType="RMSEntities.CarriacouTransactionData" Width="1.5" PointX="25.5" PointY="4.75" />
+        <EntityTypeShape EntityType="RMSEntities.GrenvilleTransactionData" Width="1.5" PointX="27.25" PointY="4.75" />
+        <EntityTypeShape EntityType="RMSEntities.MedCareTransactionData" Width="1.5" PointX="29.125" PointY="4.75" />
+        <EntityTypeShape EntityType="RMSEntities.TownTransactionData" Width="1.5" PointX="30.875" PointY="4.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

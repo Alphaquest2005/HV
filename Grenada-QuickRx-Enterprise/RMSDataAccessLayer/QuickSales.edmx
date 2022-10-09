@@ -228,6 +228,7 @@
           <Property Name="EarnedDate" Type="date" />
           <Property Name="ExpirationDate" Type="date" />
           <Property Name="Source" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CustomerId" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="QBInventoryItems">
           <Key>
@@ -361,99 +362,14 @@
           <Property Name="Latitude" Type="float" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.IDCardInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="IDCardInfo">
-          <Key>
-            <PropertyRef Name="PatientId" />
-            
-            
-            
-            <PropertyRef Name="Membership" />
-            
-            
-            
-            
-            
-            <PropertyRef Name="Store" />
-            <PropertyRef Name="MembershipId" />
-          </Key>
-          <Property Name="PatientId" Type="int" Nullable="false" />
-          <Property Name="FirstName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Address" Type="nvarchar" MaxLength="255" />
-          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
-          <Property Name="CardId" Type="nvarchar" MaxLength="15" />
-          <Property Name="TotalSales" Type="float" />
-          <Property Name="Points" Type="float" Nullable="false" />
-          <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="EntrySalesAmount" Type="float" Nullable="false" />
-          <Property Name="MaxSalesAmount" Type="float" Nullable="false" />
-          <Property Name="PointRatePerDollar" Type="float" Nullable="false" />
-          <Property Name="Discount" Type="float" Nullable="false" />
-          <Property Name="QuickBooksPriceLevel" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Store" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="MembershipId" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientAvailableRewards' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="PatientAvailableRewards">
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.CarriacouTransactionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CarriacouTransactionData">
           <Key>
             
             
             
             
             
-            
-            
-            
-            
-            
-            <PropertyRef Name="StoreName" />
-            <PropertyRef Name="ItemNumber" />
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="bigint" Nullable="false" />
-          <Property Name="PatientId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Points" Type="float" Nullable="false" />
-          <Property Name="RewardPoints" Type="int" Nullable="false" />
-          <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="PointRatePerDollar" Type="float" Nullable="false" />
-          <Property Name="Value" Type="float" Nullable="false" />
-          <Property Name="MembershipId" Type="int" Nullable="false" />
-          <Property Name="Status" Type="nvarchar" MaxLength="50" />
-          <Property Name="StatusDate" Type="datetime" />
-          <Property Name="RewardId" Type="int" Nullable="false" />
-          <Property Name="PatientRewardId" Type="int" />
-          <Property Name="DaysToExpiration" Type="int" />
-          <Property Name="StoreName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="ItemNumber" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="PatientMembership">
-          <Key>
-            <PropertyRef Name="PatientId" />
-            
-            
-            
-          </Key>
-          <Property Name="PatientId" Type="int" Nullable="false" />
-          <Property Name="Points" Type="float" Nullable="false" />
-          <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MembershipId" Type="int" Nullable="false" />
-          <Property Name="Age" Type="int" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="TransactionData">
-          <Key>
-            
-            
-            
-            
-            <PropertyRef Name="TransactionId" />
             
             
             
@@ -512,6 +428,393 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionData' does no
           <Property Name="PharmacistLastName" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar" MaxLength="1000" />
           <Property Name="isExtension" Type="bit" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientPhoneNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.GrenvilleTransactionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="GrenvilleTransactionData">
+          <Key>
+            
+            
+            
+            
+            
+            
+            
+            
+            <PropertyRef Name="TransactionEntryId" />
+            
+            
+            
+            
+          </Key>
+          <Property Name="StationId" Type="int" Nullable="false" />
+          <Property Name="BatchId" Type="int" Nullable="false" />
+          <Property Name="CloseBatchId" Type="int" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="PharmacistId" Type="int" />
+          <Property Name="CashierId" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="255" />
+          <Property Name="ReferenceNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="StoreCode" Type="varchar" MaxLength="30" />
+          <Property Name="TransactionId" Type="int" Nullable="false" />
+          <Property Name="OpenClose" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="ParentTransactionId" Type="int" />
+          <Property Name="DeliveryType" Type="nvarchar" MaxLength="50" />
+          <Property Name="Longitude" Type="float" />
+          <Property Name="Latitude" Type="float" />
+          <Property Name="StoreID" Type="int" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="int" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Taxable" Type="bit" Nullable="false" />
+          <Property Name="Expr1" Type="nvarchar" MaxLength="255" />
+          <Property Name="TransactionTime" Type="datetime" />
+          <Property Name="SalesTaxPercent" Type="float" Nullable="false" />
+          <Property Name="Discount" Type="float" />
+          <Property Name="EntryNumber" Type="smallint" />
+          <Property Name="Dosage" Type="nvarchar(max)" />
+          <Property Name="ExpiryDate" Type="date" />
+          <Property Name="Repeat" Type="int" />
+          <Property Name="RepeatQuantity" Type="int" />
+          <Property Name="QBItemListID" Type="varchar" MaxLength="50" />
+          <Property Name="ItemNumber" Type="varchar" MaxLength="50" />
+          <Property Name="ItemName" Type="varchar" MaxLength="50" />
+          <Property Name="ItemId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Initials" Type="nvarchar" MaxLength="3" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" />
+          <Property Name="LoginName" Type="nvarchar(max)" />
+          <Property Name="TransactionEntryComment" Type="nvarchar" MaxLength="255" />
+          <Property Name="CashierFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CashierLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorId" Type="int" />
+          <Property Name="PatientId" Type="int" />
+          <Property Name="PharmacistFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PharmacistLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="isExtension" Type="bit" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientPhoneNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.IDCardInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="IDCardInfo">
+          <Key>
+            <PropertyRef Name="PatientId" />
+            
+            
+            
+            <PropertyRef Name="Membership" />
+            
+            
+            
+            
+            
+            <PropertyRef Name="Store" />
+            <PropertyRef Name="MembershipId" />
+          </Key>
+          <Property Name="PatientId" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
+          <Property Name="TotalSales" Type="float" />
+          <Property Name="Points" Type="float" Nullable="false" />
+          <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EntrySalesAmount" Type="float" Nullable="false" />
+          <Property Name="MaxSalesAmount" Type="float" Nullable="false" />
+          <Property Name="PointRatePerDollar" Type="float" Nullable="false" />
+          <Property Name="Discount" Type="float" Nullable="false" />
+          <Property Name="QuickBooksPriceLevel" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Store" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="MembershipId" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.MedCareTransactionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="MedCareTransactionData">
+          <Key>
+            
+            
+            
+            
+            
+            
+            
+            
+            <PropertyRef Name="TransactionEntryId" />
+            
+            
+            
+            
+          </Key>
+          <Property Name="StationId" Type="int" Nullable="false" />
+          <Property Name="BatchId" Type="int" Nullable="false" />
+          <Property Name="CloseBatchId" Type="int" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="PharmacistId" Type="int" />
+          <Property Name="CashierId" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="255" />
+          <Property Name="ReferenceNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="StoreCode" Type="varchar" MaxLength="30" />
+          <Property Name="TransactionId" Type="int" Nullable="false" />
+          <Property Name="OpenClose" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="ParentTransactionId" Type="int" />
+          <Property Name="DeliveryType" Type="nvarchar" MaxLength="50" />
+          <Property Name="Longitude" Type="float" />
+          <Property Name="Latitude" Type="float" />
+          <Property Name="StoreID" Type="int" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="int" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Taxable" Type="bit" Nullable="false" />
+          <Property Name="Expr1" Type="nvarchar" MaxLength="255" />
+          <Property Name="TransactionTime" Type="datetime" />
+          <Property Name="SalesTaxPercent" Type="float" Nullable="false" />
+          <Property Name="Discount" Type="float" />
+          <Property Name="EntryNumber" Type="smallint" />
+          <Property Name="Dosage" Type="nvarchar(max)" />
+          <Property Name="ExpiryDate" Type="date" />
+          <Property Name="Repeat" Type="int" />
+          <Property Name="RepeatQuantity" Type="int" />
+          <Property Name="QBItemListID" Type="varchar" MaxLength="50" />
+          <Property Name="ItemNumber" Type="varchar" MaxLength="50" />
+          <Property Name="ItemName" Type="varchar" MaxLength="50" />
+          <Property Name="ItemId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Initials" Type="nvarchar" MaxLength="3" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" />
+          <Property Name="LoginName" Type="nvarchar(max)" />
+          <Property Name="TransactionEntryComment" Type="nvarchar" MaxLength="255" />
+          <Property Name="CashierFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CashierLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorId" Type="int" />
+          <Property Name="PatientId" Type="int" />
+          <Property Name="PharmacistFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PharmacistLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="isExtension" Type="bit" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientPhoneNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientAvailableRewards' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PatientAvailableRewards">
+          <Key>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <PropertyRef Name="StoreName" />
+            <PropertyRef Name="ItemNumber" />
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" Nullable="false" />
+          <Property Name="PatientId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Points" Type="float" Nullable="false" />
+          <Property Name="RewardPoints" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PointRatePerDollar" Type="float" Nullable="false" />
+          <Property Name="Value" Type="float" Nullable="false" />
+          <Property Name="MembershipId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="StatusDate" Type="datetime" />
+          <Property Name="RewardId" Type="int" Nullable="false" />
+          <Property Name="PatientRewardId" Type="int" />
+          <Property Name="DaysToExpiration" Type="int" />
+          <Property Name="StoreName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ItemNumber" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.PatientMembership' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PatientMembership">
+          <Key>
+            <PropertyRef Name="PatientId" />
+            
+            
+            
+          </Key>
+          <Property Name="PatientId" Type="int" Nullable="false" />
+          <Property Name="Points" Type="float" Nullable="false" />
+          <Property Name="Membership" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MembershipId" Type="int" Nullable="false" />
+          <Property Name="Age" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.TownTransactionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="TownTransactionData">
+          <Key>
+            
+            
+            
+            
+            
+            
+            
+            
+            <PropertyRef Name="TransactionEntryId" />
+            
+            
+            
+            
+          </Key>
+          <Property Name="StationId" Type="int" Nullable="false" />
+          <Property Name="BatchId" Type="int" Nullable="false" />
+          <Property Name="CloseBatchId" Type="int" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="PharmacistId" Type="int" />
+          <Property Name="CashierId" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="255" />
+          <Property Name="ReferenceNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="StoreCode" Type="varchar" MaxLength="30" />
+          <Property Name="TransactionId" Type="int" Nullable="false" />
+          <Property Name="OpenClose" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="ParentTransactionId" Type="int" />
+          <Property Name="DeliveryType" Type="nvarchar" MaxLength="50" />
+          <Property Name="Longitude" Type="float" />
+          <Property Name="Latitude" Type="float" />
+          <Property Name="StoreID" Type="int" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="int" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Taxable" Type="bit" Nullable="false" />
+          <Property Name="Expr1" Type="nvarchar" MaxLength="255" />
+          <Property Name="TransactionTime" Type="datetime" />
+          <Property Name="SalesTaxPercent" Type="float" Nullable="false" />
+          <Property Name="Discount" Type="float" />
+          <Property Name="EntryNumber" Type="smallint" />
+          <Property Name="Dosage" Type="nvarchar(max)" />
+          <Property Name="ExpiryDate" Type="date" />
+          <Property Name="Repeat" Type="int" />
+          <Property Name="RepeatQuantity" Type="int" />
+          <Property Name="QBItemListID" Type="varchar" MaxLength="50" />
+          <Property Name="ItemNumber" Type="varchar" MaxLength="50" />
+          <Property Name="ItemName" Type="varchar" MaxLength="50" />
+          <Property Name="ItemId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Initials" Type="nvarchar" MaxLength="3" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" />
+          <Property Name="LoginName" Type="nvarchar(max)" />
+          <Property Name="TransactionEntryComment" Type="nvarchar" MaxLength="255" />
+          <Property Name="CashierFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CashierLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorId" Type="int" />
+          <Property Name="PatientId" Type="int" />
+          <Property Name="PharmacistFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PharmacistLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="isExtension" Type="bit" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientPhoneNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="TransactionData">
+          <Key>
+            
+            
+            
+            
+            
+            
+            
+            
+            <PropertyRef Name="TransactionEntryId" />
+            
+            
+            
+            
+          </Key>
+          <Property Name="StationId" Type="int" Nullable="false" />
+          <Property Name="BatchId" Type="int" Nullable="false" />
+          <Property Name="CloseBatchId" Type="int" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="PharmacistId" Type="int" />
+          <Property Name="CashierId" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="255" />
+          <Property Name="ReferenceNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="StoreCode" Type="varchar" MaxLength="30" />
+          <Property Name="TransactionId" Type="int" Nullable="false" />
+          <Property Name="OpenClose" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="EntryTimeStamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="ParentTransactionId" Type="int" />
+          <Property Name="DeliveryType" Type="nvarchar" MaxLength="50" />
+          <Property Name="Longitude" Type="float" />
+          <Property Name="Latitude" Type="float" />
+          <Property Name="StoreID" Type="int" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="int" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Taxable" Type="bit" Nullable="false" />
+          <Property Name="Expr1" Type="nvarchar" MaxLength="255" />
+          <Property Name="TransactionTime" Type="datetime" />
+          <Property Name="SalesTaxPercent" Type="float" Nullable="false" />
+          <Property Name="Discount" Type="float" />
+          <Property Name="EntryNumber" Type="smallint" />
+          <Property Name="Dosage" Type="nvarchar(max)" />
+          <Property Name="ExpiryDate" Type="date" />
+          <Property Name="Repeat" Type="int" />
+          <Property Name="RepeatQuantity" Type="int" />
+          <Property Name="QBItemListID" Type="varchar" MaxLength="50" />
+          <Property Name="ItemNumber" Type="varchar" MaxLength="50" />
+          <Property Name="ItemName" Type="varchar" MaxLength="50" />
+          <Property Name="ItemId" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Initials" Type="nvarchar" MaxLength="3" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" />
+          <Property Name="LoginName" Type="nvarchar(max)" />
+          <Property Name="TransactionEntryComment" Type="nvarchar" MaxLength="255" />
+          <Property Name="CashierFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CashierLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorId" Type="int" />
+          <Property Name="PatientId" Type="int" />
+          <Property Name="PharmacistFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PharmacistLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="isExtension" Type="bit" />
+          <Property Name="CardId" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorFirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DoctorLastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PatientPhoneNumber" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1009,6 +1312,124 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <EntitySet Name="TransactionEntryBase_PrescriptionEntry" EntityType="Self.TransactionEntryBase_PrescriptionEntry" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionEntryItem" EntityType="Self.TransactionEntryItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionLocation" EntityType="Self.TransactionLocation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CarriacouTransactionData" EntityType="Self.CarriacouTransactionData" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CarriacouTransactionData].[StationId] AS [StationId], 
+    [CarriacouTransactionData].[BatchId] AS [BatchId], 
+    [CarriacouTransactionData].[CloseBatchId] AS [CloseBatchId], 
+    [CarriacouTransactionData].[Time] AS [Time], 
+    [CarriacouTransactionData].[CustomerId] AS [CustomerId], 
+    [CarriacouTransactionData].[PharmacistId] AS [PharmacistId], 
+    [CarriacouTransactionData].[CashierId] AS [CashierId], 
+    [CarriacouTransactionData].[Comment] AS [Comment], 
+    [CarriacouTransactionData].[ReferenceNumber] AS [ReferenceNumber], 
+    [CarriacouTransactionData].[StoreCode] AS [StoreCode], 
+    [CarriacouTransactionData].[TransactionId] AS [TransactionId], 
+    [CarriacouTransactionData].[OpenClose] AS [OpenClose], 
+    [CarriacouTransactionData].[Status] AS [Status], 
+    [CarriacouTransactionData].[EntryTimeStamp] AS [EntryTimeStamp], 
+    [CarriacouTransactionData].[ParentTransactionId] AS [ParentTransactionId], 
+    [CarriacouTransactionData].[DeliveryType] AS [DeliveryType], 
+    [CarriacouTransactionData].[Longitude] AS [Longitude], 
+    [CarriacouTransactionData].[Latitude] AS [Latitude], 
+    [CarriacouTransactionData].[StoreID] AS [StoreID], 
+    [CarriacouTransactionData].[TransactionEntryId] AS [TransactionEntryId], 
+    [CarriacouTransactionData].[Price] AS [Price], 
+    [CarriacouTransactionData].[Quantity] AS [Quantity], 
+    [CarriacouTransactionData].[Taxable] AS [Taxable], 
+    [CarriacouTransactionData].[Expr1] AS [Expr1], 
+    [CarriacouTransactionData].[TransactionTime] AS [TransactionTime], 
+    [CarriacouTransactionData].[SalesTaxPercent] AS [SalesTaxPercent], 
+    [CarriacouTransactionData].[Discount] AS [Discount], 
+    [CarriacouTransactionData].[EntryNumber] AS [EntryNumber], 
+    [CarriacouTransactionData].[Dosage] AS [Dosage], 
+    [CarriacouTransactionData].[ExpiryDate] AS [ExpiryDate], 
+    [CarriacouTransactionData].[Repeat] AS [Repeat], 
+    [CarriacouTransactionData].[RepeatQuantity] AS [RepeatQuantity], 
+    [CarriacouTransactionData].[QBItemListID] AS [QBItemListID], 
+    [CarriacouTransactionData].[ItemNumber] AS [ItemNumber], 
+    [CarriacouTransactionData].[ItemName] AS [ItemName], 
+    [CarriacouTransactionData].[ItemId] AS [ItemId], 
+    [CarriacouTransactionData].[IsActive] AS [IsActive], 
+    [CarriacouTransactionData].[Initials] AS [Initials], 
+    [CarriacouTransactionData].[Role] AS [Role], 
+    [CarriacouTransactionData].[LoginName] AS [LoginName], 
+    [CarriacouTransactionData].[TransactionEntryComment] AS [TransactionEntryComment], 
+    [CarriacouTransactionData].[CashierFirstName] AS [CashierFirstName], 
+    [CarriacouTransactionData].[CashierLastName] AS [CashierLastName], 
+    [CarriacouTransactionData].[DoctorId] AS [DoctorId], 
+    [CarriacouTransactionData].[PatientId] AS [PatientId], 
+    [CarriacouTransactionData].[PharmacistFirstName] AS [PharmacistFirstName], 
+    [CarriacouTransactionData].[PharmacistLastName] AS [PharmacistLastName], 
+    [CarriacouTransactionData].[Description] AS [Description], 
+    [CarriacouTransactionData].[isExtension] AS [isExtension], 
+    [CarriacouTransactionData].[CardId] AS [CardId], 
+    [CarriacouTransactionData].[PatientFirstName] AS [PatientFirstName], 
+    [CarriacouTransactionData].[PatientLastName] AS [PatientLastName], 
+    [CarriacouTransactionData].[DoctorFirstName] AS [DoctorFirstName], 
+    [CarriacouTransactionData].[DoctorLastName] AS [DoctorLastName], 
+    [CarriacouTransactionData].[PatientPhoneNumber] AS [PatientPhoneNumber]
+    FROM [dbo].[CarriacouTransactionData] AS [CarriacouTransactionData]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="GrenvilleTransactionData" EntityType="Self.GrenvilleTransactionData" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [GrenvilleTransactionData].[StationId] AS [StationId], 
+    [GrenvilleTransactionData].[BatchId] AS [BatchId], 
+    [GrenvilleTransactionData].[CloseBatchId] AS [CloseBatchId], 
+    [GrenvilleTransactionData].[Time] AS [Time], 
+    [GrenvilleTransactionData].[CustomerId] AS [CustomerId], 
+    [GrenvilleTransactionData].[PharmacistId] AS [PharmacistId], 
+    [GrenvilleTransactionData].[CashierId] AS [CashierId], 
+    [GrenvilleTransactionData].[Comment] AS [Comment], 
+    [GrenvilleTransactionData].[ReferenceNumber] AS [ReferenceNumber], 
+    [GrenvilleTransactionData].[StoreCode] AS [StoreCode], 
+    [GrenvilleTransactionData].[TransactionId] AS [TransactionId], 
+    [GrenvilleTransactionData].[OpenClose] AS [OpenClose], 
+    [GrenvilleTransactionData].[Status] AS [Status], 
+    [GrenvilleTransactionData].[EntryTimeStamp] AS [EntryTimeStamp], 
+    [GrenvilleTransactionData].[ParentTransactionId] AS [ParentTransactionId], 
+    [GrenvilleTransactionData].[DeliveryType] AS [DeliveryType], 
+    [GrenvilleTransactionData].[Longitude] AS [Longitude], 
+    [GrenvilleTransactionData].[Latitude] AS [Latitude], 
+    [GrenvilleTransactionData].[StoreID] AS [StoreID], 
+    [GrenvilleTransactionData].[TransactionEntryId] AS [TransactionEntryId], 
+    [GrenvilleTransactionData].[Price] AS [Price], 
+    [GrenvilleTransactionData].[Quantity] AS [Quantity], 
+    [GrenvilleTransactionData].[Taxable] AS [Taxable], 
+    [GrenvilleTransactionData].[Expr1] AS [Expr1], 
+    [GrenvilleTransactionData].[TransactionTime] AS [TransactionTime], 
+    [GrenvilleTransactionData].[SalesTaxPercent] AS [SalesTaxPercent], 
+    [GrenvilleTransactionData].[Discount] AS [Discount], 
+    [GrenvilleTransactionData].[EntryNumber] AS [EntryNumber], 
+    [GrenvilleTransactionData].[Dosage] AS [Dosage], 
+    [GrenvilleTransactionData].[ExpiryDate] AS [ExpiryDate], 
+    [GrenvilleTransactionData].[Repeat] AS [Repeat], 
+    [GrenvilleTransactionData].[RepeatQuantity] AS [RepeatQuantity], 
+    [GrenvilleTransactionData].[QBItemListID] AS [QBItemListID], 
+    [GrenvilleTransactionData].[ItemNumber] AS [ItemNumber], 
+    [GrenvilleTransactionData].[ItemName] AS [ItemName], 
+    [GrenvilleTransactionData].[ItemId] AS [ItemId], 
+    [GrenvilleTransactionData].[IsActive] AS [IsActive], 
+    [GrenvilleTransactionData].[Initials] AS [Initials], 
+    [GrenvilleTransactionData].[Role] AS [Role], 
+    [GrenvilleTransactionData].[LoginName] AS [LoginName], 
+    [GrenvilleTransactionData].[TransactionEntryComment] AS [TransactionEntryComment], 
+    [GrenvilleTransactionData].[CashierFirstName] AS [CashierFirstName], 
+    [GrenvilleTransactionData].[CashierLastName] AS [CashierLastName], 
+    [GrenvilleTransactionData].[DoctorId] AS [DoctorId], 
+    [GrenvilleTransactionData].[PatientId] AS [PatientId], 
+    [GrenvilleTransactionData].[PharmacistFirstName] AS [PharmacistFirstName], 
+    [GrenvilleTransactionData].[PharmacistLastName] AS [PharmacistLastName], 
+    [GrenvilleTransactionData].[Description] AS [Description], 
+    [GrenvilleTransactionData].[isExtension] AS [isExtension], 
+    [GrenvilleTransactionData].[CardId] AS [CardId], 
+    [GrenvilleTransactionData].[PatientFirstName] AS [PatientFirstName], 
+    [GrenvilleTransactionData].[PatientLastName] AS [PatientLastName], 
+    [GrenvilleTransactionData].[DoctorFirstName] AS [DoctorFirstName], 
+    [GrenvilleTransactionData].[DoctorLastName] AS [DoctorLastName], 
+    [GrenvilleTransactionData].[PatientPhoneNumber] AS [PatientPhoneNumber]
+    FROM [dbo].[GrenvilleTransactionData] AS [GrenvilleTransactionData]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="IDCardInfo" EntityType="Self.IDCardInfo" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [IDCardInfo].[PatientId] AS [PatientId], 
@@ -1028,6 +1449,65 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
     [IDCardInfo].[Store] AS [Store], 
     [IDCardInfo].[MembershipId] AS [MembershipId]
     FROM [dbo].[IDCardInfo] AS [IDCardInfo]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="MedCareTransactionData" EntityType="Self.MedCareTransactionData" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MedCareTransactionData].[StationId] AS [StationId], 
+    [MedCareTransactionData].[BatchId] AS [BatchId], 
+    [MedCareTransactionData].[CloseBatchId] AS [CloseBatchId], 
+    [MedCareTransactionData].[Time] AS [Time], 
+    [MedCareTransactionData].[CustomerId] AS [CustomerId], 
+    [MedCareTransactionData].[PharmacistId] AS [PharmacistId], 
+    [MedCareTransactionData].[CashierId] AS [CashierId], 
+    [MedCareTransactionData].[Comment] AS [Comment], 
+    [MedCareTransactionData].[ReferenceNumber] AS [ReferenceNumber], 
+    [MedCareTransactionData].[StoreCode] AS [StoreCode], 
+    [MedCareTransactionData].[TransactionId] AS [TransactionId], 
+    [MedCareTransactionData].[OpenClose] AS [OpenClose], 
+    [MedCareTransactionData].[Status] AS [Status], 
+    [MedCareTransactionData].[EntryTimeStamp] AS [EntryTimeStamp], 
+    [MedCareTransactionData].[ParentTransactionId] AS [ParentTransactionId], 
+    [MedCareTransactionData].[DeliveryType] AS [DeliveryType], 
+    [MedCareTransactionData].[Longitude] AS [Longitude], 
+    [MedCareTransactionData].[Latitude] AS [Latitude], 
+    [MedCareTransactionData].[StoreID] AS [StoreID], 
+    [MedCareTransactionData].[TransactionEntryId] AS [TransactionEntryId], 
+    [MedCareTransactionData].[Price] AS [Price], 
+    [MedCareTransactionData].[Quantity] AS [Quantity], 
+    [MedCareTransactionData].[Taxable] AS [Taxable], 
+    [MedCareTransactionData].[Expr1] AS [Expr1], 
+    [MedCareTransactionData].[TransactionTime] AS [TransactionTime], 
+    [MedCareTransactionData].[SalesTaxPercent] AS [SalesTaxPercent], 
+    [MedCareTransactionData].[Discount] AS [Discount], 
+    [MedCareTransactionData].[EntryNumber] AS [EntryNumber], 
+    [MedCareTransactionData].[Dosage] AS [Dosage], 
+    [MedCareTransactionData].[ExpiryDate] AS [ExpiryDate], 
+    [MedCareTransactionData].[Repeat] AS [Repeat], 
+    [MedCareTransactionData].[RepeatQuantity] AS [RepeatQuantity], 
+    [MedCareTransactionData].[QBItemListID] AS [QBItemListID], 
+    [MedCareTransactionData].[ItemNumber] AS [ItemNumber], 
+    [MedCareTransactionData].[ItemName] AS [ItemName], 
+    [MedCareTransactionData].[ItemId] AS [ItemId], 
+    [MedCareTransactionData].[IsActive] AS [IsActive], 
+    [MedCareTransactionData].[Initials] AS [Initials], 
+    [MedCareTransactionData].[Role] AS [Role], 
+    [MedCareTransactionData].[LoginName] AS [LoginName], 
+    [MedCareTransactionData].[TransactionEntryComment] AS [TransactionEntryComment], 
+    [MedCareTransactionData].[CashierFirstName] AS [CashierFirstName], 
+    [MedCareTransactionData].[CashierLastName] AS [CashierLastName], 
+    [MedCareTransactionData].[DoctorId] AS [DoctorId], 
+    [MedCareTransactionData].[PatientId] AS [PatientId], 
+    [MedCareTransactionData].[PharmacistFirstName] AS [PharmacistFirstName], 
+    [MedCareTransactionData].[PharmacistLastName] AS [PharmacistLastName], 
+    [MedCareTransactionData].[Description] AS [Description], 
+    [MedCareTransactionData].[isExtension] AS [isExtension], 
+    [MedCareTransactionData].[CardId] AS [CardId], 
+    [MedCareTransactionData].[PatientFirstName] AS [PatientFirstName], 
+    [MedCareTransactionData].[PatientLastName] AS [PatientLastName], 
+    [MedCareTransactionData].[DoctorFirstName] AS [DoctorFirstName], 
+    [MedCareTransactionData].[DoctorLastName] AS [DoctorLastName], 
+    [MedCareTransactionData].[PatientPhoneNumber] AS [PatientPhoneNumber]
+    FROM [dbo].[MedCareTransactionData] AS [MedCareTransactionData]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="PatientAvailableRewards" EntityType="Self.PatientAvailableRewards" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1058,6 +1538,65 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
     [PatientMembership].[MembershipId] AS [MembershipId], 
     [PatientMembership].[Age] AS [Age]
     FROM [dbo].[PatientMembership] AS [PatientMembership]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="TownTransactionData" EntityType="Self.TownTransactionData" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [TownTransactionData].[StationId] AS [StationId], 
+    [TownTransactionData].[BatchId] AS [BatchId], 
+    [TownTransactionData].[CloseBatchId] AS [CloseBatchId], 
+    [TownTransactionData].[Time] AS [Time], 
+    [TownTransactionData].[CustomerId] AS [CustomerId], 
+    [TownTransactionData].[PharmacistId] AS [PharmacistId], 
+    [TownTransactionData].[CashierId] AS [CashierId], 
+    [TownTransactionData].[Comment] AS [Comment], 
+    [TownTransactionData].[ReferenceNumber] AS [ReferenceNumber], 
+    [TownTransactionData].[StoreCode] AS [StoreCode], 
+    [TownTransactionData].[TransactionId] AS [TransactionId], 
+    [TownTransactionData].[OpenClose] AS [OpenClose], 
+    [TownTransactionData].[Status] AS [Status], 
+    [TownTransactionData].[EntryTimeStamp] AS [EntryTimeStamp], 
+    [TownTransactionData].[ParentTransactionId] AS [ParentTransactionId], 
+    [TownTransactionData].[DeliveryType] AS [DeliveryType], 
+    [TownTransactionData].[Longitude] AS [Longitude], 
+    [TownTransactionData].[Latitude] AS [Latitude], 
+    [TownTransactionData].[StoreID] AS [StoreID], 
+    [TownTransactionData].[TransactionEntryId] AS [TransactionEntryId], 
+    [TownTransactionData].[Price] AS [Price], 
+    [TownTransactionData].[Quantity] AS [Quantity], 
+    [TownTransactionData].[Taxable] AS [Taxable], 
+    [TownTransactionData].[Expr1] AS [Expr1], 
+    [TownTransactionData].[TransactionTime] AS [TransactionTime], 
+    [TownTransactionData].[SalesTaxPercent] AS [SalesTaxPercent], 
+    [TownTransactionData].[Discount] AS [Discount], 
+    [TownTransactionData].[EntryNumber] AS [EntryNumber], 
+    [TownTransactionData].[Dosage] AS [Dosage], 
+    [TownTransactionData].[ExpiryDate] AS [ExpiryDate], 
+    [TownTransactionData].[Repeat] AS [Repeat], 
+    [TownTransactionData].[RepeatQuantity] AS [RepeatQuantity], 
+    [TownTransactionData].[QBItemListID] AS [QBItemListID], 
+    [TownTransactionData].[ItemNumber] AS [ItemNumber], 
+    [TownTransactionData].[ItemName] AS [ItemName], 
+    [TownTransactionData].[ItemId] AS [ItemId], 
+    [TownTransactionData].[IsActive] AS [IsActive], 
+    [TownTransactionData].[Initials] AS [Initials], 
+    [TownTransactionData].[Role] AS [Role], 
+    [TownTransactionData].[LoginName] AS [LoginName], 
+    [TownTransactionData].[TransactionEntryComment] AS [TransactionEntryComment], 
+    [TownTransactionData].[CashierFirstName] AS [CashierFirstName], 
+    [TownTransactionData].[CashierLastName] AS [CashierLastName], 
+    [TownTransactionData].[DoctorId] AS [DoctorId], 
+    [TownTransactionData].[PatientId] AS [PatientId], 
+    [TownTransactionData].[PharmacistFirstName] AS [PharmacistFirstName], 
+    [TownTransactionData].[PharmacistLastName] AS [PharmacistLastName], 
+    [TownTransactionData].[Description] AS [Description], 
+    [TownTransactionData].[isExtension] AS [isExtension], 
+    [TownTransactionData].[CardId] AS [CardId], 
+    [TownTransactionData].[PatientFirstName] AS [PatientFirstName], 
+    [TownTransactionData].[PatientLastName] AS [PatientLastName], 
+    [TownTransactionData].[DoctorFirstName] AS [DoctorFirstName], 
+    [TownTransactionData].[DoctorLastName] AS [DoctorLastName], 
+    [TownTransactionData].[PatientPhoneNumber] AS [PatientPhoneNumber]
+    FROM [dbo].[TownTransactionData] AS [TownTransactionData]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="TransactionData" EntityType="Self.TransactionData" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1109,7 +1648,13 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
     [TransactionData].[PharmacistFirstName] AS [PharmacistFirstName], 
     [TransactionData].[PharmacistLastName] AS [PharmacistLastName], 
     [TransactionData].[Description] AS [Description], 
-    [TransactionData].[isExtension] AS [isExtension]
+    [TransactionData].[isExtension] AS [isExtension], 
+    [TransactionData].[CardId] AS [CardId], 
+    [TransactionData].[PatientFirstName] AS [PatientFirstName], 
+    [TransactionData].[PatientLastName] AS [PatientLastName], 
+    [TransactionData].[DoctorFirstName] AS [DoctorFirstName], 
+    [TransactionData].[DoctorLastName] AS [DoctorLastName], 
+    [TransactionData].[PatientPhoneNumber] AS [PatientPhoneNumber]
     FROM [dbo].[TransactionData] AS [TransactionData]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="TransactionsView" EntityType="Self.TransactionsView" store:Type="Views" store:Schema="dbo">
@@ -1373,7 +1918,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             <End Role="TransactionBase" EntitySet="TransactionBase" />
             <End Role="TransactionLocation" EntitySet="TransactionLocations" />
           </AssociationSet>
-          <EntitySet Name="TransactionDatas" EntityType="RMSEntities.TransactionData" />
           <AssociationSet Name="FK_TransactionBase_QuickPrescription_Persons_Patient" Association="RMSEntities.FK_TransactionBase_QuickPrescription_Persons_Patient">
             <End Role="Patient" EntitySet="Persons" />
             <End Role="QuickPrescription" EntitySet="TransactionBase" />
@@ -1415,6 +1959,11 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             <End Role="Prescription" EntitySet="TransactionBase" />
             <End Role="PrescriptionImage" EntitySet="PrescriptionImages" />
           </AssociationSet>
+          <EntitySet Name="TransactionDatas" EntityType="RMSEntities.TransactionData" />
+          <EntitySet Name="CarriacouTransactionDatas" EntityType="RMSEntities.CarriacouTransactionData" />
+          <EntitySet Name="GrenvilleTransactionDatas" EntityType="RMSEntities.GrenvilleTransactionData" />
+          <EntitySet Name="MedCareTransactionDatas" EntityType="RMSEntities.MedCareTransactionData" />
+          <EntitySet Name="TownTransactionDatas" EntityType="RMSEntities.TownTransactionData" />
           
           </EntityContainer>
         <EntityType Name="Item" Abstract="false">
@@ -2031,61 +2580,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="TransactionData">
-          <Key>
-            <PropertyRef Name="TransactionId" />
-            <PropertyRef Name="TransactionEntryId" />
-          </Key>
-          <Property Name="StationId" Type="Int32" Nullable="false" />
-          <Property Name="BatchId" Type="Int32" Nullable="false" />
-          <Property Name="CloseBatchId" Type="Int32" />
-          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CustomerId" Type="Int32" />
-          <Property Name="PharmacistId" Type="Int32" />
-          <Property Name="CashierId" Type="Int32" Nullable="false" />
-          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="StoreCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="TransactionId" Type="Int32" Nullable="false" />
-          <Property Name="OpenClose" Type="Boolean" Nullable="false" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-          <Property Name="ParentTransactionId" Type="Int32" />
-          <Property Name="DeliveryType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Longitude" Type="Double" />
-          <Property Name="Latitude" Type="Double" />
-          <Property Name="StoreID" Type="Int32" Nullable="false" />
-          <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
-          <Property Name="Price" Type="Double" Nullable="false" />
-          <Property Name="Quantity" Type="Double" Nullable="false" />
-          <Property Name="Taxable" Type="Boolean" Nullable="false" />
-          <Property Name="Expr1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TransactionTime" Type="DateTime" Precision="3" />
-          <Property Name="SalesTaxPercent" Type="Double" Nullable="false" />
-          <Property Name="Discount" Type="Double" />
-          <Property Name="EntryNumber" Type="Int16" />
-          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
-          <Property Name="Repeat" Type="Int32" />
-          <Property Name="RepeatQuantity" Type="Int32" />
-          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemId" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="Initials" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
-          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="LoginName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="TransactionEntryComment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="CashierFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CashierLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="DoctorId" Type="Int32" Nullable="true" />
-          <Property Name="PatientId" Type="Int32" Nullable="true" />
-          <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="isExtension" Type="Boolean" />
-        </EntityType>
         <Association Name="FK_TransactionBase_QuickPrescription_Persons_Patient">
           <End Type="RMSEntities.Patient" Role="Patient" Multiplicity="0..1" />
           <End Type="RMSEntities.QuickPrescription" Role="QuickPrescription" Multiplicity="*" />
@@ -2109,7 +2603,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CardId" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="TotalSales" Type="Double" />
           <Property Name="Points" Type="Int32" Nullable="false" />
           <Property Name="EntrySalesAmount" Type="Double" Nullable="false" />
@@ -2139,6 +2633,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <Property Name="EarnedDate" Type="DateTime" Precision="0" />
           <Property Name="ExpirationDate" Type="DateTime" Precision="0" />
           <Property Name="Source" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_QBCustomer_Persons_Patient">
           <End Type="RMSEntities.Patient" Role="Patient" Multiplicity="1">
@@ -2319,6 +2814,306 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="TransactionData">
+          <Key>
+            <PropertyRef Name="TransactionEntryId" />
+          </Key>
+          <Property Name="StationId" Type="Int32" Nullable="false" />
+          <Property Name="BatchId" Type="Int32" Nullable="false" />
+          <Property Name="CloseBatchId" Type="Int32" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="PharmacistId" Type="Int32" />
+          <Property Name="CashierId" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StoreCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionId" Type="Int32" Nullable="false" />
+          <Property Name="OpenClose" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ParentTransactionId" Type="Int32" />
+          <Property Name="DeliveryType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="StoreID" Type="Int32" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Taxable" Type="Boolean" Nullable="false" />
+          <Property Name="Expr1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionTime" Type="DateTime" Precision="3" />
+          <Property Name="SalesTaxPercent" Type="Double" Nullable="false" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="EntryNumber" Type="Int16" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
+          <Property Name="Repeat" Type="Int32" />
+          <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Initials" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionEntryComment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CashierFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CashierLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorId" Type="Int32" />
+          <Property Name="PatientId" Type="Int32" />
+          <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="isExtension" Type="Boolean" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="CarriacouTransactionData">
+          <Key>
+            <PropertyRef Name="TransactionEntryId" />
+          </Key>
+          <Property Name="StationId" Type="Int32" Nullable="false" />
+          <Property Name="BatchId" Type="Int32" Nullable="false" />
+          <Property Name="CloseBatchId" Type="Int32" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="PharmacistId" Type="Int32" />
+          <Property Name="CashierId" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StoreCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionId" Type="Int32" Nullable="false" />
+          <Property Name="OpenClose" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ParentTransactionId" Type="Int32" />
+          <Property Name="DeliveryType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="StoreID" Type="Int32" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Taxable" Type="Boolean" Nullable="false" />
+          <Property Name="Expr1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionTime" Type="DateTime" Precision="3" />
+          <Property Name="SalesTaxPercent" Type="Double" Nullable="false" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="EntryNumber" Type="Int16" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
+          <Property Name="Repeat" Type="Int32" />
+          <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Initials" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionEntryComment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CashierFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CashierLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorId" Type="Int32" />
+          <Property Name="PatientId" Type="Int32" />
+          <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="isExtension" Type="Boolean" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="GrenvilleTransactionData">
+          <Key>
+            <PropertyRef Name="TransactionEntryId" />
+          </Key>
+          <Property Name="StationId" Type="Int32" Nullable="false" />
+          <Property Name="BatchId" Type="Int32" Nullable="false" />
+          <Property Name="CloseBatchId" Type="Int32" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="PharmacistId" Type="Int32" />
+          <Property Name="CashierId" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StoreCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionId" Type="Int32" Nullable="false" />
+          <Property Name="OpenClose" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ParentTransactionId" Type="Int32" />
+          <Property Name="DeliveryType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="StoreID" Type="Int32" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Taxable" Type="Boolean" Nullable="false" />
+          <Property Name="Expr1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionTime" Type="DateTime" Precision="3" />
+          <Property Name="SalesTaxPercent" Type="Double" Nullable="false" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="EntryNumber" Type="Int16" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
+          <Property Name="Repeat" Type="Int32" />
+          <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Initials" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionEntryComment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CashierFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CashierLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorId" Type="Int32" />
+          <Property Name="PatientId" Type="Int32" />
+          <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="isExtension" Type="Boolean" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="MedCareTransactionData">
+          <Key>
+            <PropertyRef Name="TransactionEntryId" />
+          </Key>
+          <Property Name="StationId" Type="Int32" Nullable="false" />
+          <Property Name="BatchId" Type="Int32" Nullable="false" />
+          <Property Name="CloseBatchId" Type="Int32" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="PharmacistId" Type="Int32" />
+          <Property Name="CashierId" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StoreCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionId" Type="Int32" Nullable="false" />
+          <Property Name="OpenClose" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ParentTransactionId" Type="Int32" />
+          <Property Name="DeliveryType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="StoreID" Type="Int32" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Taxable" Type="Boolean" Nullable="false" />
+          <Property Name="Expr1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionTime" Type="DateTime" Precision="3" />
+          <Property Name="SalesTaxPercent" Type="Double" Nullable="false" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="EntryNumber" Type="Int16" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
+          <Property Name="Repeat" Type="Int32" />
+          <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Initials" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionEntryComment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CashierFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CashierLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorId" Type="Int32" />
+          <Property Name="PatientId" Type="Int32" />
+          <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="isExtension" Type="Boolean" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TownTransactionData">
+          <Key>
+            <PropertyRef Name="TransactionEntryId" />
+          </Key>
+          <Property Name="StationId" Type="Int32" Nullable="false" />
+          <Property Name="BatchId" Type="Int32" Nullable="false" />
+          <Property Name="CloseBatchId" Type="Int32" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="PharmacistId" Type="Int32" />
+          <Property Name="CashierId" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StoreCode" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionId" Type="Int32" Nullable="false" />
+          <Property Name="OpenClose" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryTimeStamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" a:StoreGeneratedPattern="Computed" xmlns:a="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ParentTransactionId" Type="Int32" />
+          <Property Name="DeliveryType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="StoreID" Type="Int32" Nullable="false" />
+          <Property Name="TransactionEntryId" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Taxable" Type="Boolean" Nullable="false" />
+          <Property Name="Expr1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionTime" Type="DateTime" Precision="3" />
+          <Property Name="SalesTaxPercent" Type="Double" Nullable="false" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="EntryNumber" Type="Int16" />
+          <Property Name="Dosage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpiryDate" Type="DateTime" Precision="0" />
+          <Property Name="Repeat" Type="Int32" />
+          <Property Name="RepeatQuantity" Type="Int32" />
+          <Property Name="QBItemListID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Initials" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LoginName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionEntryComment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CashierFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CashierLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorId" Type="Int32" />
+          <Property Name="PatientId" Type="Int32" />
+          <Property Name="PharmacistFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PharmacistLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="isExtension" Type="Boolean" />
+          <Property Name="CardId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DoctorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PatientPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
 
         </Schema>
     </edmx:ConceptualModels>
@@ -2640,61 +3435,6 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="TransactionDatas">
-            <EntityTypeMapping TypeName="RMSEntities.TransactionData">
-              <MappingFragment StoreEntitySet="TransactionData">
-                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
-                <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />
-                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
-                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
-                <ScalarProperty Name="CashierLastName" ColumnName="CashierLastName" />
-                <ScalarProperty Name="CashierFirstName" ColumnName="CashierFirstName" />
-                <ScalarProperty Name="TransactionEntryComment" ColumnName="TransactionEntryComment" />
-                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
-                <ScalarProperty Name="Role" ColumnName="Role" />
-                <ScalarProperty Name="Initials" ColumnName="Initials" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
-                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
-                <ScalarProperty Name="QBItemListID" ColumnName="QBItemListID" />
-                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
-                <ScalarProperty Name="Repeat" ColumnName="Repeat" />
-                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
-                <ScalarProperty Name="Dosage" ColumnName="Dosage" />
-                <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
-                <ScalarProperty Name="Discount" ColumnName="Discount" />
-                <ScalarProperty Name="SalesTaxPercent" ColumnName="SalesTaxPercent" />
-                <ScalarProperty Name="TransactionTime" ColumnName="TransactionTime" />
-                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
-                <ScalarProperty Name="Taxable" ColumnName="Taxable" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
-                <ScalarProperty Name="StoreID" ColumnName="StoreID" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="DeliveryType" ColumnName="DeliveryType" />
-                <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
-                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="OpenClose" ColumnName="OpenClose" />
-                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
-                <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
-                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
-                <ScalarProperty Name="Comment" ColumnName="Comment" />
-                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
-                <ScalarProperty Name="PharmacistId" ColumnName="PharmacistId" />
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
-                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
-                <ScalarProperty Name="StationId" ColumnName="StationId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="IDCardInfoes">
             <EntityTypeMapping TypeName="RMSEntities.IDCardInfo">
               <MappingFragment StoreEntitySet="IDCardInfo">
@@ -2720,6 +3460,7 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
           <EntitySetMapping Name="QBCustomers">
             <EntityTypeMapping TypeName="RMSEntities.QBCustomer">
               <MappingFragment StoreEntitySet="QBCustomer">
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
                 <ScalarProperty Name="Source" ColumnName="Source" />
                 <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
                 <ScalarProperty Name="EarnedDate" ColumnName="EarnedDate" />
@@ -2815,6 +3556,311 @@ warning 6002: The table/view 'QuickSales-Enterprise.dbo.TransactionsView' does n
                 <ScalarProperty Name="Path" ColumnName="Path" />
                 <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TransactionDatas">
+            <EntityTypeMapping TypeName="RMSEntities.TransactionData">
+              <MappingFragment StoreEntitySet="TransactionData">
+                <ScalarProperty Name="PatientPhoneNumber" ColumnName="PatientPhoneNumber" />
+                <ScalarProperty Name="DoctorLastName" ColumnName="DoctorLastName" />
+                <ScalarProperty Name="DoctorFirstName" ColumnName="DoctorFirstName" />
+                <ScalarProperty Name="PatientLastName" ColumnName="PatientLastName" />
+                <ScalarProperty Name="PatientFirstName" ColumnName="PatientFirstName" />
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
+                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
+                <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />
+                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
+                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
+                <ScalarProperty Name="CashierLastName" ColumnName="CashierLastName" />
+                <ScalarProperty Name="CashierFirstName" ColumnName="CashierFirstName" />
+                <ScalarProperty Name="TransactionEntryComment" ColumnName="TransactionEntryComment" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Initials" ColumnName="Initials" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="QBItemListID" ColumnName="QBItemListID" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+                <ScalarProperty Name="Repeat" ColumnName="Repeat" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="Dosage" ColumnName="Dosage" />
+                <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="SalesTaxPercent" ColumnName="SalesTaxPercent" />
+                <ScalarProperty Name="TransactionTime" ColumnName="TransactionTime" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="Taxable" ColumnName="Taxable" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
+                <ScalarProperty Name="StoreID" ColumnName="StoreID" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="DeliveryType" ColumnName="DeliveryType" />
+                <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
+                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="OpenClose" ColumnName="OpenClose" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
+                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
+                <ScalarProperty Name="PharmacistId" ColumnName="PharmacistId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
+                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
+                <ScalarProperty Name="StationId" ColumnName="StationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CarriacouTransactionDatas">
+            <EntityTypeMapping TypeName="RMSEntities.CarriacouTransactionData">
+              <MappingFragment StoreEntitySet="CarriacouTransactionData">
+                <ScalarProperty Name="PatientPhoneNumber" ColumnName="PatientPhoneNumber" />
+                <ScalarProperty Name="DoctorLastName" ColumnName="DoctorLastName" />
+                <ScalarProperty Name="DoctorFirstName" ColumnName="DoctorFirstName" />
+                <ScalarProperty Name="PatientLastName" ColumnName="PatientLastName" />
+                <ScalarProperty Name="PatientFirstName" ColumnName="PatientFirstName" />
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
+                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
+                <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />
+                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
+                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
+                <ScalarProperty Name="CashierLastName" ColumnName="CashierLastName" />
+                <ScalarProperty Name="CashierFirstName" ColumnName="CashierFirstName" />
+                <ScalarProperty Name="TransactionEntryComment" ColumnName="TransactionEntryComment" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Initials" ColumnName="Initials" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="QBItemListID" ColumnName="QBItemListID" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+                <ScalarProperty Name="Repeat" ColumnName="Repeat" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="Dosage" ColumnName="Dosage" />
+                <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="SalesTaxPercent" ColumnName="SalesTaxPercent" />
+                <ScalarProperty Name="TransactionTime" ColumnName="TransactionTime" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="Taxable" ColumnName="Taxable" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
+                <ScalarProperty Name="StoreID" ColumnName="StoreID" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="DeliveryType" ColumnName="DeliveryType" />
+                <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
+                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="OpenClose" ColumnName="OpenClose" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
+                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
+                <ScalarProperty Name="PharmacistId" ColumnName="PharmacistId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
+                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
+                <ScalarProperty Name="StationId" ColumnName="StationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GrenvilleTransactionDatas">
+            <EntityTypeMapping TypeName="RMSEntities.GrenvilleTransactionData">
+              <MappingFragment StoreEntitySet="GrenvilleTransactionData">
+                <ScalarProperty Name="PatientPhoneNumber" ColumnName="PatientPhoneNumber" />
+                <ScalarProperty Name="DoctorLastName" ColumnName="DoctorLastName" />
+                <ScalarProperty Name="DoctorFirstName" ColumnName="DoctorFirstName" />
+                <ScalarProperty Name="PatientLastName" ColumnName="PatientLastName" />
+                <ScalarProperty Name="PatientFirstName" ColumnName="PatientFirstName" />
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
+                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
+                <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />
+                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
+                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
+                <ScalarProperty Name="CashierLastName" ColumnName="CashierLastName" />
+                <ScalarProperty Name="CashierFirstName" ColumnName="CashierFirstName" />
+                <ScalarProperty Name="TransactionEntryComment" ColumnName="TransactionEntryComment" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Initials" ColumnName="Initials" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="QBItemListID" ColumnName="QBItemListID" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+                <ScalarProperty Name="Repeat" ColumnName="Repeat" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="Dosage" ColumnName="Dosage" />
+                <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="SalesTaxPercent" ColumnName="SalesTaxPercent" />
+                <ScalarProperty Name="TransactionTime" ColumnName="TransactionTime" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="Taxable" ColumnName="Taxable" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
+                <ScalarProperty Name="StoreID" ColumnName="StoreID" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="DeliveryType" ColumnName="DeliveryType" />
+                <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
+                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="OpenClose" ColumnName="OpenClose" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
+                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
+                <ScalarProperty Name="PharmacistId" ColumnName="PharmacistId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
+                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
+                <ScalarProperty Name="StationId" ColumnName="StationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MedCareTransactionDatas">
+            <EntityTypeMapping TypeName="RMSEntities.MedCareTransactionData">
+              <MappingFragment StoreEntitySet="MedCareTransactionData">
+                <ScalarProperty Name="PatientPhoneNumber" ColumnName="PatientPhoneNumber" />
+                <ScalarProperty Name="DoctorLastName" ColumnName="DoctorLastName" />
+                <ScalarProperty Name="DoctorFirstName" ColumnName="DoctorFirstName" />
+                <ScalarProperty Name="PatientLastName" ColumnName="PatientLastName" />
+                <ScalarProperty Name="PatientFirstName" ColumnName="PatientFirstName" />
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
+                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
+                <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />
+                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
+                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
+                <ScalarProperty Name="CashierLastName" ColumnName="CashierLastName" />
+                <ScalarProperty Name="CashierFirstName" ColumnName="CashierFirstName" />
+                <ScalarProperty Name="TransactionEntryComment" ColumnName="TransactionEntryComment" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Initials" ColumnName="Initials" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="QBItemListID" ColumnName="QBItemListID" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+                <ScalarProperty Name="Repeat" ColumnName="Repeat" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="Dosage" ColumnName="Dosage" />
+                <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="SalesTaxPercent" ColumnName="SalesTaxPercent" />
+                <ScalarProperty Name="TransactionTime" ColumnName="TransactionTime" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="Taxable" ColumnName="Taxable" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
+                <ScalarProperty Name="StoreID" ColumnName="StoreID" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="DeliveryType" ColumnName="DeliveryType" />
+                <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
+                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="OpenClose" ColumnName="OpenClose" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
+                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
+                <ScalarProperty Name="PharmacistId" ColumnName="PharmacistId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
+                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
+                <ScalarProperty Name="StationId" ColumnName="StationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TownTransactionDatas">
+            <EntityTypeMapping TypeName="RMSEntities.TownTransactionData">
+              <MappingFragment StoreEntitySet="TownTransactionData">
+                <ScalarProperty Name="PatientPhoneNumber" ColumnName="PatientPhoneNumber" />
+                <ScalarProperty Name="DoctorLastName" ColumnName="DoctorLastName" />
+                <ScalarProperty Name="DoctorFirstName" ColumnName="DoctorFirstName" />
+                <ScalarProperty Name="PatientLastName" ColumnName="PatientLastName" />
+                <ScalarProperty Name="PatientFirstName" ColumnName="PatientFirstName" />
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
+                <ScalarProperty Name="isExtension" ColumnName="isExtension" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="PharmacistLastName" ColumnName="PharmacistLastName" />
+                <ScalarProperty Name="PharmacistFirstName" ColumnName="PharmacistFirstName" />
+                <ScalarProperty Name="PatientId" ColumnName="PatientId" />
+                <ScalarProperty Name="DoctorId" ColumnName="DoctorId" />
+                <ScalarProperty Name="CashierLastName" ColumnName="CashierLastName" />
+                <ScalarProperty Name="CashierFirstName" ColumnName="CashierFirstName" />
+                <ScalarProperty Name="TransactionEntryComment" ColumnName="TransactionEntryComment" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Initials" ColumnName="Initials" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="QBItemListID" ColumnName="QBItemListID" />
+                <ScalarProperty Name="RepeatQuantity" ColumnName="RepeatQuantity" />
+                <ScalarProperty Name="Repeat" ColumnName="Repeat" />
+                <ScalarProperty Name="ExpiryDate" ColumnName="ExpiryDate" />
+                <ScalarProperty Name="Dosage" ColumnName="Dosage" />
+                <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="SalesTaxPercent" ColumnName="SalesTaxPercent" />
+                <ScalarProperty Name="TransactionTime" ColumnName="TransactionTime" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="Taxable" ColumnName="Taxable" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="TransactionEntryId" ColumnName="TransactionEntryId" />
+                <ScalarProperty Name="StoreID" ColumnName="StoreID" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="DeliveryType" ColumnName="DeliveryType" />
+                <ScalarProperty Name="ParentTransactionId" ColumnName="ParentTransactionId" />
+                <ScalarProperty Name="EntryTimeStamp" ColumnName="EntryTimeStamp" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="OpenClose" ColumnName="OpenClose" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="StoreCode" ColumnName="StoreCode" />
+                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
+                <ScalarProperty Name="PharmacistId" ColumnName="PharmacistId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="CloseBatchId" ColumnName="CloseBatchId" />
+                <ScalarProperty Name="BatchId" ColumnName="BatchId" />
+                <ScalarProperty Name="StationId" ColumnName="StationId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

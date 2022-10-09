@@ -201,6 +201,12 @@
                 <TextBlock Text="{Binding SearchResults.Count, StringFormat=0 Results}" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" Foreground="#FFF0FBA9"/>
                 <TextBlock x:Name="Status" HorizontalAlignment="Left" Height="20" Margin="10,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="133" Foreground="#FFF0FBA9" TextAlignment="Right"/>
                 <CheckBox Content="Show Inactive Items" HorizontalAlignment="Right" Height="20" Margin="0,82,10.667,0" VerticalAlignment="Top" Width="128" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                <ComboBox HorizontalAlignment="Left" Height="23" Margin="175,10,0,0" VerticalAlignment="Top" Width="96" SelectedValue="{Binding Location  }">
+                    <ComboBoxItem Content="MedCare"/>
+                    <ComboBoxItem Content="Town"/>
+                    <ComboBoxItem Content="Grenville"/>
+                    <ComboBoxItem Content="Carriacou"/>
+                </ComboBox>
             </Grid>
         </TabItem>
         <TabItem >

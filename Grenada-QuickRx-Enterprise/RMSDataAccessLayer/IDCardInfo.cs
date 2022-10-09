@@ -81,7 +81,7 @@ namespace RMSDataAccessLayer
     	}
     	private string _PhoneNumber;
         [DataMember]
-                    [StringLength(15)]
+                    [StringLength(50)]
     	public string CardId
     	{ 
     		get { return _CardId; }

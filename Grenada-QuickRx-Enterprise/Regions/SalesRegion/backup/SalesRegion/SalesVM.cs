@@ -982,11 +982,11 @@ private void AddDoctorToTransaction(Doctor doctor)
     }
 
 
-    public void GoToTransaction(int TransactionId)
+    public TransactionBase GoToTransaction(int TransactionId)
     {
         try
         {
-            if (TransactionId == 0) return;
+            if (TransactionId == 0) return null;
 
             using (var ctx = new RMSModel())
             {
@@ -1006,10 +1006,10 @@ private void AddDoctorToTransaction(Doctor doctor)
                 //        where t.TransactionId == TransactionId
                 //        orderby t.Time descending
                 //        select t).FirstOrDefault();
-                ntrn = GetDBTransaction(TransactionId, null);
+                ntrn = GetDBTransaction(TransactionId);
                 if (ntrn == null)
                 {
-                    return;
+                    return null;
                 }
                 ntrn.StartTracking();
 
@@ -1023,7 +1023,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                     NotifyPropertyChanged(x => x.TransactionData.Position);
                 }
 
-
+                return ntrn;
 
             }
         }
@@ -1055,7 +1055,7 @@ private void AddDoctorToTransaction(Doctor doctor)
                         .FirstOrDefault(t => t.TransactionId < TransactionData.TransactionId);
                 }
 
-                if (ptrn != null) ptrn = GetDBTransaction(ptrn.TransactionId, ptrn.GetType().Name);
+                if (ptrn != null) ptrn = GetDBTransaction(ptrn.TransactionId);
                 NotifyPropertyChanged(x => x.TransactionData.TransactionLocation);
                 NotifyPropertyChanged(x => x.TransactionData.Position);
                 if (ptrn != null)
@@ -1084,7 +1084,7 @@ private void AddDoctorToTransaction(Doctor doctor)
     }
 
 
-    private TransactionBase GetDBTransaction(int transactionId, string type)
+    private TransactionBase GetDBTransaction(int transactionId)
     {
         try
         {
@@ -1097,34 +1097,86 @@ private void AddDoctorToTransaction(Doctor doctor)
             //     .Include("TransactionEntries.TransactionEntryItem.Item")
             //     .Include("ParentTransaction.TransactionEntries.TransactionEntryItem.Item")
             //      .Include(x => x.ParentTransaction.Transactions)
-            if (transactionId == 0) return new TransactionBase();
+            if (transactionId == 0) return null;
 
             using (var ctx = new RMSModel())
             {
-                if (type == null)
-                {
-                    var trn = ctx.TransactionBase.FirstOrDefault(x => x.TransactionId == transactionId);
-                    type = trn.GetType().Name;
-                }
+                //if (type == null)
+                //{
+                //    var trn = ctx.TransactionBase.FirstOrDefault(x => x.TransactionId == transactionId);
+                //    type = trn.GetType().Name;
+                //}
 
                 var tds = ctx.TransactionDatas.Where(x => x.TransactionId == transactionId).ToList();
-                if (!tds.Any()) tds = ctx.TransactionDatas.OrderByDescending(x => x.TransactionId).Take(1).ToList();
+                if (!tds.Any()) return null; //tds = ctx.TransactionDatas.OrderByDescending(x => x.TransactionId).Take(1).ToList();
+               
+                return GetTransactions(tds).FirstOrDefault();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public List<TransactionBase> GetTransactions(List<TransactionData> data)
+    {
+        try
+        {
+
+            var transGrps = data.GroupBy(x => x.TransactionId).ToList();
+            var reslst = new List<TransactionBase>();
+            foreach (var tds in transGrps)
+            {
+
+
                 var header = tds.First();
-                var res = type == "Prescription"
-                  ? (TransactionBase)new Prescription()
-                  {
+                //int transactionId;
+                //RMSModel ctx;
+                //List<TransactionData> tds;
+                var res = header.DoctorId != null //type == "Prescription"
+                    ? (TransactionBase)new Prescription()
+                    {
+                        DoctorId = header.DoctorId.GetValueOrDefault(),
+                        Doctor = tds.GroupBy(x => new
+                            { x.DoctorId, x.DoctorFirstName, x.DoctorLastName }).Select(x =>
+                            new Doctor()
+                            {
+                                Id = x.Key.DoctorId.GetValueOrDefault(),
+                                FirstName = x.Key.DoctorFirstName,
+                                LastName = x.Key.DoctorLastName,
 
-                      DoctorId = header.DoctorId.GetValueOrDefault(),
-                      PatientId = header.PatientId.GetValueOrDefault(),
-                      PrescriptionImage = ctx.PrescriptionImages.FirstOrDefault(x => x.TransactionId == header.TransactionId),
+                            }).FirstOrDefault(),
+                        PatientId = header.PatientId.GetValueOrDefault(),
+                        PrescriptionImage =
+                            new RMSModel().PrescriptionImages.FirstOrDefault(x =>
+                                x.TransactionId == header.TransactionId),
+                        Patient = tds.GroupBy(x => new
+                            { x.PatientId, x.PatientFirstName, x.PatientLastName, x.PatientPhoneNumber }).Select(x =>
+                            new Patient()
+                            {
+                                Id = x.Key.PatientId.GetValueOrDefault(),
+                                FirstName = x.Key.PatientFirstName,
+                                LastName = x.Key.PatientLastName,
+                                PhoneNumber = x.Key.PatientPhoneNumber,
+                            }).FirstOrDefault()
+                    }
+                    : new QuickPrescription()
+                    {
+                        PatientId = header?.PatientId.GetValueOrDefault(),
+                        Patient = tds.GroupBy(x => new
+                            { x.PatientId, x.PatientFirstName, x.PatientLastName, x.PatientPhoneNumber }).Select(x =>
+                            new Patient()
+                            {
+                                Id = x.Key.PatientId.GetValueOrDefault(),
+                                FirstName = x.Key.PatientFirstName,
+                                LastName = x.Key.PatientLastName,
+                                PhoneNumber = x.Key.PatientPhoneNumber,
+                            }).FirstOrDefault()
+                    };
 
-                  }
-                  : new QuickPrescription()
-                  {
-                      PatientId = header?.PatientId.GetValueOrDefault(),
-                  };
-
-                res.TransactionId = transactionId;
+                res.TransactionId = header.TransactionId;
                 res.Time = header.TransactionTime.GetValueOrDefault();
                 res.BatchId = header.BatchId;
                 res.CashierId = header.CashierId;
@@ -1137,25 +1189,30 @@ private void AddDoctorToTransaction(Doctor doctor)
                 res.DeliveryType = header.DeliveryType;
 
 
-                res.Cashier = tds.GroupBy(x => new { x.CashierId, x.LoginName, x.Initials, x.Role, x.CashierFirstName, x.CashierLastName }).Select(x =>
-                      new Cashier()
-                      {
-                          LoginName = x.Key.LoginName,
-                          Initials = x.Key.Initials,
-                          Id = x.Key.CashierId,
-                          Role = x.Key.Role,
-                          FirstName = x.Key.CashierFirstName,
-                          LastName = x.Key.CashierLastName
-                      }).FirstOrDefault();
-                res.Batch = new Batch();
-                res.CloseBatch = new Batch();
-                res.Pharmacist = tds.GroupBy(x => new { x.PharmacistId, x.PharmacistFirstName, x.PharmacistLastName }).Select(x =>
+
+
+
+                res.Cashier = tds.GroupBy(x => new
+                    { x.CashierId, x.LoginName, x.Initials, x.Role, x.CashierFirstName, x.CashierLastName }).Select(x =>
                     new Cashier()
                     {
-                        Id = x.Key.PharmacistId.GetValueOrDefault(),
-                        FirstName = x.Key.PharmacistFirstName,
-                        LastName = x.Key.PharmacistLastName
+                        LoginName = x.Key.LoginName,
+                        Initials = x.Key.Initials,
+                        Id = x.Key.CashierId,
+                        Role = x.Key.Role,
+                        FirstName = x.Key.CashierFirstName,
+                        LastName = x.Key.CashierLastName
                     }).FirstOrDefault();
+                res.Batch = new Batch();
+                res.CloseBatch = new Batch();
+                res.Pharmacist = tds.GroupBy(x => new { x.PharmacistId, x.PharmacistFirstName, x.PharmacistLastName })
+                    .Select(x =>
+                        new Cashier()
+                        {
+                            Id = x.Key.PharmacistId.GetValueOrDefault(),
+                            FirstName = x.Key.PharmacistFirstName,
+                            LastName = x.Key.PharmacistLastName
+                        }).FirstOrDefault();
                 res.TransactionLocation = tds.Where(x => x.Latitude.HasValue)
                     .GroupBy(x => new { x.TransactionId, x.Latitude, x.Longitude })
                     .Select(x => new TransactionLocation()
@@ -1166,28 +1223,26 @@ private void AddDoctorToTransaction(Doctor doctor)
                         Longitude = x.Key.Longitude.GetValueOrDefault()
                     }).FirstOrDefault();
 
-                
 
                 var trans = tds.GroupBy(x => new
-                {
-                    x.TransactionEntryId,
-                    x.Price,
-                    x.Quantity,
-                    x.Taxable,
-                    x.SalesTaxPercent,
-                    x.Discount,
-                    x.EntryNumber,
-                    x.ItemId,
-                    x.ItemNumber,
-                    x.Description,
-                    x.ItemName,
-                    x.Dosage,
-                    x.Repeat,
-                    x.RepeatQuantity,
-                    x.isExtension,
-                    x.QBItemListID
-
-                })
+                    {
+                        x.TransactionEntryId,
+                        x.Price,
+                        x.Quantity,
+                        x.Taxable,
+                        x.SalesTaxPercent,
+                        x.Discount,
+                        x.EntryNumber,
+                        x.ItemId,
+                        x.ItemNumber,
+                        x.Description,
+                        x.ItemName,
+                        x.Dosage,
+                        x.Repeat,
+                        x.RepeatQuantity,
+                        x.isExtension,
+                        x.QBItemListID
+                    })
                     .Select(x => new PrescriptionEntry()
                     {
                         TransactionEntryId = x.Key.TransactionEntryId,
@@ -1222,18 +1277,17 @@ private void AddDoctorToTransaction(Doctor doctor)
 
                 if (res != null && res?.ParentTransactionId != null)
                 {
-                    res.ParentTransaction = GetDBTransaction(res.ParentTransactionId.Value, "Prescription");
-                    res.ParentTransaction.Transactions = new ObservableCollection<TransactionBase>(ctx.TransactionBase.Include("TransactionEntries.TransactionEntryItem.Item")
+                    res.ParentTransaction = GetDBTransaction(res.ParentTransactionId.Value);
+                    res.ParentTransaction.Transactions = new ObservableCollection<TransactionBase>(new RMSModel()
+                        .TransactionBase
+                        .Include("TransactionEntries.TransactionEntryItem.Item")
                         .Where(x => x.ParentTransactionId == res.ParentTransactionId.Value).ToList());
                 }
 
-
-
-                return res;
-
-
-
+                reslst.Add(res);
             }
+
+            return reslst;
         }
         catch (Exception e)
         {
@@ -1697,35 +1751,35 @@ private void AddDoctorToTransaction(Doctor doctor)
     }
 
 
-    public TransactionBase CopyCurrentTransaction(bool copydetails = true)
+    public TransactionBase CopyCurrentTransaction(TransactionBase transactionData, bool copydetails = true)
     {
         try
         {
             using (var t = new TransactionScope())
             {
                 dynamic newt = null;
-                if (TransactionData is Prescription)
+                if (transactionData is Prescription)
                 {
                     var p = NewPrescription();
                     p.StartTracking();
 
-                    var doc = ((Prescription) TransactionData).Doctor;
+                    var doc = ((Prescription)transactionData).Doctor;
                     if (doc != null)
                     {
                         p.Doctor = doc;
-                        p.DoctorId = p.Doctor.Id;
+                        p.DoctorId = (int)(p.Doctor.Id == 0? GetDoctors($"{p.Doctor.FirstName} {p.Doctor.LastName}").FirstOrDefault()?.Id??0: p.Doctor.Id);
                         p.Doctor.StartTracking();
                     }
 
-                    var pat = ((Prescription) TransactionData).Patient;
+                    var pat = ((Prescription)transactionData).Patient;
                     if (pat != null)
                     {
                         p.Patient = pat;
                         p.Patient.StartTracking();
-                        p.PatientId = p.Patient.Id;
+                        p.PatientId = (int)(p.Patient.Id == 0 ? GetPatients(pat.DisplayName).FirstOrDefault()?.Id??0: p.Patient.Id);
                     }
 
-                    var pPhoto = ((Prescription)TransactionData).PrescriptionImage;
+                    var pPhoto = ((Prescription)transactionData).PrescriptionImage;
                     if (pPhoto != null)
                     {
                         p.PrescriptionImage = new PrescriptionImage() {TrackingState = TrackingState.Added};
@@ -1740,8 +1794,8 @@ private void AddDoctorToTransaction(Doctor doctor)
 
                     if (copydetails)
                     {
-                        newt.Patient = ((Prescription) TransactionData).Patient;
-                        newt.PatientId = ((Prescription) TransactionData).PatientId;
+                        newt.Patient = ((Prescription)transactionData).Patient;
+                        newt.PatientId = ((Prescription)transactionData).PatientId;
                         
 
                         }
@@ -1755,12 +1809,12 @@ private void AddDoctorToTransaction(Doctor doctor)
 
                     if (copydetails)
                     {
-                        newt.Patient = ((QuickPrescription) TransactionData).Patient;
-                        newt.PatientId = ((QuickPrescription) TransactionData).PatientId;
+                        newt.Patient = ((QuickPrescription)transactionData).Patient;
+                        newt.PatientId = ((QuickPrescription)transactionData).PatientId;
                         
                     }
                 }
-                CopyTransactionDetails(newt, TransactionData);
+                CopyTransactionDetails(newt, transactionData);
                 newt.UpdatePrices();
                 t.Complete();
                 return newt;
@@ -1937,7 +1991,7 @@ private void AddDoctorToTransaction(Doctor doctor)
     {
         Logger.Log(LoggingLevel.Info, $"Start: CopyCurrentTransaction - {DateTime.Now:O}");
 
-        var newt = CopyCurrentTransaction();
+        var newt = CopyCurrentTransaction(TransactionData);
 
         Logger.Log(LoggingLevel.Info, $"End: CopyCurrentTransaction - {DateTime.Now:O}");
         return newt;
@@ -2121,7 +2175,7 @@ private void AddDoctorToTransaction(Doctor doctor)
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Print error! Please check prints and reprint and also tell joseph you saw this error in SalesVM.");
+            MessageBox.Show("Print error! Please check prints and reprint and also tell Joseph you saw this error in SalesVM.");
             //Instance.UpdateTransactionEntry(ex, prescriptionEntry);
             Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
             //  throw ex;
@@ -2660,7 +2714,7 @@ private void AddDoctorToTransaction(Doctor doctor)
 
 
                 var saveTransactionToDb = SaveTransactionToDB(trans);
-                if(trans!= null) trans = GetDBTransaction(trans.TransactionId, trans.GetType().Name);
+                if(trans!= null) trans = GetDBTransaction(trans.TransactionId);
                 return saveTransactionToDb;
 
         }
@@ -3347,6 +3401,12 @@ private void AddDoctorToTransaction(Doctor doctor)
     }
 
         public string PrescriptionPhotoFolder { get; set; }
+
+        public void CreateNewTransaction(Prescription prescription)
+        {
+            var trans = CopyCurrentTransaction(prescription, true);
+            SalesVM.Instance.TransactionData = trans;
+        }
     }
 
 

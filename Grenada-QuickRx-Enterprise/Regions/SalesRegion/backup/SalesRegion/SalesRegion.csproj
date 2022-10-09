@@ -194,10 +194,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GMap.NET.Core">
-      <Version>2.0.3</Version>
+      <Version>2.1.7</Version>
     </PackageReference>
     <PackageReference Include="GMap.NET.WinPresentation">
-      <Version>2.0.3</Version>
+      <Version>2.1.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.Immutable">
       <Version>1.0.34</Version>
@@ -224,7 +224,7 @@
       <Version>4.8.3</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite">
-      <Version>1.0.115.5</Version>
+      <Version>1.0.116</Version>
     </PackageReference>
     <PackageReference Include="TrackableEntities.Client">
       <Version>2.5.7</Version>

@@ -20,7 +20,7 @@ namespace RMSDataAccessLayer
     using System.Collections.Generic;
     using TrackableEntities.Client;
     
-    public partial class TransactionData : BaseEntity<TransactionData>
+    public partial class TownTransactionData : BaseEntity<TownTransactionData>
     {
         [DataMember]
                     [Required(ErrorMessage="StationId is required")]

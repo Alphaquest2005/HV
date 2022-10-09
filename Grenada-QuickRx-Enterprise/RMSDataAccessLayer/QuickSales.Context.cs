@@ -44,7 +44,6 @@ namespace RMSDataAccessLayer
         public virtual DbSet<LocationType> LocationTypes { get; set; }
         public virtual DbSet<PersonLocation> PersonLocations { get; set; }
         public virtual DbSet<TransactionLocation> TransactionLocations { get; set; }
-        public virtual DbSet<TransactionData> TransactionDatas { get; set; }
         public virtual DbSet<IDCardInfo> IDCardInfoes { get; set; }
         public virtual DbSet<QBCustomer> QBCustomers { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
@@ -54,5 +53,10 @@ namespace RMSDataAccessLayer
         public virtual DbSet<PatientMembership> PatientMemberships { get; set; }
         public virtual DbSet<AgeRange> AgeRanges1 { get; set; }
         public virtual DbSet<PrescriptionImage> PrescriptionImages { get; set; }
+        public virtual DbSet<TransactionData> TransactionDatas { get; set; }
+        public virtual DbSet<CarriacouTransactionData> CarriacouTransactionDatas { get; set; }
+        public virtual DbSet<GrenvilleTransactionData> GrenvilleTransactionDatas { get; set; }
+        public virtual DbSet<MedCareTransactionData> MedCareTransactionDatas { get; set; }
+        public virtual DbSet<TownTransactionData> TownTransactionDatas { get; set; }
     }
 }

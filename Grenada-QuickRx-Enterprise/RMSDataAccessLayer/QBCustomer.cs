@@ -186,6 +186,20 @@ namespace RMSDataAccessLayer
     	}
     	private string _Source;
         [DataMember]
+                    [StringLength(50)]
+    	public string CustomerId
+    	{ 
+    		get { return _CustomerId; }
+    		set
+    		{
+    			if (Equals(value, _CustomerId)) return;
+    			_CustomerId = value;
+                ValidateModelProperty(this, value);
+    			NotifyPropertyChanged();
+    		}
+    	}
+    	private string _CustomerId;
+        [DataMember]
     	public Patient Persons_Patient
     	{
     		get { return _Persons_Patient; }

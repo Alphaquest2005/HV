@@ -11,6 +11,7 @@ using RMSDataAccessLayer;
 using System.Data.Entity;
 using System.Collections.ObjectModel;
 using System.Data.Entity.SqlServer;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Practices.Prism;
@@ -74,6 +75,31 @@ namespace LeftRegion
         }
 
 
+        string _location;
+
+        public string Location
+        {
+            get
+            {
+                return _location;
+            }
+            set
+            {
+                try
+                {
+                    _location = value;
+                    NotifyPropertyChanged(x => x.Location);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+        }
+
+
         public void AutoRepeat(TransactionBase transactionData)
         {
             SalesVM.Instance.AutoRepeat(transactionData);
@@ -82,22 +108,22 @@ namespace LeftRegion
 
         public void CopyPrescription()
         {
-            var t = SalesVM.Instance.CopyCurrentTransaction(false);
+            var t = SalesVM.Instance.CopyCurrentTransaction(TransactionData,false);
             SalesVM.Instance.TransactionData = t;
             //if (t != null) SalesVM.Instance.GoToTransaction(t.TransactionId);
         }
 
         public void SearchTransactions()
         {
-            SearchTransactions(SearchText);
+            SearchTransactions(SearchText, Location?.Replace("System.Windows.Controls.ComboBoxItem: ",""));
         }
 
-        public void SearchTransactions(string searchTxt)
+        public void SearchTransactions(string searchTxt, string location)
         {
             try
             {
 
-                SearchResults = new ObservableCollection<Prescription>(GetTransactions(searchTxt));
+                SearchResults = new ObservableCollection<Prescription>(GetTransactions(searchTxt, location));
 
             }
             catch (Exception ex)
@@ -106,302 +132,533 @@ namespace LeftRegion
             }
         }
 
-        private List<Prescription> GetTransactions(string searchTxt)
+        private List<Prescription> GetTransactions(string searchTxt, string location)
         {
+            var plist = new List<Prescription>();
+            var plistTask = Task.Run(() => { plist = GetPrescriptions(searchTxt, location); });
+            //var qlist = new List<Prescription>();
+
+             //var qlistTask = Task.Run(() => { qlist = GetQuickPrescriptions(searchTxt, location); });
+
+            Task.WhenAll(plistTask
+               //, qlistTask
+                ).Wait();
+
+
+            var prescriptions = plist;
+            //    prescriptions.AddRange(qlist);
+                return prescriptions.OrderByDescending(x => x.TransactionId).ToList();
+            
+        }
+
+        private List<Prescription> GetPrescriptions(string searchTxt, string location)
+        {
+            var plist = new List<Prescription>();
            
-             
+                var res = GetRawPrescriptionData(searchTxt, location);
 
-                var plist = new List<Prescription>();
-                var plistTask = Task.Run(() =>
-                {
-                    using (var ctx = new RMSModel())
-                    {
-                        IQueryable<Prescription> Transactions;
-                        if (Int32.TryParse(searchTxt, out int num))
+                plist = res
+                        .Select(x => new Prescription()
                         {
-                            Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
-                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
-                                            || (x.Patient.CardId.Contains(searchTxt)));
-
-                        }
-                        else
-                        {
-                            Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
-                                .Where(x => (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt)
-                                            );
-                        }
-
-                        var lst = Transactions.OfType<Prescription>()
-                            .OrderByDescending(x => x.TransactionId)
-                            .Where(x => x.ParentTransactionId == null)
-                            .OrderByDescending(x => x.Time)
-                            .Select(x => new
+                            TransactionId = x.TransactionId,
+                            Time = x.Time,
+                            Patient = new Patient()
                             {
-                                TransactionId = x.TransactionId,
-                                Time = x.Time,
-
-                                Patient = new
-                                {
-                                    FirstName = x.Patient.FirstName,
-                                    LastName = x.Patient.LastName,
-                                },
-                                Doctor = new
-                                {
-                                    FirstName = x.Doctor.FirstName,
-                                    LastName = x.Doctor.LastName,
-                                },
-                                TransactionEntries = x.TransactionEntries
-                                    .Select(z => new
+                                FirstName = x.Patient.FirstName,
+                                LastName = x.Patient.LastName,
+                                PhoneNumber = x.Patient.PhoneNumber,
+                            },
+                            Doctor = new Doctor()
+                            {
+                                FirstName = x.Doctor.FirstName,
+                                LastName = x.Doctor.LastName,
+                            },
+                            TransactionEntries = new ObservableCollection<TransactionEntryBase>(
+                                x.TransactionEntries
+                                    .Select(z => new PrescriptionEntry()
                                     {
                                         Quantity = z.Quantity,
                                         Price = z.Price,
                                         SalesTaxPercent = z.SalesTaxPercent,
                                         Discount = z.Discount,
-                                        TransactionEntryItem = new
+                                        TransactionEntryItem = new TransactionEntryItem()
                                         {
                                             ItemName = z.TransactionEntryItem.ItemName
                                         }
-                                    }).ToList(),
-                                Transactions = x.Transactions.OfType<Prescription>().Select(pp => new
+                                    })),
+                            Transactions = new ObservableCollection<TransactionBase>(x.Transactions.Select(pp =>
+                                new Prescription()
                                 {
                                     TransactionId = pp.TransactionId,
                                     Time = pp.Time,
 
-                                    Patient = new
+                                    Patient = new Patient()
                                     {
                                         FirstName = pp.Patient.FirstName,
                                         LastName = pp.Patient.LastName,
+                                        PhoneNumber = x.Patient.PhoneNumber,
                                     },
-                                    Doctor = new
+                                    Doctor = new Doctor()
                                     {
                                         FirstName = pp.Doctor.FirstName,
                                         LastName = pp.Doctor.LastName,
                                     },
-                                    TransactionEntries = pp.TransactionEntries
-                                        .Select(zz => new
-                                        {
-                                            Quantity = zz.Quantity,
-                                            Price = zz.Price,
-                                            SalesTaxPercent = zz.SalesTaxPercent,
-                                            Discount = zz.Discount,
-                                            TransactionEntryItem = new
+                                    TransactionEntries = new ObservableCollection<TransactionEntryBase>(
+                                        pp.TransactionEntries
+                                            .Select(q => new PrescriptionEntry()
                                             {
-                                                ItemName = zz.TransactionEntryItem.ItemName
-                                            }
-                                        }),
-                                })
-
-                            })
-                            .Take(listCount)
-                            .ToList();
-
-                        plist = lst
-                            .Select(x => new Prescription()
-                            {
-                                TransactionId = x.TransactionId,
-                                Time = x.Time,
-                                Patient = new Patient()
-                                {
-                                    FirstName = x.Patient.FirstName,
-                                    LastName = x.Patient.LastName,
-                                },
-                                Doctor = new Doctor()
-                                {
-                                    FirstName = x.Doctor.FirstName,
-                                    LastName = x.Doctor.LastName,
-                                },
-                                TransactionEntries = new ObservableCollection<TransactionEntryBase>(
-                                    x.TransactionEntries
-                                        .Select(z => new PrescriptionEntry()
-                                        {
-                                            Quantity = z.Quantity,
-                                            Price = z.Price,
-                                            SalesTaxPercent = z.SalesTaxPercent,
-                                            Discount = z.Discount,
-                                            TransactionEntryItem = new TransactionEntryItem()
-                                            {
-                                                ItemName = z.TransactionEntryItem.ItemName
-                                            }
-                                        })),
-                                Transactions = new ObservableCollection<TransactionBase>(x.Transactions.Select(pp =>
-                                    new Prescription()
-                                    {
-                                        TransactionId = pp.TransactionId,
-                                        Time = pp.Time,
-
-                                        Patient = new Patient()
-                                        {
-                                            FirstName = pp.Patient.FirstName,
-                                            LastName = pp.Patient.LastName,
-                                        },
-                                        Doctor = new Doctor()
-                                        {
-                                            FirstName = pp.Doctor.FirstName,
-                                            LastName = pp.Doctor.LastName,
-                                        },
-                                        TransactionEntries = new ObservableCollection<TransactionEntryBase>(
-                                            pp.TransactionEntries
-                                                .Select(q => new PrescriptionEntry()
+                                                Quantity = q.Quantity,
+                                                Price = q.Price,
+                                                SalesTaxPercent = q.SalesTaxPercent,
+                                                Discount = q.Discount,
+                                                TransactionEntryItem = new TransactionEntryItem()
                                                 {
-                                                    Quantity = q.Quantity,
-                                                    Price = q.Price,
-                                                    SalesTaxPercent = q.SalesTaxPercent,
-                                                    Discount = q.Discount,
-                                                    TransactionEntryItem = new TransactionEntryItem()
-                                                    {
-                                                        ItemName = q.TransactionEntryItem.ItemName
-                                                    }
-                                                })),
+                                                    ItemName = q.TransactionEntryItem.ItemName
+                                                }
+                                            })),
+                                }).ToList())
+                        }).ToList();
+            
+            return plist;
+        }
 
-                                    }).ToList())
+        private List<(int TransactionId, DateTime Time, (string FirstName, string LastName, string PhoneNumber) Patient, (string FirstName, string LastName) Doctor, List<(double Quantity, double Price, double SalesTaxPercent, double? Discount, (string ItemName, int? ItemId) TransactionEntryItem)> TransactionEntries, IEnumerable<(int TransactionId, DateTime Time, (string FirstName, string LastName, string PhoneNumber) Patient, (string FirstName, string LastName) Doctor, IEnumerable<(double Quantity, double Price, double SalesTaxPercent, double? Discount, (string ItemName, int? ItemId) TransactionEntryItem)> TransactionEntries)> Transactions)> GetRawPrescriptionData(
+            string searchTxt, string location)
+        {
+            var lst = GetPrescriptionData(searchTxt, location);
 
-                            }).ToList();
-                    }
-                });
-                var qlist = new List<Prescription>();
-                var qlistTask = Task.Run(() =>
+
+            var res = lst.OfType<Prescription>().Select(x =>
+                (
+                    TransactionId: x.TransactionId,
+                    Time: x.Time,
+                    Patient: 
+                    (
+                        FirstName : x.Patient.FirstName,
+                        LastName : x.Patient.LastName,
+                        PhoneNumber: x.Patient.PhoneNumber
+                    ),
+                    Doctor: (
+                        FirstName : x.Doctor.FirstName,
+                        LastName : x.Doctor.LastName
+                    ),
+                    TransactionEntries: x.TransactionEntries
+                        .Select(z => (
+                            Quantity : z.Quantity,
+                            Price : z.Price,
+                            SalesTaxPercent : z.SalesTaxPercent,
+                            Discount : z.Discount,
+                            TransactionEntryItem : (
+                                ItemName : z.TransactionEntryItem.ItemName, z.TransactionEntryItem.ItemId
+                            )
+                        )).ToList(),
+                    Transactions: x.Transactions.OfType<Prescription>().Select(pp => (
+                        TransactionId : pp.TransactionId,
+                        Time : pp.Time,
+
+                        Patient : (
+                            FirstName : pp.Patient.FirstName,
+                            LastName : pp.Patient.LastName,
+                            PhoneNumber: x.Patient.PhoneNumber
+                        ),
+                        Doctor :(
+                        
+                            FirstName : pp.Doctor.FirstName,
+                            LastName : pp.Doctor.LastName
+                        ),
+                        TransactionEntries : pp.TransactionEntries
+                            .Select(zz => (
+                                Quantity : zz.Quantity,
+                                Price : zz.Price,
+                                SalesTaxPercent : zz.SalesTaxPercent,
+                                Discount : zz.Discount,
+                                TransactionEntryItem : (
+                                    ItemName : zz.TransactionEntryItem.ItemName, zz.TransactionEntryItem.ItemId
+                                )
+                            ))
+                    ))
+                ))
+                .ToList();
+
+            var qres = lst.OfType<QuickPrescription>().Select(x =>
+                (
+                    TransactionId: x.TransactionId,
+                    Time: x.Time,
+                    Patient:
+                    (
+                        FirstName: x.Patient?.FirstName,
+                        LastName: x.Patient?.LastName,
+                        PhoneNumber: x.Patient?.PhoneNumber
+                    ),
+                    Doctor: (
+                        FirstName: "",
+                        LastName: ""
+                    ),
+                    TransactionEntries: x.TransactionEntries
+                        .Select(z => (
+                            Quantity: z.Quantity,
+                            Price: z.Price,
+                            SalesTaxPercent: z.SalesTaxPercent,
+                            Discount: z.Discount,
+                            TransactionEntryItem: (
+                                ItemName: z.TransactionEntryItem.ItemName, z.TransactionEntryItem.ItemId
+                            )
+                        )).ToList(),
+                    Transactions: x.Transactions.OfType<QuickPrescription>().Select(pp => (
+                        TransactionId: pp.TransactionId,
+                        Time: pp.Time,
+
+                        Patient: (
+                            FirstName: pp?.Patient?.FirstName,
+                            LastName: pp?.Patient?.LastName,
+                            PhoneNumber: x.Patient?.PhoneNumber
+                        ),
+                        Doctor: (
+
+                            FirstName: "",
+                            LastName: ""
+                        ),
+                        TransactionEntries: pp.TransactionEntries
+                            .Select(zz => (
+                                Quantity: zz.Quantity,
+                                Price: zz.Price,
+                                SalesTaxPercent: zz.SalesTaxPercent,
+                                Discount: zz.Discount,
+                                TransactionEntryItem: (
+                                    ItemName: zz.TransactionEntryItem.ItemName, zz.TransactionEntryItem.ItemId
+                                )
+                            ))
+                    ))
+                ))
+                .ToList();
+
+            res.AddRange(qres);
+
+            return res;
+        }
+
+        private List<TransactionBase> GetPrescriptionData(string searchTxt, string location)
+        {
+            List<TransactionBase> lst;
+            using (var ctx = new RMSModel())
+            {
+                //IQueryable<Prescription> Transactions;
+                //if (Int32.TryParse(searchTxt, out int num))
+                //{
+                //    Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
+                //        .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                //                    || (x.Patient.CardId.Contains(searchTxt)));
+                //}
+                //else
+                //{
+                //    Transactions = ctx.TransactionBase.OfType<Prescription>().AsNoTracking()
+                //        .Where(x => (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt)
+                //        );
+                //}
+
+
+                //lst = Transactions.OfType<Prescription>()
+                //    .OrderByDescending(x => x.TransactionId)
+                //    .Where(x => x.ParentTransactionId == null)
+                //    .OrderByDescending(x => x.Time)
+                //    .Take(listCount).ToList();
+
+                List<TransactionData> Transactions;
+                if (Int32.TryParse(searchTxt, out int num))
                 {
-                    using (var ctx = new RMSModel())
+                    switch (location)
                     {
+                        case "Grenville":
+                            Transactions = ctx.GrenvilleTransactionDatas.AsNoTracking()
+                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                                            || (x.CardId.Contains(searchTxt)))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<GrenvilleTransactionData, TransactionData>))
+                                .ToList();
+                            break;
+                        case "Town":
+                            Transactions = ctx.TownTransactionDatas.AsNoTracking()
+                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                                            || (x.CardId.Contains(searchTxt)))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<TownTransactionData, TransactionData>))
+                                .ToList(); ;
+                            break;
+                        case "MedCare":
+                            Transactions = ctx.MedCareTransactionDatas.AsNoTracking()
+                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                                            || (x.CardId.Contains(searchTxt)))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<MedCareTransactionData, TransactionData>))
+                                .ToList(); ;
+                            break;
+                        case "Carriacou":
+                            Transactions = ctx.CarriacouTransactionDatas.AsNoTracking()
+                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                                            || (x.CardId.Contains(searchTxt)))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<CarriacouTransactionData, TransactionData>))
+                                .ToList(); ;
+                            break;
+                        default:
+                            Transactions = ctx.TransactionDatas.AsNoTracking()
+                                .Where(x => x.TransactionId.ToString().Contains(searchTxt)
+                                            || (x.CardId.Contains(searchTxt)))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.ToList())
+                                .ToList(); ;
+                            break;
+                    }
+                   
+                }
+                else
+                {
+                    switch (location)
+                    {
+                        case "Grenville":
+                            Transactions = ctx.GrenvilleTransactionDatas.AsNoTracking()
+                                .Where(x => (x.PatientFirstName + " " + x.PatientLastName).Contains(searchTxt))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<GrenvilleTransactionData, TransactionData>))
+                                .ToList();
+                            break;
+                        case "Town":
+                            Transactions = ctx.TownTransactionDatas.AsNoTracking()
+                                .Where(x => (x.PatientFirstName + " " + x.PatientLastName).Contains(searchTxt))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<TownTransactionData, TransactionData>))
+                                .ToList();
+                            break;
+                        case "MedCare":
+                            Transactions = ctx.MedCareTransactionDatas.AsNoTracking()
+                                .Where(x => (x.PatientFirstName + " " + x.PatientLastName).Contains(searchTxt))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<MedCareTransactionData,TransactionData>))
+                                .ToList();
+                            break;
+                        case "Carriacou":
+                            Transactions = ctx.CarriacouTransactionDatas.AsNoTracking()
+                                .Where(x => (x.PatientFirstName + " " + x.PatientLastName).Contains(searchTxt))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.Select(Common.Core.Extensions.CopyProperties<CarriacouTransactionData, TransactionData>))
+                                .ToList();
+                            break;
+                        default:
+                            Transactions = ctx.TransactionDatas.AsNoTracking()
+                                .Where(x => (x.PatientFirstName + " " + x.PatientLastName).Contains(searchTxt))
+                                //.OrderBy(x => x.TransactionId)
+                                .Where(x => x.ParentTransactionId == null)
+                                //.OrderByDescending(x => x.Time)
+                                .GroupBy(x => x.TransactionId)
+                                .OrderByDescending(x => x.Key)
+                                .Take(listCount)
+                                .ToList()
+                                .SelectMany(x => x.ToList())
+                                .ToList(); ;
+                            break;
+                    }
+                  
+                }
 
-                        IQueryable<QuickPrescription> qTransactions;
-                        if (Int32.TryParse(searchTxt, out int num))
+                lst = Transactions
+                    .GroupBy(x => x.TransactionId)
+                    .SelectMany(x => SalesVM.Instance.GetTransactions(x.ToList()))
+                    .OrderByDescending(x => x.TransactionId)
+                    .ToList();
+            }
+
+            return lst;
+        }
+
+ 
+
+        private List<Prescription> GetQuickPrescriptions(string searchTxt, string location)
+        {
+            var qlist = new List<Prescription>();
+           
+                using (var ctx = new RMSModel())
+                {
+                    IQueryable<QuickPrescription> qTransactions;
+                    if (Int32.TryParse(searchTxt, out int num))
+                    {
+                        qTransactions = ctx.TransactionBase.OfType<QuickPrescription>().AsNoTracking()
+                            .Where(x => x.TransactionId.ToString().Contains(searchTxt));
+                    }
+                    else
+                    {
+                        qTransactions = ctx.TransactionBase.OfType<QuickPrescription>().AsNoTracking()
+                            .Where(x => x.Patient != null &&
+                                        (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt));
+                    }
+
+
+                    var lst = qTransactions.OfType<QuickPrescription>()
+                        .OrderByDescending(x => x.TransactionId)
+                        .Where(x => x.ParentTransactionId == null)
+                        .OrderByDescending(x => x.Time)
+                        .Select(x => new
                         {
+                            TransactionId = x.TransactionId,
+                            Time = x.Time,
 
-                            qTransactions = ctx.TransactionBase.OfType<QuickPrescription>().AsNoTracking()
-                                .Where(x => x.TransactionId.ToString().Contains(searchTxt));
-                        }
-                        else
-                        {
-
-                            qTransactions = ctx.TransactionBase.OfType<QuickPrescription>().AsNoTracking()
-                                .Where(x => x.Patient != null &&
-                                            (x.Patient.FirstName + " " + x.Patient.LastName).Contains(searchTxt));
-                        }
-
-
-                        var lst = qTransactions.OfType<QuickPrescription>()
-                            .OrderByDescending(x => x.TransactionId)
-                            .Where(x => x.ParentTransactionId == null)
-                            .OrderByDescending(x => x.Time)
-                            .Select(x => new
+                            Patient = new
                             {
-                                TransactionId = x.TransactionId,
-                                Time = x.Time,
+                                FirstName = x.Patient.FirstName,
+                                LastName = x.Patient.LastName,
+                            },
+
+                            TransactionEntries = x.TransactionEntries
+                                .Select(z => new
+                                {
+                                    Quantity = z.Quantity,
+                                    Price = z.Price,
+                                    SalesTaxPercent = z.SalesTaxPercent,
+                                    Discount = z.Discount,
+                                    TransactionEntryItem = new
+                                    {
+                                        ItemName = z.TransactionEntryItem.ItemName
+                                    }
+                                }).ToList(),
+                            Transactions = x.Transactions.OfType<QuickPrescription>().Select(pp => new
+                            {
+                                TransactionId = pp.TransactionId,
+                                Time = pp.Time,
 
                                 Patient = new
                                 {
-                                    FirstName = x.Patient.FirstName,
-                                    LastName = x.Patient.LastName,
+                                    FirstName = pp.Patient.FirstName,
+                                    LastName = pp.Patient.LastName,
                                 },
 
-                                TransactionEntries = x.TransactionEntries
-                                    .Select(z => new
+                                TransactionEntries = pp.TransactionEntries
+                                    .Select(zz => new
+                                    {
+                                        Quantity = zz.Quantity,
+                                        Price = zz.Price,
+                                        SalesTaxPercent = zz.SalesTaxPercent,
+                                        Discount = zz.Discount,
+                                        TransactionEntryItem = new
+                                        {
+                                            ItemName = zz.TransactionEntryItem.ItemName
+                                        }
+                                    }),
+                            })
+                        })
+                        .Take(listCount)
+                        .ToList();
+
+                    qlist = lst
+                        .Select(x => new Prescription()
+                        {
+                            TransactionId = x.TransactionId,
+                            Time = x.Time,
+                            Patient = new Patient()
+                            {
+                                FirstName = x.Patient.FirstName,
+                                LastName = x.Patient.LastName,
+                            },
+
+                            TransactionEntries = new ObservableCollection<TransactionEntryBase>(
+                                x.TransactionEntries
+                                    .Select(z => new PrescriptionEntry()
                                     {
                                         Quantity = z.Quantity,
                                         Price = z.Price,
                                         SalesTaxPercent = z.SalesTaxPercent,
                                         Discount = z.Discount,
-                                        TransactionEntryItem = new
+                                        TransactionEntryItem = new TransactionEntryItem()
                                         {
                                             ItemName = z.TransactionEntryItem.ItemName
                                         }
-                                    }).ToList(),
-                                Transactions = x.Transactions.OfType<QuickPrescription>().Select(pp => new
+                                    })),
+                            Transactions = new ObservableCollection<TransactionBase>(x.Transactions.Select(pp =>
+                                new Prescription()
                                 {
                                     TransactionId = pp.TransactionId,
                                     Time = pp.Time,
 
-                                    Patient = new
+                                    Patient = new Patient()
                                     {
                                         FirstName = pp.Patient.FirstName,
                                         LastName = pp.Patient.LastName,
                                     },
-
-                                    TransactionEntries = pp.TransactionEntries
-                                        .Select(zz => new
-                                        {
-                                            Quantity = zz.Quantity,
-                                            Price = zz.Price,
-                                            SalesTaxPercent = zz.SalesTaxPercent,
-                                            Discount = zz.Discount,
-                                            TransactionEntryItem = new
+                                    //Doctor = new Doctor()
+                                    //{
+                                    //    FirstName = pp.Doctor.FirstName,
+                                    //    LastName = pp.Doctor.LastName,
+                                    //},
+                                    TransactionEntries = new ObservableCollection<TransactionEntryBase>(
+                                        pp.TransactionEntries
+                                            .Select(q => new PrescriptionEntry()
                                             {
-                                                ItemName = zz.TransactionEntryItem.ItemName
-                                            }
-                                        }),
-                                })
-                            })
-                            .Take(listCount)
-                            .ToList();
-
-                        qlist = lst
-                            .Select(x => new Prescription()
-                            {
-                                TransactionId = x.TransactionId,
-                                Time = x.Time,
-                                Patient = new Patient()
-                                {
-                                    FirstName = x.Patient.FirstName,
-                                    LastName = x.Patient.LastName,
-                                },
-
-                                TransactionEntries = new ObservableCollection<TransactionEntryBase>(
-                                    x.TransactionEntries
-                                        .Select(z => new PrescriptionEntry()
-                                        {
-                                            Quantity = z.Quantity,
-                                            Price = z.Price,
-                                            SalesTaxPercent = z.SalesTaxPercent,
-                                            Discount = z.Discount,
-                                            TransactionEntryItem = new TransactionEntryItem()
-                                            {
-                                                ItemName = z.TransactionEntryItem.ItemName
-                                            }
-                                        })),
-                                Transactions = new ObservableCollection<TransactionBase>(x.Transactions.Select(pp =>
-                                    new Prescription()
-                                    {
-                                        TransactionId = pp.TransactionId,
-                                        Time = pp.Time,
-
-                                        Patient = new Patient()
-                                        {
-                                            FirstName = pp.Patient.FirstName,
-                                            LastName = pp.Patient.LastName,
-                                        },
-                                        //Doctor = new Doctor()
-                                        //{
-                                        //    FirstName = pp.Doctor.FirstName,
-                                        //    LastName = pp.Doctor.LastName,
-                                        //},
-                                        TransactionEntries = new ObservableCollection<TransactionEntryBase>(
-                                            pp.TransactionEntries
-                                                .Select(q => new PrescriptionEntry()
+                                                Quantity = q.Quantity,
+                                                Price = q.Price,
+                                                SalesTaxPercent = q.SalesTaxPercent,
+                                                Discount = q.Discount,
+                                                TransactionEntryItem = new TransactionEntryItem()
                                                 {
-                                                    Quantity = q.Quantity,
-                                                    Price = q.Price,
-                                                    SalesTaxPercent = q.SalesTaxPercent,
-                                                    Discount = q.Discount,
-                                                    TransactionEntryItem = new TransactionEntryItem()
-                                                    {
-                                                        ItemName = q.TransactionEntryItem.ItemName
-                                                    }
-                                                })),
-
-                                    }).ToList())
-
-                            }).ToList();
-                    }
-                });
-
-                Task.WhenAll(plistTask, qlistTask).Wait();
-
-
-                var prescriptions = plist;
-                prescriptions.AddRange(qlist);
-                return prescriptions.OrderByDescending(x => x.TransactionId).ToList();
+                                                    ItemName = q.TransactionEntryItem.ItemName
+                                                }
+                                            })),
+                                }).ToList())
+                        }).ToList();
+                }
             
+            return qlist;
         }
 
         static ObservableCollection<Prescription> _searchResults = new ObservableCollection<Prescription>();
