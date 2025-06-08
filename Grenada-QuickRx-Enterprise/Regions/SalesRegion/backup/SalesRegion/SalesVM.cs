@@ -2063,61 +2063,42 @@ private void AddDoctorToTransaction(Doctor doctor)
         try
         {
 
-            if (Station.PrintServer.StartsWith("\\"))
-            {
-                PrintServer printserver = new PrintServer(Station.PrintServer);
-
-
-                Size visualSize;
-
-                visualSize = new Size(288, 2 * 96); // paper size
-
-                DrawingVisual visual =
-                    PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);//
-
-
-                SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
-                    visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
-                page.Initialize(false);
-
-                PrintDialog pd = new PrintDialog();
-                pd.PrintQueue = printserver.GetPrintQueue(Station.ReceiptPrinterName);
-
-                pd.PrintDocument(page, "");
-            }
-            else
-            {
-                LocalPrintServer printserver = new LocalPrintServer();
-
-
-                Size visualSize;
-
-                visualSize = new Size(288, 2 * 96); // paper size
-
-                DrawingVisual visual =
-                    PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
-
-
-                SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
-                    visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
-                page.Initialize(false);
-
-                PrintDialog pd = new PrintDialog();
-                pd.PrintQueue = printserver.GetPrintQueue(Station.ReceiptPrinterName);
-
-                pd.PrintDocument(page, "");
-            }
-
-
+            PrintServer printserver = Station.PrintServer.StartsWith("\\")
+                                          ? new PrintServer(Station.PrintServer)
+                                          : new LocalPrintServer();
+            this.Print(fwe, printserver);
 
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Print error! Please check prints and reprint and also tell joseph you saw this error in SalesVM.");
+            MessageBox.Show(
+                "Print error! Please check prints and reprint and also tell joseph you saw this error in SalesVM.");
             Instance.UpdateTransactionEntry(ex, prescriptionEntry);
-            Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
+            Logger.Log(
+                LoggingLevel.Error,
+                GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
             //  throw ex;
         }
+    }
+
+    private void Print(FrameworkElement fwe, PrintServer printserver)
+    {
+        Size visualSize;
+
+        visualSize = new Size(288, 2 * 96); // paper size
+
+        DrawingVisual visual =
+            PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);//
+
+
+        SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
+            visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
+        page.Initialize(false);
+
+        PrintDialog pd = new PrintDialog();
+        pd.PrintQueue = printserver.GetPrintQueue(this.Station.ReceiptPrinterName);
+
+        pd.PrintDocument(page, "");
     }
 
     public void Print(ref FrameworkElement fwe)
@@ -3408,6 +3389,9 @@ private void AddDoctorToTransaction(Doctor doctor)
             SalesVM.Instance.TransactionData = trans;
         }
     }
+
+
+
 
 
 }

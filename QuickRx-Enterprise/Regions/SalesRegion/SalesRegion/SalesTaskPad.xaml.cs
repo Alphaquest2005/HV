@@ -740,6 +740,32 @@ namespace SalesRegion
                 }
             }
         }
+
+        private Patient walkinPatient = null;
+        private void AddWalkinPatient(object sender, RoutedEventArgs e)
+        {
+            if (walkinPatient == null)
+            {
+                using (var ctx = new RMSModel())
+                {
+                    this.walkinPatient=
+                        ctx.Persons.OfType<Patient>().FirstOrDefault(
+                            x =>
+                                x.FirstName.Trim().ToUpper() == "Walk in".ToUpper());
+                }
+            }
+            if (SalesVM.Instance.TransactionData == null) SalesVM.Instance.TransactionData = SalesVM.Instance.NewPrescription();
+            if (SalesVM.Instance.TransactionData is Prescription)
+            {
+                ((Prescription)SalesVM.Instance.TransactionData).Patient = walkinPatient;
+                            ((Prescription)SalesVM.Instance.TransactionData).PatientId = walkinPatient.Id;
+            }
+            else
+            {
+                MessageBox.Show("Walk in Patients only apply to prescriptions!");
+            }
+            
+        }
     }
 
 

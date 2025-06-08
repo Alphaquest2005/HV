@@ -1340,7 +1340,7 @@ namespace SalesRegion
             }
         }
 
-        private QuickPrescription CreateNewQuickPrescription()
+        public QuickPrescription CreateNewQuickPrescription()
         {
             try
             {
@@ -1371,11 +1371,10 @@ namespace SalesRegion
             try
             {
               
+                PrintServer printserver = Station.PrintServer.StartsWith("\\")
+                                              ? new PrintServer(Station.PrintServer)
+                                              : new LocalPrintServer();
                 
-                //LocalPrintServer printserver = new LocalPrintServer();
-                PrintServer printserver = new PrintServer(Station.PrintServer);
-
-
                 Size visualSize;
 
                 visualSize = new Size(288, 2 * 96); // paper size

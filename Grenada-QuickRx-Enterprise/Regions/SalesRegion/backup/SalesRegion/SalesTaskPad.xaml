@@ -1145,7 +1145,7 @@
 							Grid.ColumnSpan="2"
 							Width="38"
 							Height="35"
-							Margin="248,-39,0,0"
+							Margin="288,-39,0,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Click="SearchBtn_Click">
@@ -1153,6 +1153,14 @@
                             <SolidColorBrush Opacity="0.0" Color="#FFDDDDDD" />
                         </Button.Background>
                         <Image Source="{DynamicResource SearchImg}" />
+                    </Button>
+
+                    <Button HorizontalAlignment="Left" Click="AddWalkinPatient"  Height="35" Margin="248,-39,0,0" VerticalAlignment="Top" Width="37" Grid.ColumnSpan="2" >
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
+                        </Button.Background>
+                        <Image Source="{DynamicResource Patient}"/>
+
                     </Button>
 
                     <Button x:Name="ScanBtn"
@@ -1205,7 +1213,7 @@
 							Grid.Column="1"
 							Width="38"
 							Height="35"
-							Margin="34,-39,0,0"
+							Margin="64,-39,0,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top"
 							Click="ClearBtn_Click">
@@ -1584,7 +1592,7 @@
 									  Background="{x:Null}"
 									  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 									  ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                                    <Border Width="281"
+                                    <Border Width="282"
 											Height="172"
 											Margin="-3,0,0,0"
 											HorizontalAlignment="Center"
@@ -1760,7 +1768,7 @@
                                             <TextBlock Grid.Row="0"
 													   Width="19"
 													   Height="18"
-													   Margin="258,43,0,0"
+													   Margin="262,43,0,0"
 													   HorizontalAlignment="Left"
 													   VerticalAlignment="Top"
 													   FontFamily="Calibri"
@@ -1776,7 +1784,7 @@
 
                                             
 
-                                            <StackPanel Grid.Row="1" Margin="3,0,5,0">
+                                            <StackPanel Grid.Row="1" Margin="3,0,0,0">
 
                                                 <Grid>
                                                 <TextBlock Width="238"
@@ -1811,7 +1819,7 @@
                                                 
 
                                                 <TextBlock x:Name="DosageTxt"
-                                                           Width="276"
+                                                           Width="277"
                                                            Margin="0,0,0,5"
                                                            HorizontalAlignment="Left"
 														   VerticalAlignment="Top"

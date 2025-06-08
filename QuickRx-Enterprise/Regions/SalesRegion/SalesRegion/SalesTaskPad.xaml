@@ -408,13 +408,20 @@
 
                     </Button>
 
-                    <Button x:Name="SearchBtn" HorizontalAlignment="Left" Height="35" Margin="248,-39,0,0" VerticalAlignment="Top" Width="38" Click="SearchBtn_Click" Grid.ColumnSpan="2" >
+                    <Button x:Name="SearchBtn" HorizontalAlignment="Left" Height="35" Margin="298,-39,0,0" VerticalAlignment="Top" Width="38" Click="SearchBtn_Click" Grid.ColumnSpan="2" >
                         <Button.Background>
                             <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
                         </Button.Background>
                         <Image Source="{DynamicResource SearchImg}"/>
                     </Button>
-                    <Button x:Name="ClearBtn" HorizontalAlignment="Left" Height="35" Margin="34,-39,0,0" VerticalAlignment="Top" Width="38" Click="ClearBtn_Click" Grid.Column="1" >
+                    <Button HorizontalAlignment="Left" Click="AddWalkinPatient"  Height="35" Margin="248,-39,0,0" VerticalAlignment="Top" Width="37" Grid.ColumnSpan="2" >
+                        <Button.Background>
+                            <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
+                        </Button.Background>
+                        <Image Source="{DynamicResource Patient}"/>
+
+                    </Button>
+                    <Button x:Name="ClearBtn" HorizontalAlignment="Left" Height="35" Margin="74,-39,0,0" VerticalAlignment="Top" Width="38" Click="ClearBtn_Click" Grid.Column="1" >
                         <Button.Background>
                             <SolidColorBrush Color="#FFDDDDDD" Opacity="0.0"/>
                         </Button.Background>
