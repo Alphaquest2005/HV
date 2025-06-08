@@ -28,7 +28,7 @@ namespace SUT.PrintEngine.ViewModels
         MemoryStream _ms;
         Package _pkg;
         XpsDocument _xpsDocument;
-        public void ReloadPreview(PageOrientation pageOrientation, PaperSize currentPaper)
+        public async void ReloadPreview(PageOrientation pageOrientation, PaperSize currentPaper)
         {
             ReloadingPreview = true;
             if (FullScreenPrintWindow != null)
@@ -66,7 +66,7 @@ namespace SUT.PrintEngine.ViewModels
             Paginator = documentPaginator;
             MaxCopies = NumberOfPages = ApproaxNumberOfPages = Paginator.PageCount;
             PagesAcross = 2;
-            DisplayPagePreviewsAll(documentPaginator);
+            await DisplayPagePreviewsAllAsync(documentPaginator).ConfigureAwait(false);
             WaitScreen.Hide();
             ReloadingPreview = false;
         }

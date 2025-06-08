@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Printing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,11 +16,18 @@ namespace SUT.PrintEngine.Utils
 {
     public class PrintControlFactory
     {
+        private static readonly Lazy<UnityContainer> _cachedContainer = new Lazy<UnityContainer>(() =>
+        {
+            var container = new UnityContainer();
+            PrintEngineModule.Initialize(container);
+            return container;
+        });
+
+        private static UnityContainer CachedContainer => _cachedContainer.Value;
+
         public static IPrintControlViewModel Create(Size visualSize, Visual visual)
         {
-            var unityContainer = new UnityContainer();
-            PrintEngineModule.Initialize(unityContainer);
-            var printControlPresenter = (PrintControlViewModel)unityContainer.Resolve<IPrintControlViewModel>();
+            var printControlPresenter = (PrintControlViewModel)CachedContainer.Resolve<IPrintControlViewModel>();
 
             var drawingVisual = BuildGraphVisual(new PageMediaSize(visualSize.Width, visualSize.Height), visual);
             printControlPresenter.DrawingVisual = drawingVisual;
@@ -33,27 +41,21 @@ namespace SUT.PrintEngine.Utils
             return Create(size, frameworkElement);
         }
 
-        public static IPrintControlViewModel Create(DataTable dataTable, List<double> columnWidths)
+        public static async Task<IPrintControlViewModel> CreateAsync(DataTable dataTable, List<double> columnWidths)
         {
-            var unityContainer = new UnityContainer();
-            PrintEngineModule.Initialize(unityContainer);
-            var printControlPresenter = (DataTablePrintControlViewModel)unityContainer.Resolve<IDataTablePrintControlViewModel>();
-            SetupDataTablePrintControlPresenter(dataTable, printControlPresenter, columnWidths, string.Empty);
+            var printControlPresenter = (DataTablePrintControlViewModel)CachedContainer.Resolve<IDataTablePrintControlViewModel>();
+            await SetupDataTablePrintControlPresenterAsync(dataTable, printControlPresenter, columnWidths, string.Empty).ConfigureAwait(false);
             return printControlPresenter;
-
         }
 
-        public static IPrintControlViewModel Create(DataTable dataTable, List<double> columnWidths, string headerTemplate)
+        public static async Task<IPrintControlViewModel> CreateAsync(DataTable dataTable, List<double> columnWidths, string headerTemplate)
         {
-            var unityContainer = new UnityContainer();
-            PrintEngineModule.Initialize(unityContainer);
-            var printControlPresenter = (DataTablePrintControlViewModel)unityContainer.Resolve<IDataTablePrintControlViewModel>();
-            SetupDataTablePrintControlPresenter(dataTable, printControlPresenter, columnWidths, headerTemplate);
+            var printControlPresenter = (DataTablePrintControlViewModel)CachedContainer.Resolve<IDataTablePrintControlViewModel>();
+            await SetupDataTablePrintControlPresenterAsync(dataTable, printControlPresenter, columnWidths, headerTemplate).ConfigureAwait(false);
             return printControlPresenter;
-
         }
 
-        private static void SetupDataTablePrintControlPresenter(DataTable dataTable, DataTablePrintControlViewModel printControlPresenter, List<double> columnWidths, string headerTemplate)
+        private static async Task SetupDataTablePrintControlPresenterAsync(DataTable dataTable, DataTablePrintControlViewModel printControlPresenter, List<double> columnWidths, string headerTemplate)
         {
 
             var fieldNames = new List<string>();
@@ -69,7 +71,7 @@ namespace SUT.PrintEngine.Utils
                 pageAccrossWidth += columnsWidth;
             }
 
-            var customVisualGrid = CreateDocument(dataTable, pageAccrossWidth, columnWidths);
+            var customVisualGrid = await CreateDocumentAsync(dataTable, pageAccrossWidth, columnWidths).ConfigureAwait(false);
 
             var rowHeights = CalculateRowHeights(customVisualGrid);
 
@@ -104,9 +106,9 @@ namespace SUT.PrintEngine.Utils
             return rowHeights;
         }
 
-        private static Border CreateDocument(DataTable dataTable, double pageAcrossWidth, List<double> columnWidths)
+        private static async Task<Border> CreateDocumentAsync(DataTable dataTable, double pageAcrossWidth, List<double> columnWidths)
         {
-            Application.Current.DoEvents();
+            await Task.Yield();
             var spBorder = new Border { BorderBrush = Brushes.Gray, BorderThickness = new Thickness(0.25), Background = Brushes.White};
             var stackPanel = new StackPanel
             {
@@ -118,7 +120,7 @@ namespace SUT.PrintEngine.Utils
 
             foreach (DataRow dataRow in dataTable.Rows) // loop for all propertyOwners
             {
-                Application.Current.DoEvents();
+                await Task.Yield();
                 var border = new Border { Margin = new Thickness(0, 0, 0, 0), BorderBrush = Brushes.Gray, BorderThickness = new Thickness(0.25), HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
                 var sp = new StackPanel
                 {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Printing;
 using System.Printing.Interop;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -1017,7 +1018,7 @@ namespace SUT.PrintEngine.ViewModels
             LoadDocument();
         }
 
-        protected void DisplayPagePreviewsAll(DocumentPaginator paginator)
+        protected async Task DisplayPagePreviewsAllAsync(DocumentPaginator paginator)
         {
             double scale;
             var rowCount = GetRowCount(paginator);
@@ -1050,7 +1051,7 @@ namespace SUT.PrintEngine.ViewModels
 
             for (var i = 0; i < paginator.PageCount; i++)
             {
-                Application.Current.DoEvents();
+                await Task.Yield();
                 var pageElement = GetPageUiElement(i, paginator, scale);
                 pageElement.HorizontalAlignment = HorizontalAlignment.Center;
                 pageElement.VerticalAlignment = System.Windows.VerticalAlignment.Center;

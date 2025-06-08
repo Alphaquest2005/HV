@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +27,8 @@ namespace SUT.PrintEngine.Paginators
         protected readonly List<double> AdjustedPageHeights = new List<double>();
         private int _verticalPageCount;
         protected Rect FrameRect;
+        private readonly ConcurrentDictionary<int, DrawingVisual> _visualCache = new ConcurrentDictionary<int, DrawingVisual>();
+        private readonly int _maxCacheSize = 50;
         public List<DrawingVisual> DrawingVisuals;
         private IDocumentPaginatorSource _document;
         protected double PrintablePageWidth;
@@ -66,29 +70,36 @@ namespace SUT.PrintEngine.Paginators
 
             _verticalPageCount = GetVerticalPageCount();
 
-            CreateAllPageVisuals();
+            // Lazy loading - visuals created on demand
         }
 
-        private void CreateAllPageVisuals()
+        private DrawingVisual CreatePageVisualOnDemand(int pageNumber)
         {
-            DrawingVisuals = new List<DrawingVisual>();
-
-            for (var verticalPageNumber = 0; verticalPageNumber < _verticalPageCount; verticalPageNumber++)
+            return _visualCache.GetOrAdd(pageNumber, pn =>
             {
-                for (var horizontalPageNumber = 0; horizontalPageNumber < HorizontalPageCount; horizontalPageNumber++)
+                var verticalPageNumber = pn / HorizontalPageCount;
+                var horizontalPageNumber = pn % HorizontalPageCount;
+                
+                const float horizontalOffset = 0;
+                var verticalOffset = (float)(verticalPageNumber * PrintablePageHeight);
+                var pageBounds = GetPageBounds(horizontalPageNumber, verticalPageNumber, horizontalOffset, verticalOffset);
+                
+                var visual = new DrawingVisual();
+                using (var dc = visual.RenderOpen())
                 {
-                    const float horizontalOffset = 0;
-                    var verticalOffset = (float)(verticalPageNumber * PrintablePageHeight);
-                    var pageBounds = GetPageBounds(horizontalPageNumber, verticalPageNumber, horizontalOffset, verticalOffset);
-                    var visual = new DrawingVisual();
-                    using (var dc = visual.RenderOpen())
-                    {
-                        CreatePageVisual(pageBounds, DrawingVisual,
-                                         IsFooterPage(horizontalPageNumber), dc);
-                    }
-                    DrawingVisuals.Add(visual);
+                    CreatePageVisual(pageBounds, DrawingVisual,
+                                     IsFooterPage(horizontalPageNumber), dc);
                 }
-            }
+                
+                // Clean cache if too large
+                if (_visualCache.Count > _maxCacheSize)
+                {
+                    var oldestKey = _visualCache.Keys.Min();
+                    _visualCache.TryRemove(oldestKey, out _);
+                }
+                
+                return visual;
+            });
         }
 
         protected virtual Rect GetPageBounds(int horizontalPageNumber, int verticalPageNumber, float horizontalOffset, float verticalOffset)
@@ -144,7 +155,7 @@ namespace SUT.PrintEngine.Paginators
             var xFactor = printablePageWidth / PageSize.Width;
             var yFactor = printablePageHeight / PageSize.Height;
             var scaleFactor = Math.Max(xFactor, yFactor);
-            var pageVisual = DrawingVisuals[pageNumber];
+            var pageVisual = CreatePageVisualOnDemand(pageNumber);
             var transformGroup = new TransformGroup();
             var scaleTransform = new ScaleTransform(scaleFactor, scaleFactor);
             var translateTransform = new TranslateTransform(_originalMargin.Left, _originalMargin.Top);

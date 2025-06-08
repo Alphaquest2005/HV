@@ -1368,35 +1368,46 @@ namespace SalesRegion
 
         public void Print(ref FrameworkElement fwe, PrescriptionEntry prescriptionEntry)
         {
+            PrintServer printserver = null;
+            PrintDialog pd = null;
+            DrawingVisual visual = null;
+            SUT.PrintEngine.Paginators.VisualPaginator page = null;
+            
             try
             {
-              
-                PrintServer printserver = Station.PrintServer.StartsWith("\\")
+                printserver = Station.PrintServer.StartsWith("\\")
                                               ? new PrintServer(Station.PrintServer)
                                               : new LocalPrintServer();
                 
-                Size visualSize;
+                Size visualSize = new Size(288, 2 * 96); // paper size
 
-                visualSize = new Size(288, 2 * 96); // paper size
+                visual = PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
 
-                DrawingVisual visual = PrintControlFactory.CreateDrawingVisual(fwe, fwe.ActualWidth, fwe.ActualHeight);
-
-
-                SUT.PrintEngine.Paginators.VisualPaginator page = new SUT.PrintEngine.Paginators.VisualPaginator(
+                page = new SUT.PrintEngine.Paginators.VisualPaginator(
                     visual, visualSize, new Thickness(0, 0, 0, 0), new Thickness(0, 0, 0, 0));
                 page.Initialize(false);
 
-                PrintDialog pd = new PrintDialog();
+                pd = new PrintDialog();
                 pd.PrintQueue = printserver.GetPrintQueue(Station.ReceiptPrinterName);
 
                 pd.PrintDocument(page, "");
-
             }
             catch (Exception ex)
             {
                 Instance.UpdateTransactionEntry(ex, prescriptionEntry);
                 Logger.Log(LoggingLevel.Error, GetCurrentMethodClass.GetCurrentMethod() + ": --- :" + ex.Message + ex.StackTrace);
-              //  throw ex;
+            }
+            finally
+            {
+                // Dispose resources properly
+                pd?.PrintQueue?.Dispose();
+                printserver?.Dispose();
+                
+                // Note: DrawingVisual and VisualPaginator don't implement IDisposable
+                // but we null them to help GC
+                visual = null;
+                page = null;
+                pd = null;
             }
         }
 

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Drawing.Printing;
+using System.Linq;
 using System.Printing;
 using System.Windows;
 using System.Windows.Input;
@@ -16,6 +18,9 @@ namespace SUT.PrintEngine.ViewModels
 {
     public class PrintControlViewModel : APrintControlViewModel, IPrintControlViewModel
     {
+        private static readonly ConcurrentDictionary<string, DrawingVisual> _scaledVisualCache = 
+            new ConcurrentDictionary<string, DrawingVisual>();
+        private const int MaxCacheSize = 20;
         #region Commands
 
         public DrawingVisual DrawingVisual { get; set; }
@@ -104,7 +109,7 @@ namespace SUT.PrintEngine.ViewModels
                 ReloadPreview(Scale, new Thickness(), PageOrientation, CurrentPaper);
         }
 
-        public void ReloadPreview(double scale, Thickness margin, PageOrientation pageOrientation, PaperSize paperSize)
+        public async void ReloadPreview(double scale, Thickness margin, PageOrientation pageOrientation, PaperSize paperSize)
         {
             try
             {
@@ -121,7 +126,7 @@ namespace SUT.PrintEngine.ViewModels
                 if (Scale == 1)
                     NumberOfPages = ApproaxNumberOfPages;
 
-                DisplayPagePreviewsAll(visualPaginator);
+                await DisplayPagePreviewsAllAsync(visualPaginator).ConfigureAwait(false);
                 ReloadingPreview = false;
             }
             catch (Exception ex)
@@ -138,13 +143,27 @@ namespace SUT.PrintEngine.ViewModels
         {
             if (scale == 1)
                 return DrawingVisual;
-            var visual = new DrawingVisual();
-            using (var dc = visual.RenderOpen())
+                
+            var cacheKey = $"{DrawingVisual.GetHashCode()}_{scale:F2}";
+            
+            return _scaledVisualCache.GetOrAdd(cacheKey, key =>
             {
-                dc.PushTransform(new ScaleTransform(scale, scale));
-                dc.DrawDrawing(DrawingVisual.Drawing);
-            }
-            return visual;
+                var visual = new DrawingVisual();
+                using (var dc = visual.RenderOpen())
+                {
+                    dc.PushTransform(new ScaleTransform(scale, scale));
+                    dc.DrawDrawing(DrawingVisual.Drawing);
+                }
+                
+                // Clean cache if too large
+                if (_scaledVisualCache.Count > MaxCacheSize)
+                {
+                    var oldestKey = _scaledVisualCache.Keys.First();
+                    _scaledVisualCache.TryRemove(oldestKey, out _);
+                }
+                
+                return visual;
+            });
         }
 
         private static Size GetPrintSize(PaperSize paperSize, PageOrientation pageOrientation)
